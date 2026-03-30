@@ -12,11 +12,8 @@ export const CHAR_LIMIT = 500;
 
 export const ALL_LANGUAGES = [
   "English","Spanish","French","Japanese","Mandarin","Arabic",
-  "German","Portuguese","Korean","Italian","Hindi","Russian",
+  "German","Portuguese","Korean","Italian","Vietnamese","Russian",
   "Dutch","Turkish","Polish"
-];
-export const APP_LANGUAGES = [
-  "English","Spanish","French","Japanese","Korean","German","Portuguese","Italian"
 ];
 
 // ─── THEMES ──────────────────────────────────────────────────
@@ -39,9 +36,4 @@ export const THEMES = {
   },
 };
 
-export const DEMO_SAVED = [
-  { id:1, tone:"Polite", toneCount:2, lang:"Japanese", original:"I need this report done by Friday or we'll have a problem.", date:"Today", mode:"refine" },
-  { id:2, tone:"Assertive", toneCount:1, lang:"Spanish", original:"Can you send me the updated files before the meeting?", date:"Yesterday", mode:"refine" },
-  { id:3, tone:"Diplomatic", toneCount:1, lang:"French", original:"I think we need to reconsider the timeline for this project.", date:"Mon", mode:"refine" },
-  { id:4, tone:null, toneCount:null, lang:"Korean", original:"Where is the nearest subway station?", date:"Sun", mode:"quick" },
-];
+
