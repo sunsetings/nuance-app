@@ -4,31 +4,43 @@ import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } fr
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
+import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function ResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount, setUsageCount, apiKey, recentTones, onAddRecentTone }) {
+export function ResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount, setUsageCount, apiKey, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
-
-  // If coming from saved, use saved data. Otherwise use what was passed from home.
   const source = savedItem || initialData || {};
 
   const [activeTone, setActiveTone] = useState(source.tone || "Polite");
   const [toneCount, setToneCount] = useState(source.toneCount || 1);
-  const [saved, setSaved] = useState(fromSaved);
   const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [shareVisible, setShareVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  // The three panels
   const [refined, setRefined] = useState(source.refined || "");
   const [translated, setTranslated] = useState(source.translated || "");
   const original = source.original || "";
-  const toLang = source.toLang || source.lang || "Japanese";
+  const toLang = source.toLang || source.to_lang || source.lang || "Japanese";
+
+  // Check if this translation is already saved
+  const existingSave = savedItems?.find(s =>
+    s.original === original &&
+    s.tone === activeTone &&
+    s.tone_count === toneCount &&
+    s.mode === "refine"
+  );
+  const saved = !!existingSave;
 
   const atLimit = !isPremium && usageCount >= FREE_DAILY_CAP;
 
-  const showToast = () => { setToastVisible(true); setTimeout(() => setToastVisible(false), 2200); };
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2200);
+  };
 
   const doRefine = async (tone, count) => {
     if (!apiKey) { setError("No API key — add your OpenAI key in settings."); return; }
@@ -39,8 +51,11 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
     try {
       const result = await refineAndTranslate({
         text: original,
-        tone, fromLang: source.fromLang || "English",
-        toLang, toneCount: count, apiKey,
+        tone,
+        fromLang: source.fromLang || source.from_lang || "English",
+        toLang,
+        toneCount: count,
+        apiKey,
       });
       setRefined(result.refined);
       setTranslated(result.translated);
@@ -74,7 +89,38 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
     await doRefine(activeTone, lvl);
   };
 
-  const handleSave = () => { setSaved(s => !s); if (!saved) showToast(); };
+  const handleSave = async () => {
+    if (!user) { navigate("upgrade"); return; }
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (saved && existingSave) {
+        // Unsave
+        await unsaveTranslation(user.id, existingSave.id);
+        setSavedItems(prev => prev.filter(s => s.id !== existingSave.id));
+      } else {
+        // Save
+        const newItem = await saveTranslation(user.id, {
+          mode: "refine",
+          original,
+          refined,
+          translated,
+          tone: activeTone,
+          toneCount,
+          fromLang: source.fromLang || source.from_lang || "English",
+          toLang,
+        });
+        setSavedItems(prev => [newItem, ...prev]);
+        showToast("All 3 panels saved to favourites");
+      }
+    } catch (e) {
+      console.error("Save failed:", e);
+      setError("Couldn't save — please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const refinedLabel = `REFINED · ${activeTone.toUpperCase()}${toneCount > 1 ? ` ×${toneCount}` : ""}`;
 
   return (
@@ -83,7 +129,7 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
       color: t.text, position: "relative", background: t.phoneBg,
       display: "flex", flexDirection: "column", minHeight: "100%",
     }}>
-      <Toast message="All 3 panels saved to favourites" visible={toastVisible} theme={theme} />
+      <Toast message={toastMessage} visible={toastVisible} theme={theme} />
       <ShareSheet visible={shareVisible} onClose={() => setShareVisible(false)} theme={theme} />
 
       {/* Header */}
@@ -107,32 +153,22 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
         />
       </div>
 
-      {/* Loading state */}
       {loading && (
-        <div style={{
-          textAlign: "center", padding: "20px",
-          color: t.textDim, fontSize: 13,
-          fontStyle: "italic", letterSpacing: "0.05em",
-        }}>
+        <div style={{ textAlign: "center", padding: "20px", color: t.textDim, fontSize: 13, fontStyle: "italic", letterSpacing: "0.05em" }}>
           refining…
         </div>
       )}
 
-      {/* Error state */}
       {error && (
-        <div style={{
-          background: "#2a0a0a", border: "1px solid #6a2020",
-          borderRadius: 10, padding: "10px 14px", marginBottom: 8,
-          fontSize: 12, color: "#e88", fontFamily: "'Lora',Georgia,serif",
-        }}>
+        <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 8, fontSize: 12, color: "#e88", fontFamily: "'Lora',Georgia,serif" }}>
           {error}
         </div>
       )}
 
       {/* 3 panels */}
       {!loading && [
-        { label: "ORIGINAL", content: original, lang: source.fromLang || "EN", muted: true, highlight: false, textToCopy: original },
-        { label: refinedLabel, content: refined, lang: source.fromLang || "EN", highlight: true, textToCopy: refined },
+        { label: "ORIGINAL", content: original, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), muted: true, highlight: false, textToCopy: original },
+        { label: refinedLabel, content: refined, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), highlight: true, textToCopy: refined },
         { label: "TRANSLATED · " + toLang.toUpperCase(), content: translated, lang: toLang.slice(0, 2).toUpperCase(), highlight: false, textToCopy: translated },
       ].map(({ label, content, lang, muted, highlight, textToCopy }, i) => (
         <div key={i} style={{
