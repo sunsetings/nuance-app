@@ -1,6 +1,6 @@
 // ─── PLAN LIMITS ─────────────────────────────────────────────
-export const FREE_TONES = ["Polite", "Formal", "Friendly"];
-export const PRO_TONES = ["Sincere", "Serious", "Succinct", "Assertive", "Diplomatic", "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm"];
+export const FREE_TONES = ["Casual", "Polite", "Gen A"];
+export const PRO_TONES = ["Formal", "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic", "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm", "19th Century"];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
 export const MAX_SAME_TONE = 3;
 export const FREE_DAILY_CAP = 30;
@@ -29,7 +29,7 @@ export const THEMES = {
     text:"#d8d4cc", textMuted:"#edeae4", textDim:"#d8d4cc", textFaint:"#b0aca6",
     accent:"#c8f0a0", accentText:"#0a1a00",
     highlight:"#0e1e0e", highlightBorder:"#304e30", highlightText:"#c8e8a0",
-    notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#aaa8a2",
+    notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#b0aca6",
   },
   light: {
     bg:"#e8e4da", phoneBg:"#faf8f3", surface:"#f0ece3", surface2:"#e6e2d8",
