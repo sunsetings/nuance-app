@@ -16,6 +16,13 @@ export const ALL_LANGUAGES = [
   "Dutch","Turkish","Polish"
 ];
 
+// App UI language options — must match ALL_LANGUAGES exactly
+export const APP_LANGUAGES = [...ALL_LANGUAGES];
+
+// Default languages for first-time users
+export const DEFAULT_FROM_LANG = "English";
+export const DEFAULT_TO_LANG = "Korean";
+
 // ─── THEMES ──────────────────────────────────────────────────
 export const THEMES = {
   dark: {
@@ -35,8 +42,3 @@ export const THEMES = {
     notch:"#ddd9d0", proTag:"#a07010", swipeHint:"#3a3830",
   },
 };
-const toggleBM = lang => setBookmarked(prev =>
-    prev.includes(lang) ? prev.filter(l => l !== lang)
-    : prev.length < bookmarkLimit ? [...prev, lang] : prev
-  );
-
