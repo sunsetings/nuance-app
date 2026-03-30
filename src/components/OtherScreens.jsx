@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, APP_LANGUAGES, DEMO_SAVED } from "../lib/constants.js";
+import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, APP_LANGUAGES } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout }) {
+export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout, savedItems }) {
   const t = THEMES[theme] || THEMES.dark;
-  const [appLang, setAppLang] = useState("English");
-  const savedCount = 17;
+  const savedCount = savedItems?.length || 0;
 
   return (
     <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
@@ -57,14 +56,12 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
       <div style={{ height: 1, background: t.border, margin: "14px 0" }} />
 
-      {/* App language */}
+      {/* App language — coming soon */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.12em", marginBottom: 7 }}>APP LANGUAGE</div>
         <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 13 }}>{appLang}</span>
-          <select value={appLang} onChange={e => setAppLang(e.target.value)} style={{ background: "transparent", border: "none", color: t.textMuted, fontSize: 12, fontFamily: "'Lora',Georgia,serif", cursor: "pointer" }}>
-            {APP_LANGUAGES.map(l => <option key={l} value={l} style={{ background: theme === "light" ? "#fff" : "#1a1a1a" }}>{l}</option>)}
-          </select>
+          <span style={{ fontSize: 13, color: t.textMuted }}>English</span>
+          <span style={{ fontSize: 10, color: t.textFaint, fontStyle: "italic" }}>more languages coming soon</span>
         </div>
       </div>
 
@@ -145,20 +142,20 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
       <div style={{ marginTop: 18 }}>
         {[
           { label: "Annual", plan: "yearly", price: "$59.99 / year", sub: "Save 37% — best value", highlight: true },
-{ label: "Monthly", plan: "monthly", price: "$7.99 / month", sub: null },
-].map(opt => (
-  <button key={opt.label} onClick={async () => {
-    const priceId = opt.plan === "yearly"
-      ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
-      : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
-    const res = await fetch("/api/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId, userId: user?.id, userEmail: user?.email }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  }} style={{
+          { label: "Monthly", plan: "monthly", price: "$7.99 / month", sub: null },
+        ].map(opt => (
+          <button key={opt.label} onClick={async () => {
+            const priceId = opt.plan === "yearly"
+              ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
+              : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
+            const res = await fetch("/api/create-checkout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ priceId, userId: user?.id, userEmail: user?.email }),
+            });
+            const data = await res.json();
+            if (data.url) window.location.href = data.url;
+          }} style={{
             width: "100%", padding: "14px 16px", marginBottom: 8,
             background: opt.highlight ? t.accent : t.surface,
             border: `1px solid ${opt.highlight ? t.accent : t.border}`,
@@ -183,8 +180,20 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
 }
 
 // ─── SAVED FAVOURITES ────────────────────────────────────────
-export function SavedScreen({ navigate, isPremium, theme, onOpenSaved }) {
+export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
+  const items = savedItems || [];
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    return date.toLocaleDateString("en-US", { weekday: "short" });
+  };
+
   return (
     <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 6 }}>
@@ -192,7 +201,7 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved }) {
           <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
           <span style={{ fontSize: 16, fontWeight: "bold" }}>Saved Favourites</span>
         </div>
-        {isPremium && <span style={{ fontSize: 10, color: t.textMuted }}>{DEMO_SAVED.length} / {PRO_SAVE_LIMIT}</span>}
+        {isPremium && <span style={{ fontSize: 10, color: t.textMuted }}>{items.length} / {PRO_SAVE_LIMIT}</span>}
       </div>
 
       {!isPremium ? (
@@ -207,11 +216,23 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved }) {
             fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
           }}>✦ Go Pro</button>
         </div>
+      ) : items.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "36px 16px" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>♡</div>
+          <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 8 }}>Nothing saved yet</div>
+          <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65 }}>Tap the heart on any translation to save it here.</div>
+        </div>
       ) : (
         <>
           <div style={{ fontSize: 10, color: t.textDim, marginBottom: 12 }}>Tap any item to reopen and keep refining.</div>
-          {DEMO_SAVED.map(item => (
-            <button key={item.id} onClick={() => onOpenSaved(item)} style={{
+          {items.map(item => (
+            <button key={item.id} onClick={() => onOpenSaved({
+              ...item,
+              tone: item.tone,
+              toneCount: item.tone_count,
+              fromLang: item.from_lang,
+              toLang: item.to_lang,
+            })} style={{
               width: "100%", background: t.surface,
               border: `1px solid ${t.border}`, borderRadius: 10,
               padding: "12px 13px", marginBottom: 8,
@@ -221,24 +242,4 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved }) {
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   {item.mode === "refine"
-                    ? <span style={{ padding: "2px 9px", borderRadius: 9, background: t.highlight, border: `1px solid ${t.highlightBorder}`, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#8adc8a" }}>{item.tone}{item.toneCount > 1 ? ` ×${item.toneCount}` : ""}</span>
-                    : <span style={{ padding: "2px 9px", borderRadius: 9, background: t.surface2, border: `1px solid ${t.border2}`, fontSize: 10, color: t.textDim }}>Quick</span>
-                  }
-                  <span style={{ fontSize: 10, color: t.textDim }}>→ {item.lang}</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 10, color: t.textFaint }}>{item.date}</span>
-                  <span style={{ fontSize: 12, color: t.textDim }}>›</span>
-                </div>
-              </div>
-              <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.5 }}>
-                {item.original.substring(0, 60)}{item.original.length > 60 ? "…" : ""}
-              </div>
-            </button>
-          ))}
-        </>
-      )}
-      <BottomNav active="saved" navigate={navigate} theme={theme} />
-    </div>
-  );
-}
+                    ? <span style={{ padding: "2px 9px", borderRadius: 9, background: t.highlight, border: `1px solid ${t.
