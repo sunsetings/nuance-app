@@ -65,7 +65,7 @@ export default function App() {
     ]);
     setUsageCount(count);
     setSavedItems(saved);
-    if (profile?.data?.is_pro) setIsPremium(true);
+    setIsPremium(profile?.data?.is_pro === true);
   } catch (e) {
     console.error("Failed to load user data:", e);
   }
