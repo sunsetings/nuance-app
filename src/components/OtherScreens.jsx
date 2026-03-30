@@ -132,8 +132,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
       </div>
     </div>
   );
-}
-// ─── SAVED FAVOURITES ────────────────────────────────────────
+}// ─── SAVED FAVOURITES ────────────────────────────────────────
 export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const items = savedItems || [];
