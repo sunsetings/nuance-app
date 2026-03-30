@@ -16,10 +16,8 @@ export const ALL_LANGUAGES = [
   "Dutch","Turkish","Polish"
 ];
 
-// App UI language options — must match ALL_LANGUAGES exactly
 export const APP_LANGUAGES = [...ALL_LANGUAGES];
 
-// Default languages for first-time users
 export const DEFAULT_FROM_LANG = "English";
 export const DEFAULT_TO_LANG = "Korean";
 
@@ -28,10 +26,10 @@ export const THEMES = {
   dark: {
     bg:"#050505", phoneBg:"#0f0f0f", surface:"#181818", surface2:"#222",
     border:"#333", border2:"#444",
-    text:"#f5f1e8", textMuted:"#d0ccc0", textDim:"#9a9690", textFaint:"#686460",
+    text:"#d8d4cc", textMuted:"#ccc9c2", textDim:"#aaa8a2", textFaint:"#666666",
     accent:"#c8f0a0", accentText:"#0a1a00",
     highlight:"#0e1e0e", highlightBorder:"#304e30", highlightText:"#c8e8a0",
-    notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#e0dcd4",
+    notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#aaa8a2",
   },
   light: {
     bg:"#e8e4da", phoneBg:"#faf8f3", surface:"#f0ece3", surface2:"#e6e2d8",
