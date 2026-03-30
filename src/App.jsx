@@ -135,7 +135,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div style={{ minHeight: "100vh", background: "#050505", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "#c8f0a0", fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>nuance.</div>
+        <div style={{ color: "#c8f0a0", fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function App() {
 
       <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256 }}>
         <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>Interactive Preview</div>
-        <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>nuance.</div>
+        <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>{API_KEY ? "✓ API key loaded" : "⚠ No API key"}</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.6 }}>{user ? `✓ ${user.email}` : "◎ Not logged in"}</div>
 

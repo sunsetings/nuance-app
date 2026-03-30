@@ -3,7 +3,7 @@ import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LI
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount }) {
+export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout }) {
   const t = THEMES[theme] || THEMES.dark;
   const [appLang, setAppLang] = useState("English");
   const savedCount = 17;
@@ -23,7 +23,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
       }}>
         <div style={{ fontSize: 26, marginBottom: 6 }}>{isPremium ? "✦" : "◎"}</div>
         <div style={{ fontSize: 15, fontWeight: "bold" }}>{isPremium ? "Pro Member" : "Free Plan"}</div>
-        <div style={{ fontSize: 12, color: t.textMuted, marginTop: 3 }}>user@email.com</div>
+        <div style={{ fontSize: 12, color: t.textMuted, marginTop: 3 }}>{user?.email || "user@email.com"}</div>
         {!isPremium && (
           <button onClick={() => navigate("upgrade")} style={{
             marginTop: 12, padding: "9px 22px",
@@ -97,6 +97,16 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         [Demo: Switch to {isPremium ? "Free" : "Pro"} view]
       </button>
 
+      {/* Sign out */}
+      <button onClick={onLogout} style={{
+        width: "100%", padding: "11px", background: "transparent",
+        border: `1px solid ${t.border}`, borderRadius: 9,
+        color: t.textDim, fontSize: 13, cursor: "pointer",
+        fontFamily: "'Lora',Georgia,serif", marginBottom: 4,
+      }}>
+        Sign out
+      </button>
+
       <BottomNav active="account" navigate={navigate} theme={theme} />
     </div>
   );
@@ -111,7 +121,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme }) {
 
       <div style={{ textAlign: "center", marginBottom: 22 }}>
         <div style={{ fontSize: 30, marginBottom: 8 }}>✦</div>
-        <div style={{ fontSize: 19, fontWeight: "bold", marginBottom: 5 }}>nuance Pro</div>
+        <div style={{ fontSize: 19, fontWeight: "bold", marginBottom: 5 }}>tonara Pro</div>
         <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65 }}>For people who communicate with precision.</div>
       </div>
 

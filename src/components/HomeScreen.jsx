@@ -10,8 +10,8 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
 
   const [mode, setMode] = useState("refine");
   const [fromLang, setFromLang] = useState("English");
-  const [toLang, setToLang] = useState("Japanese");
-  const [bookmarked, setBookmarked] = useState(["English", "Japanese"]);
+  const [toLang, setToLang] = useState("Korean");
+  const [bookmarked, setBookmarked] = useState(["English","Korean"]);
   const [tone, setTone] = useState("Polite");
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -61,7 +61,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
     }}>
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 13, marginTop: 6 }}>
-        <span style={{ fontSize: 20, fontWeight: "bold", letterSpacing: "-0.5px" }}>nuance.</span>
+        <span style={{ fontSize: 20, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
         <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
       </div>
 

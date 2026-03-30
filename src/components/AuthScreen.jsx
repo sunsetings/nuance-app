@@ -75,7 +75,7 @@ export function AuthScreen({ theme, onAuth }) {
     }}>
       {/* Logo */}
       <div style={{ textAlign: "center", marginBottom: 36, marginTop: 20 }}>
-        <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: 6 }}>nuance.</div>
+        <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: 6 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim }}>
           {mode === "login" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset your password"}
         </div>

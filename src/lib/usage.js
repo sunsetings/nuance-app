@@ -9,7 +9,7 @@
  * It persists between sessions but is per-device.
  */
 
-const KEY = "nuance_usage";
+const KEY = "tonara_usage";
 
 function getTodayKey() {
   const d = new Date();
