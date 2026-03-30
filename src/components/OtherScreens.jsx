@@ -160,7 +160,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme }) {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-  }}
+  }} style={{
             width: "100%", padding: "14px 16px", marginBottom: 8,
             background: opt.highlight ? t.accent : t.surface,
             border: `1px solid ${opt.highlight ? t.accent : t.border}`,
