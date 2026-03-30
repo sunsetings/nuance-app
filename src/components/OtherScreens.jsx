@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, APP_LANGUAGES } from "../lib/constants.js";
+import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
@@ -14,27 +14,15 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         <span style={{ fontSize: 16, fontWeight: "bold" }}>Account</span>
       </div>
 
-      {/* Plan card */}
-      <div style={{
-        background: isPremium ? t.highlight : t.surface2,
-        border: `1px solid ${isPremium ? t.highlightBorder : t.border}`,
-        borderRadius: 16, padding: "18px", marginBottom: 14, textAlign: "center",
-      }}>
+      <div style={{ background: isPremium ? t.highlight : t.surface2, border: `1px solid ${isPremium ? t.highlightBorder : t.border}`, borderRadius: 16, padding: "18px", marginBottom: 14, textAlign: "center" }}>
         <div style={{ fontSize: 26, marginBottom: 6 }}>{isPremium ? "✦" : "◎"}</div>
         <div style={{ fontSize: 15, fontWeight: "bold" }}>{isPremium ? "Pro Member" : "Free Plan"}</div>
         <div style={{ fontSize: 12, color: t.textMuted, marginTop: 3 }}>{user?.email || "user@email.com"}</div>
         {!isPremium && (
-          <button onClick={() => navigate("upgrade")} style={{
-            marginTop: 12, padding: "9px 22px",
-            background: t.accent, color: t.accentText,
-            border: "none", borderRadius: 10, fontSize: 13,
-            fontWeight: "bold", cursor: "pointer",
-            fontFamily: "'Lora',Georgia,serif",
-          }}>✦ Go Pro →</button>
+          <button onClick={() => navigate("upgrade")} style={{ marginTop: 12, padding: "9px 22px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro →</button>
         )}
       </div>
 
-      {/* Stats */}
       {[
         { label: "Daily refines used", value: isPremium ? "Unlimited" : `${usageCount} / ${FREE_DAILY_CAP} today` },
         { label: "Tones available", value: isPremium ? "All 13" : "3 of 13" },
@@ -42,11 +30,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT} total` : `Up to ${FREE_BOOKMARK_LIMIT} total` },
         { label: "Saved favourites", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : "Locked", locked: !isPremium, warn: isPremium && savedCount >= PRO_SAVE_WARN },
       ].map((item, i) => (
-        <div key={i} style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "10px 13px", background: t.surface,
-          border: `1px solid ${t.border}`, borderRadius: 8, marginBottom: 6,
-        }}>
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 13px", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 8, marginBottom: 6 }}>
           <span style={{ fontSize: 13 }}>{item.label}</span>
           <span style={{ fontSize: 13, color: item.locked ? t.textDim : item.warn ? t.proTag : t.accent }}>
             {item.locked ? "🔒 Pro" : item.value}
@@ -56,7 +40,6 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
       <div style={{ height: 1, background: t.border, margin: "14px 0" }} />
 
-      {/* App language — coming soon */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.12em", marginBottom: 7 }}>APP LANGUAGE</div>
         <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -65,42 +48,22 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         </div>
       </div>
 
-      {/* Display mode */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.12em", marginBottom: 7 }}>DISPLAY MODE</div>
         <div style={{ display: "flex", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: 3, gap: 3 }}>
           {[{ id: "dark", icon: "🌙", label: "Dark" }, { id: "light", icon: "☀️", label: "Light" }].map(opt => (
-            <button key={opt.id} onClick={() => setTheme(opt.id)} style={{
-              flex: 1, padding: "8px 4px", borderRadius: 8, border: "none",
-              background: theme === opt.id ? t.surface2 : "transparent",
-              color: theme === opt.id ? t.text : t.textMuted,
-              fontSize: 11, fontFamily: "'Lora',Georgia,serif",
-              cursor: "pointer", fontWeight: theme === opt.id ? "bold" : "normal",
-              transition: "all 0.15s",
-            }}>
+            <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "8px 4px", borderRadius: 8, border: "none", background: theme === opt.id ? t.surface2 : "transparent", color: theme === opt.id ? t.text : t.textMuted, fontSize: 11, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: theme === opt.id ? "bold" : "normal", transition: "all 0.15s" }}>
               {opt.icon} {opt.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Demo toggle */}
-      <button onClick={() => setIsPremium(!isPremium)} style={{
-        width: "100%", padding: "10px", background: t.surface,
-        border: `1px dashed ${t.border2}`, borderRadius: 9,
-        color: t.textMuted, fontSize: 11, cursor: "pointer",
-        fontFamily: "'Lora',Georgia,serif", marginBottom: 4,
-      }}>
+      <button onClick={() => setIsPremium(!isPremium)} style={{ width: "100%", padding: "10px", background: t.surface, border: `1px dashed ${t.border2}`, borderRadius: 9, color: t.textMuted, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", marginBottom: 4 }}>
         [Demo: Switch to {isPremium ? "Free" : "Pro"} view]
       </button>
 
-      {/* Sign out */}
-      <button onClick={onLogout} style={{
-        width: "100%", padding: "11px", background: "transparent",
-        border: `1px solid ${t.border}`, borderRadius: 9,
-        color: t.textDim, fontSize: 13, cursor: "pointer",
-        fontFamily: "'Lora',Georgia,serif", marginBottom: 4,
-      }}>
+      <button onClick={onLogout} style={{ width: "100%", padding: "11px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 9, color: t.textDim, fontSize: 13, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", marginBottom: 4 }}>
         Sign out
       </button>
 
@@ -155,15 +118,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
             });
             const data = await res.json();
             if (data.url) window.location.href = data.url;
-          }} style={{
-            width: "100%", padding: "14px 16px", marginBottom: 8,
-            background: opt.highlight ? t.accent : t.surface,
-            border: `1px solid ${opt.highlight ? t.accent : t.border}`,
-            borderRadius: 12, cursor: "pointer",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            fontFamily: "'Lora',Georgia,serif",
-            color: opt.highlight ? t.accentText : t.textMuted,
-          }}>
+          }} style={{ width: "100%", padding: "14px 16px", marginBottom: 8, background: opt.highlight ? t.accent : t.surface, border: `1px solid ${opt.highlight ? t.accent : t.border}`, borderRadius: 12, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted }}>
             <span style={{ fontSize: 13, fontWeight: "bold" }}>{opt.label}</span>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: 13 }}>{opt.price}</div>
@@ -178,7 +133,6 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
     </div>
   );
 }
-
 // ─── SAVED FAVOURITES ────────────────────────────────────────
 export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -210,11 +164,7 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItem
           <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 8 }}>Save your best translations</div>
           <div style={{ fontSize: 12, color: t.textMuted, marginBottom: 6, lineHeight: 1.65 }}>All 3 panels saved automatically — original, refined, and translated.</div>
           <div style={{ fontSize: 12, color: t.textMuted, marginBottom: 20, lineHeight: 1.65 }}>Reopen any time to keep refining. Up to {PRO_SAVE_LIMIT} saves on Pro.</div>
-          <button onClick={() => navigate("upgrade")} style={{
-            padding: "12px 28px", background: t.accent, color: t.accentText,
-            border: "none", borderRadius: 10, fontSize: 13,
-            fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
-          }}>✦ Go Pro</button>
+          <button onClick={() => navigate("upgrade")} style={{ padding: "12px 28px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro</button>
         </div>
       ) : items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "36px 16px" }}>
@@ -232,14 +182,28 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItem
               toneCount: item.tone_count,
               fromLang: item.from_lang,
               toLang: item.to_lang,
-            })} style={{
-              width: "100%", background: t.surface,
-              border: `1px solid ${t.border}`, borderRadius: 10,
-              padding: "12px 13px", marginBottom: 8,
-              textAlign: "left", cursor: "pointer",
-              fontFamily: "'Lora',Georgia,serif",
-            }}>
+            })} style={{ width: "100%", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 10, padding: "12px 13px", marginBottom: 8, textAlign: "left", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   {item.mode === "refine"
-                    ? <span style={{ padding: "2px 9px", borderRadius: 9, background: t.highlight, border: `1px solid ${t.
+                    ? <span style={{ padding: "2px 9px", borderRadius: 9, background: t.highlight, border: `1px solid ${t.highlightBorder}`, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#8adc8a" }}>{item.tone}{item.tone_count > 1 ? ` ×${item.tone_count}` : ""}</span>
+                    : <span style={{ padding: "2px 9px", borderRadius: 9, background: t.surface2, border: `1px solid ${t.border2}`, fontSize: 10, color: t.textDim }}>Quick</span>
+                  }
+                  <span style={{ fontSize: 10, color: t.textDim }}>→ {item.to_lang}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 10, color: t.textFaint }}>{formatDate(item.created_at)}</span>
+                  <span style={{ fontSize: 12, color: t.textDim }}>›</span>
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.5 }}>
+                {item.original?.substring(0, 60)}{item.original?.length > 60 ? "…" : ""}
+              </div>
+            </button>
+          ))}
+        </>
+      )}
+      <BottomNav active="saved" navigate={navigate} theme={theme} />
+    </div>
+  );
+}
