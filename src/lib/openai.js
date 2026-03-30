@@ -1,7 +1,7 @@
 export async function refineAndTranslate({ text, tone, fromLang, toLang, toneCount, apiKey }) {
   const toneGuide = {
     "Casual": "Relaxed, everyday language — like texting a close friend. Short sentences, natural contractions, no formality.",
-    "Gen A": "Gen Alpha slang and internet language — very current, youth-coded, informal. Use slang naturally but don't overdo it.",
+    "Gen A": "Gen Alpha and Gen Z internet slang — use terms like 'no cap', 'lowkey', 'fr fr', 'slay', 'it's giving', 'bussin', 'rizz', 'understood the assignment', 'ate that', 'periodt', emojis where natural. Very online, very current. Should sound distinctly different from just being casual.",
     "19th Century": "Formal Victorian-era prose — elaborate, eloquent, and ornate. Use archaic vocabulary and constructions appropriate to 19th century written English, adapted naturally to the target language.",
   };
   const toneInstruction = toneGuide[tone] ? ` Tone guide: ${toneGuide[tone]}` : "";
