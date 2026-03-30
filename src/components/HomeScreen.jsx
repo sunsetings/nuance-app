@@ -1,22 +1,28 @@
-import { useState, useRef } from "react";
-import { THEMES, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, CHAR_LIMIT, FREE_DAILY_CAP } from "../lib/constants.js";
+import { useState, useRef, useEffect } from "react";
+import { THEMES, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, CHAR_LIMIT, FREE_DAILY_CAP, DEFAULT_FROM_LANG, DEFAULT_TO_LANG } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneRow } from "./ToneRow.jsx";
+
+const LS_FROM = "tonara_fromLang";
+const LS_TO = "tonara_toLang";
+const LS_BOOKMARKS = "tonara_bookmarks";
 
 export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate }) {
   const t = THEMES[theme] || THEMES.dark;
   const bookmarkLimit = isPremium ? PRO_BOOKMARK_LIMIT : FREE_BOOKMARK_LIMIT;
 
-  const [mode, setMode] = useState("refine");
-const savedFrom = localStorage.getItem("tonara_fromLang") || "English";
-  const savedTo = localStorage.getItem("tonara_toLang") || "Korean";
-  const [fromLang, setFromLang] = useState(savedFrom);
-  const [toLang, setToLang] = useState(savedTo);
+  // Load last-used languages from localStorage, fall back to defaults
+  const [fromLang, setFromLang] = useState(() => localStorage.getItem(LS_FROM) || DEFAULT_FROM_LANG);
+  const [toLang, setToLang] = useState(() => localStorage.getItem(LS_TO) || DEFAULT_TO_LANG);
   const [bookmarked, setBookmarked] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("tonara_bookmarked")) || ["English","Korean"]; }
-    catch { return ["English","Korean"]; }
+    try {
+      const stored = localStorage.getItem(LS_BOOKMARKS);
+      return stored ? JSON.parse(stored) : [DEFAULT_FROM_LANG, DEFAULT_TO_LANG];
+    } catch { return [DEFAULT_FROM_LANG, DEFAULT_TO_LANG]; }
   });
+
+  const [mode, setMode] = useState("refine");
   const [tone, setTone] = useState("Polite");
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -27,19 +33,20 @@ const savedFrom = localStorage.getItem("tonara_fromLang") || "English";
   const hasText = text.trim().length > 0;
   const atLimit = !isPremium && usageCount >= FREE_DAILY_CAP;
 
+  // Persist language choices whenever they change
+  useEffect(() => { localStorage.setItem(LS_FROM, fromLang); }, [fromLang]);
+  useEffect(() => { localStorage.setItem(LS_TO, toLang); }, [toLang]);
+  useEffect(() => { localStorage.setItem(LS_BOOKMARKS, JSON.stringify(bookmarked)); }, [bookmarked]);
+
   const toggleBM = lang => setBookmarked(prev =>
     prev.includes(lang) ? prev.filter(l => l !== lang)
     : prev.length < bookmarkLimit ? [...prev, lang] : prev
   );
 
-const swapLanguages = () => {
+  const swapLanguages = () => {
     setSwapping(true);
-    const newFrom = toLang;
-    const newTo = fromLang;
-    setFromLang(newFrom);
-    setToLang(newTo);
-    localStorage.setItem("tonara_fromLang", newFrom);
-    localStorage.setItem("tonara_toLang", newTo);
+    setFromLang(toLang);
+    setToLang(fromLang);
     setTimeout(() => setSwapping(false), 300);
   };
 
@@ -77,7 +84,7 @@ const swapLanguages = () => {
       {/* Language bar */}
       <div style={{ background: t.surface2, border: `1px solid ${t.border}`, borderRadius: 12, marginBottom: 11, position: "relative", zIndex: 300 }}>
         <div style={{ padding: "9px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-          <LangSelector label="FROM" value={fromLang} onChange={lang => { setFromLang(lang); localStorage.setItem("tonara_fromLang", lang); }} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
+          <LangSelector label="FROM" value={fromLang} onChange={setFromLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
           <button onClick={swapLanguages} style={{
             background: "transparent", border: `1px solid ${t.border2}`,
             borderRadius: "50%", width: 30, height: 30,
@@ -86,7 +93,7 @@ const swapLanguages = () => {
             flexShrink: 0, transition: "transform 0.3s",
             transform: swapping ? "rotate(180deg)" : "rotate(0deg)",
           }}>⇄</button>
-          <LangSelector label="TO" value={toLang} onChange={lang => { setToLang(lang); localStorage.setItem("tonara_toLang", lang); }} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
+          <LangSelector label="TO" value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
         </div>
         <div style={{ padding: "0 14px 8px", display: "flex", justifyContent: "flex-end" }}>
           <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint }}>
