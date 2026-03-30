@@ -25,7 +25,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
       {[
         { label: "Daily refines used", value: isPremium ? "Unlimited" : `${usageCount} / ${FREE_DAILY_CAP} today` },
-        { label: "Tones available", value: isPremium ? "All 13" : "3 of 16" },
+        { label: "Tones available", value: isPremium ? "All 16" : "3 of 16" },
         { label: "Audio dictation 🎙", value: isPremium ? "Enabled" : "Locked", locked: !isPremium },
         { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT} total` : `Up to ${FREE_BOOKMARK_LIMIT} total` },
         { label: "Saved favourites", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : "Locked", locked: !isPremium, warn: isPremium && savedCount >= PRO_SAVE_WARN },
@@ -59,9 +59,6 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         </div>
       </div>
 
-      <button onClick={() => setIsPremium(!isPremium)} style={{ width: "100%", padding: "10px", background: t.surface, border: `1px dashed ${t.border2}`, borderRadius: 9, color: t.textMuted, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", marginBottom: 4 }}>
-        [Demo: Switch to {isPremium ? "Free" : "Pro"} view]
-      </button>
 
       <button onClick={onLogout} style={{ width: "100%", padding: "11px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 9, color: t.textDim, fontSize: 13, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", marginBottom: 4 }}>
         Sign out
