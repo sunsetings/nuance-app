@@ -28,93 +28,121 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
   const [draggingIndex, setDraggingIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const containerRef = useRef(null);
-  const longPressTimer = useRef(null);
-  const touchDragActive = useRef(false);
-  const touchStartIndex = useRef(null);
-  const pillRefs = useRef([]);
+  const stateRef = useRef({
+    draggingIndex: null,
+    dragOverIndex: null,
+    toneOrder: loadOrder(),
+    longPressTimer: null,
+    touchDragActive: false,
+  });
 
   useEffect(() => {
     setToneOrder(loadOrder());
   }, []);
 
-  // ── Desktop drag handlers ──────────────────────────────────
-  const handleDragStart = (e, index) => {
-    e.dataTransfer.effectAllowed = "move";
-    setDraggingIndex(index);
-  };
+  // Keep stateRef in sync
+  useEffect(() => {
+    stateRef.current.toneOrder = toneOrder;
+  }, [toneOrder]);
 
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    if (index !== draggingIndex) setDragOverIndex(index);
-  };
+  useEffect(() => {
+    stateRef.current.draggingIndex = draggingIndex;
+  }, [draggingIndex]);
 
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-    if (draggingIndex === null || draggingIndex === index) {
-      setDraggingIndex(null); setDragOverIndex(null); return;
-    }
-    const newOrder = [...toneOrder];
-    const [moved] = newOrder.splice(draggingIndex, 1);
-    newOrder.splice(index, 0, moved);
-    setToneOrder(newOrder);
-    saveOrder(newOrder);
-    setDraggingIndex(null); setDragOverIndex(null);
-  };
+  useEffect(() => {
+    stateRef.current.dragOverIndex = dragOverIndex;
+  }, [dragOverIndex]);
 
-  const handleDragEnd = () => {
-    setDraggingIndex(null); setDragOverIndex(null);
-  };
+  // Attach non-passive touchmove to container
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onTouchMove = (e) => {
+      if (!stateRef.current.touchDragActive) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const els = document.elementsFromPoint(touch.clientX, touch.clientY);
+      els.forEach(target => {
+        const idx = target.dataset?.pillIndex;
+        if (idx !== undefined) {
+          const i = parseInt(idx);
+          if (i !== stateRef.current.draggingIndex) {
+            stateRef.current.dragOverIndex = i;
+            setDragOverIndex(i);
+          }
+        }
+      });
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, []);
 
-  // ── Touch drag handlers ────────────────────────────────────
-  const handleTouchStart = (e, index) => {
+  const handleTouchStart = (index) => {
     if (disabled) return;
-    touchStartIndex.current = index;
-    touchDragActive.current = false;
-    longPressTimer.current = setTimeout(() => {
-      touchDragActive.current = true;
+    stateRef.current.touchDragActive = false;
+    clearTimeout(stateRef.current.longPressTimer);
+    stateRef.current.longPressTimer = setTimeout(() => {
+      stateRef.current.touchDragActive = true;
+      stateRef.current.draggingIndex = index;
       setDraggingIndex(index);
-      // Haptic feedback if available
       if (navigator.vibrate) navigator.vibrate(40);
     }, 500);
   };
 
-  const handleTouchMove = (e) => {
-    if (!touchDragActive.current) {
-      clearTimeout(longPressTimer.current);
-      return;
-    }
-    e.preventDefault();
-    const touch = e.touches[0];
-    const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
-    pillRefs.current.forEach((ref, index) => {
-      if (ref && elements.includes(ref)) {
-        if (index !== draggingIndex) setDragOverIndex(index);
-      }
-    });
-  };
-
   const handleTouchEnd = () => {
-    clearTimeout(longPressTimer.current);
-    if (touchDragActive.current && draggingIndex !== null && dragOverIndex !== null && draggingIndex !== dragOverIndex) {
-      const newOrder = [...toneOrder];
-      const [moved] = newOrder.splice(draggingIndex, 1);
-      newOrder.splice(dragOverIndex, 0, moved);
+    clearTimeout(stateRef.current.longPressTimer);
+    const { touchDragActive, draggingIndex: di, dragOverIndex: doi, toneOrder: order } = stateRef.current;
+    if (touchDragActive && di !== null && doi !== null && di !== doi) {
+      const newOrder = [...order];
+      const [moved] = newOrder.splice(di, 1);
+      newOrder.splice(doi, 0, moved);
       setToneOrder(newOrder);
       saveOrder(newOrder);
     }
-    touchDragActive.current = false;
+    stateRef.current.touchDragActive = false;
+    stateRef.current.draggingIndex = null;
+    stateRef.current.dragOverIndex = null;
     setDraggingIndex(null);
     setDragOverIndex(null);
-    touchStartIndex.current = null;
   };
 
-  // ── Build pills ────────────────────────────────────────────
-  const pills = [];
+  const handleTouchCancel = () => {
+    clearTimeout(stateRef.current.longPressTimer);
+    stateRef.current.touchDragActive = false;
+    stateRef.current.draggingIndex = null;
+    stateRef.current.dragOverIndex = null;
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
 
+  // Desktop drag
+  const handleDragStart = (e, index) => {
+    e.dataTransfer.effectAllowed = "move";
+    setDraggingIndex(index);
+  };
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (index !== stateRef.current.draggingIndex) setDragOverIndex(index);
+  };
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    const di = stateRef.current.draggingIndex;
+    if (di === null || di === index) { setDraggingIndex(null); setDragOverIndex(null); return; }
+    const newOrder = [...toneOrder];
+    const [moved] = newOrder.splice(di, 1);
+    newOrder.splice(index, 0, moved);
+    setToneOrder(newOrder);
+    saveOrder(newOrder);
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDraggingIndex(null); setDragOverIndex(null); };
+
+  // Build pills
+  const pills = [];
   toneOrder.forEach((tone, index) => {
     const isActive = tone === activeTone;
     const isLocked = !isPremium && !FREE_TONES.includes(tone);
-
     if (isActive && !isHomeScreen) {
       const showUpTo = Math.min(toneCount + 1, MAX_SAME_TONE);
       for (let lvl = 1; lvl <= showUpTo; lvl++) {
@@ -129,9 +157,9 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
           active: isCurrent, past: isPast, next: isNext, maxed: isMaxed,
           locked: false, tappable, index,
           onClick: () => {
-            if (disabled || touchDragActive.current) return;
+            if (disabled || stateRef.current.touchDragActive) return;
             if (isPast) { onSetLevel(lvl); return; }
-            if (isNext && !isMaxed) { onSelect(tone); }
+            if (isNext && !isMaxed) onSelect(tone);
           },
         });
       }
@@ -142,7 +170,7 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         locked: isLocked, index,
         tappable: !disabled && !isLocked,
         onClick: () => {
-          if (disabled || touchDragActive.current) return;
+          if (disabled || stateRef.current.touchDragActive) return;
           if (!isLocked) onSelect(tone);
         },
       });
@@ -181,16 +209,16 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         {pills.map((p, i) => (
           <button
             key={p.key}
-            ref={el => pillRefs.current[i] = el}
+            data-pill-index={p.index}
             onClick={p.onClick}
             draggable={!disabled}
             onDragStart={e => handleDragStart(e, p.index)}
             onDragOver={e => handleDragOver(e, p.index)}
             onDrop={e => handleDrop(e, p.index)}
             onDragEnd={handleDragEnd}
-            onTouchStart={e => handleTouchStart(e, p.index)}
-            onTouchMove={handleTouchMove}
+            onTouchStart={() => handleTouchStart(p.index)}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchCancel}
             style={{
               flexShrink: 0,
               padding: p.locked ? "7px 18px 7px 13px" : "7px 13px",
@@ -205,6 +233,7 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
               position: "relative",
               transform: dragOverIndex === p.index ? "scale(1.05)" : "scale(1)",
               userSelect: "none", WebkitUserSelect: "none",
+              touchAction: "pan-x",
             }}
           >
             {p.label}
@@ -222,30 +251,19 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         <div style={{ flexShrink: 0, width: 52 }} />
       </div>
 
-      {/* Right fade */}
       <div style={{
         position: "absolute", right: 0, top: 0, bottom: 4, width: 72,
         background: `linear-gradient(to right, transparent, ${t.phoneBg})`,
         pointerEvents: "none",
       }} />
 
-      {/* Bottom hints */}
       {!disabled && (
         <div style={{
           display: "flex", justifyContent: "space-between",
-          marginTop: 4, paddingRight: 2,
-          position: "relative", zIndex: 2,
+          marginTop: 4, paddingRight: 2, position: "relative", zIndex: 2,
         }}>
-          <span style={{
-            fontSize: 9, color: t.swipeHint,
-            letterSpacing: "0.08em", fontWeight: "500",
-            fontFamily: "'Lora',Georgia,serif",
-          }}>hold to rearrange</span>
-          <span style={{
-            fontSize: 9, color: t.swipeHint,
-            letterSpacing: "0.08em", fontWeight: "500",
-            fontFamily: "'Lora',Georgia,serif",
-          }}>swipe for more →</span>
+          <span style={{ fontSize: 9, color: t.swipeHint, letterSpacing: "0.08em", fontWeight: "500", fontFamily: "'Lora',Georgia,serif" }}>hold to rearrange</span>
+          <span style={{ fontSize: 9, color: t.swipeHint, letterSpacing: "0.08em", fontWeight: "500", fontFamily: "'Lora',Georgia,serif" }}>swipe for more →</span>
         </div>
       )}
     </div>
