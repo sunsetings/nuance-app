@@ -107,8 +107,4 @@ export async function getUserProfile(userId) {
     return newProfile
   }
   return data
-}
-const toggleBM = lang => setBookmarked(prev =>
-    prev.includes(lang) ? prev.filter(l => l !== lang)
-    : prev.length < bookmarkLimit ? [...prev, lang] : prev
-  );
+
