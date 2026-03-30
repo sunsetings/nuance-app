@@ -4,6 +4,7 @@ export const PRO_TONES = ["Formal", "Friendly", "Sincere", "Serious", "Succinct"
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
 export const MAX_SAME_TONE = 3;
 export const FREE_DAILY_CAP = 30;
+export const PRO_DAILY_CAP = 300;
 export const PRO_SAVE_LIMIT = 50;
 export const PRO_SAVE_WARN = 45;
 export const FREE_BOOKMARK_LIMIT = 2;

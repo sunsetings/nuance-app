@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT } from "../lib/constants.js";
+import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
@@ -24,7 +24,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
       </div>
 
       {[
-        { label: "Daily refines used", value: isPremium ? "Unlimited" : `${usageCount} / ${FREE_DAILY_CAP} today` },
+        { label: "Daily refines used", value: isPremium ? `${usageCount} / ${PRO_DAILY_CAP} today` : `${usageCount} / ${FREE_DAILY_CAP} today` },
         { label: "Tones available", value: isPremium ? "All 16" : "3 of 16" },
         { label: "Audio dictation 🎙", value: isPremium ? "Enabled" : "Locked", locked: !isPremium },
         { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT} total` : `Up to ${FREE_BOOKMARK_LIMIT} total` },
@@ -84,7 +84,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
 
       {[
         ["16 tone options", "vs 3 on free — Assertive, Diplomatic, Empathetic + 10 more"],
-        ["Unlimited daily use", `Free is capped at ${FREE_DAILY_CAP} refines / day`],
+        ["300 daily refines", `Free is capped at ${FREE_DAILY_CAP} refines / day`],
         ["Audio dictation 🎙", "Speak your message instead of typing"],
         [`${PRO_BOOKMARK_LIMIT} bookmarked languages`, `vs ${FREE_BOOKMARK_LIMIT} on free — shared across both selectors`],
         [`Save up to ${PRO_SAVE_LIMIT} favourites`, "All 3 panels saved automatically. Reopen any time to keep refining."],

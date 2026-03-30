@@ -274,7 +274,7 @@ export function RefineCounter({ isPremium, usageCount, navigate, theme }) {
         fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
         display: "flex", alignItems: "center", gap: 5,
       }}>
-        ✦ Pro · Unlimited
+        ✦ Pro · 300/day
       </button>
     );
   }
