@@ -26,7 +26,7 @@ export const THEMES = {
   dark: {
     bg:"#050505", phoneBg:"#0f0f0f", surface:"#181818", surface2:"#222",
     border:"#333", border2:"#444",
-    text:"#d8d4cc", textMuted:"#dedad0", textDim:"#c8c4bc", textFaint:"#999590",
+    text:"#d8d4cc", textMuted:"#edeae4", textDim:"#d8d4cc", textFaint:"#b0aca6",
     accent:"#c8f0a0", accentText:"#0a1a00",
     highlight:"#0e1e0e", highlightBorder:"#304e30", highlightText:"#c8e8a0",
     notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#aaa8a2",
