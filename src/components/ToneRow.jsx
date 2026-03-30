@@ -8,7 +8,6 @@ function loadOrder() {
     const stored = localStorage.getItem(LS_TONE_ORDER);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Merge: keep stored order, append any new tones not yet in stored
       const merged = [
         ...parsed.filter(t => ALL_TONES.includes(t)),
         ...ALL_TONES.filter(t => !parsed.includes(t)),
@@ -26,60 +25,90 @@ function saveOrder(order) {
 export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium, disabled, isHomeScreen = false, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   const [toneOrder, setToneOrder] = useState(loadOrder);
-  const [dragging, setDragging] = useState(null); // index being dragged
-  const [dragOver, setDragOver] = useState(null); // index being hovered
+  const [draggingIndex, setDraggingIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const containerRef = useRef(null);
   const longPressTimer = useRef(null);
-  const isDraggingRef = useRef(false);
+  const touchDragActive = useRef(false);
+  const touchStartIndex = useRef(null);
+  const pillRefs = useRef([]);
 
-  // Keep order up to date if ALL_TONES changes (e.g. new tones added)
   useEffect(() => {
     setToneOrder(loadOrder());
   }, []);
 
-  const startLongPress = (index) => {
-    longPressTimer.current = setTimeout(() => {
-      isDraggingRef.current = true;
-      setDragging(index);
-    }, 500);
-  };
-
-  const cancelLongPress = () => {
-    clearTimeout(longPressTimer.current);
-  };
-
+  // ── Desktop drag handlers ──────────────────────────────────
   const handleDragStart = (e, index) => {
     e.dataTransfer.effectAllowed = "move";
-    setDragging(index);
+    setDraggingIndex(index);
   };
 
   const handleDragOver = (e, index) => {
     e.preventDefault();
-    if (index !== dragging) setDragOver(index);
+    if (index !== draggingIndex) setDragOverIndex(index);
   };
 
   const handleDrop = (e, index) => {
     e.preventDefault();
-    if (dragging === null || dragging === index) {
-      setDragging(null);
-      setDragOver(null);
-      return;
+    if (draggingIndex === null || draggingIndex === index) {
+      setDraggingIndex(null); setDragOverIndex(null); return;
     }
     const newOrder = [...toneOrder];
-    const [moved] = newOrder.splice(dragging, 1);
+    const [moved] = newOrder.splice(draggingIndex, 1);
     newOrder.splice(index, 0, moved);
     setToneOrder(newOrder);
     saveOrder(newOrder);
-    setDragging(null);
-    setDragOver(null);
-    isDraggingRef.current = false;
+    setDraggingIndex(null); setDragOverIndex(null);
   };
 
   const handleDragEnd = () => {
-    setDragging(null);
-    setDragOver(null);
-    isDraggingRef.current = false;
+    setDraggingIndex(null); setDragOverIndex(null);
   };
 
+  // ── Touch drag handlers ────────────────────────────────────
+  const handleTouchStart = (e, index) => {
+    if (disabled) return;
+    touchStartIndex.current = index;
+    touchDragActive.current = false;
+    longPressTimer.current = setTimeout(() => {
+      touchDragActive.current = true;
+      setDraggingIndex(index);
+      // Haptic feedback if available
+      if (navigator.vibrate) navigator.vibrate(40);
+    }, 500);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchDragActive.current) {
+      clearTimeout(longPressTimer.current);
+      return;
+    }
+    e.preventDefault();
+    const touch = e.touches[0];
+    const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+    pillRefs.current.forEach((ref, index) => {
+      if (ref && elements.includes(ref)) {
+        if (index !== draggingIndex) setDragOverIndex(index);
+      }
+    });
+  };
+
+  const handleTouchEnd = () => {
+    clearTimeout(longPressTimer.current);
+    if (touchDragActive.current && draggingIndex !== null && dragOverIndex !== null && draggingIndex !== dragOverIndex) {
+      const newOrder = [...toneOrder];
+      const [moved] = newOrder.splice(draggingIndex, 1);
+      newOrder.splice(dragOverIndex, 0, moved);
+      setToneOrder(newOrder);
+      saveOrder(newOrder);
+    }
+    touchDragActive.current = false;
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+    touchStartIndex.current = null;
+  };
+
+  // ── Build pills ────────────────────────────────────────────
   const pills = [];
 
   toneOrder.forEach((tone, index) => {
@@ -94,14 +123,13 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         const isPast = lvl < toneCount;
         const isMaxed = toneCount >= MAX_SAME_TONE && isCurrent;
         const tappable = !disabled && ((isNext && !isMaxed) || isPast);
-
         pills.push({
           key: `${tone}-${lvl}`,
           label: lvl === 1 ? tone : `${tone} ×${lvl}`,
           active: isCurrent, past: isPast, next: isNext, maxed: isMaxed,
           locked: false, tappable, index,
           onClick: () => {
-            if (disabled || isDraggingRef.current) return;
+            if (disabled || touchDragActive.current) return;
             if (isPast) { onSetLevel(lvl); return; }
             if (isNext && !isMaxed) { onSelect(tone); }
           },
@@ -114,8 +142,8 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         locked: isLocked, index,
         tappable: !disabled && !isLocked,
         onClick: () => {
-          if (disabled || isDraggingRef.current) return;
-          if (!disabled && !isLocked) onSelect(tone);
+          if (disabled || touchDragActive.current) return;
+          if (!isLocked) onSelect(tone);
         },
       });
     }
@@ -140,40 +168,43 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
 
   return (
     <div style={{ position: "relative" }}>
-      <div style={{
-        display: "flex", gap: 7, overflowX: "auto",
-        paddingBottom: 4, paddingTop: 10,
-        scrollbarWidth: "none", msOverflowStyle: "none",
-        opacity: disabled ? 0.2 : 1, transition: "opacity 0.2s",
-        WebkitOverflowScrolling: "touch",
-      }}>
+      <div
+        ref={containerRef}
+        style={{
+          display: "flex", gap: 7, overflowX: "auto",
+          paddingBottom: 4, paddingTop: 10,
+          scrollbarWidth: "none", msOverflowStyle: "none",
+          opacity: disabled ? 0.2 : 1, transition: "opacity 0.2s",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
         {pills.map((p, i) => (
           <button
             key={p.key}
+            ref={el => pillRefs.current[i] = el}
             onClick={p.onClick}
             draggable={!disabled}
-            onMouseDown={() => startLongPress(p.index)}
-            onMouseUp={cancelLongPress}
-            onMouseLeave={cancelLongPress}
-            onTouchStart={() => startLongPress(p.index)}
-            onTouchEnd={cancelLongPress}
             onDragStart={e => handleDragStart(e, p.index)}
             onDragOver={e => handleDragOver(e, p.index)}
             onDrop={e => handleDrop(e, p.index)}
             onDragEnd={handleDragEnd}
+            onTouchStart={e => handleTouchStart(e, p.index)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             style={{
               flexShrink: 0,
               padding: p.locked ? "7px 18px 7px 13px" : "7px 13px",
               borderRadius: 20,
-              border: `1.5px solid ${dragOver === p.index ? t.accent : getBorder(p)}`,
-              background: p.active ? t.accent : dragging === p.index ? t.surface2 : "transparent",
+              border: `1.5px solid ${dragOverIndex === p.index ? t.accent : getBorder(p)}`,
+              background: p.active ? t.accent : draggingIndex === p.index ? t.surface2 : "transparent",
               color: getColor(p),
               fontSize: 12, fontFamily: "'Lora',Georgia,serif",
-              cursor: dragging !== null ? "grabbing" : p.tappable ? "pointer" : "default",
+              cursor: draggingIndex !== null ? "grabbing" : p.tappable ? "pointer" : "default",
               transition: "all 0.18s", whiteSpace: "nowrap",
-              opacity: dragging === p.index ? 0.5 : 1,
+              opacity: draggingIndex === p.index ? 0.5 : 1,
               position: "relative",
-              transform: dragOver === p.index ? "scale(1.05)" : "scale(1)",
+              transform: dragOverIndex === p.index ? "scale(1.05)" : "scale(1)",
+              userSelect: "none", WebkitUserSelect: "none",
             }}
           >
             {p.label}
@@ -198,7 +229,7 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
         pointerEvents: "none",
       }} />
 
-      {/* Bottom hints row */}
+      {/* Bottom hints */}
       {!disabled && (
         <div style={{
           display: "flex", justifyContent: "space-between",
