@@ -30,8 +30,15 @@ export default function App() {
   const [recentTones, setRecentTones] = useState([]);
   const [isTranslating, setIsTranslating] = useState(false);
   const [savedItems, setSavedItems] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const t = THEMES[theme] || THEMES.dark;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -57,19 +64,19 @@ export default function App() {
   }, []);
 
   const loadUserData = async (userId) => {
-  try {
-    const [count, saved, profile] = await Promise.all([
-      getUsageToday(userId),
-      getSavedTranslations(userId),
-      supabase.from("profiles").select("is_pro").eq("id", userId).single(),
-    ]);
-    setUsageCount(count);
-    setSavedItems(saved);
-    setIsPremium(profile?.data?.is_pro === true);
-  } catch (e) {
-    console.error("Failed to load user data:", e);
-  }
-};
+    try {
+      const [count, saved, profile] = await Promise.all([
+        getUsageToday(userId),
+        getSavedTranslations(userId),
+        supabase.from("profiles").select("is_pro").eq("id", userId).single(),
+      ]);
+      setUsageCount(count);
+      setSavedItems(saved);
+      setIsPremium(profile?.data?.is_pro === true);
+    } catch (e) {
+      console.error("Failed to load user data:", e);
+    }
+  };
 
   const handleAuth = (user) => {
     setUser(user);
@@ -126,8 +133,9 @@ export default function App() {
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} apiKey={API_KEY} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} />;      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user}/>;
+      case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
+      case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} />;
+      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       default: return <HomeScreen {...props} onTranslate={handleTranslate} />;
     }
@@ -137,6 +145,31 @@ case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} set
     return (
       <div style={{ minHeight: "100vh", background: "#050505", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ color: "#c8f0a0", fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
+      </div>
+    );
+  }
+
+  const screenContent = !user
+    ? <AuthScreen theme={theme} onAuth={handleAuth} />
+    : renderScreen();
+
+  if (isMobile) {
+    return (
+      <div style={{
+        minHeight: "100vh", width: "100%",
+        background: theme === "light" ? "#faf8f3" : "#0f0f0f",
+        fontFamily: "'Lora',Georgia,serif",
+        display: "flex", flexDirection: "column",
+      }}>
+        {isTranslating && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ background: theme === "light" ? "#faf8f3" : "#1c1c1c", borderRadius: 20, padding: "28px 40px", textAlign: "center", border: `1px solid ${t.border2}` }}>
+              <div style={{ fontSize: 28, marginBottom: 12 }}>✦</div>
+              <div style={{ fontSize: 14, color: t.textMuted, fontFamily: "'Lora',Georgia,serif" }}>translating…</div>
+            </div>
+          </div>
+        )}
+        {screenContent}
       </div>
     );
   }
@@ -159,7 +192,7 @@ case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} set
       )}
 
       <PhoneFrame theme={theme}>
-        {!user ? <AuthScreen theme={theme} onAuth={handleAuth} /> : renderScreen()}
+        {screenContent}
       </PhoneFrame>
 
       <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256 }}>
@@ -167,7 +200,6 @@ case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} set
         <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>{API_KEY ? "✓ API key loaded" : "⚠ No API key"}</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.6 }}>{user ? `✓ ${user.email}` : "◎ Not logged in"}</div>
-
         {user && (
           <>
             <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>Screens</div>
