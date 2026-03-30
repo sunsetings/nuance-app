@@ -1,24 +1,60 @@
 import { useState } from "react";
 import { THEMES } from "../lib/constants.js";
 import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
+import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function QuickResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount }) {
+export function QuickResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
 
-  const [saved, setSaved] = useState(fromSaved);
   const [toastVisible, setToastVisible] = useState(false);
   const [shareVisible, setShareVisible] = useState(false);
-
-  const handleSave = () => {
-    setSaved(s => !s);
-    if (!saved) { setToastVisible(true); setTimeout(() => setToastVisible(false), 2200); }
-  };
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   const original = source.original || "";
   const translated = source.translated || "";
-  const toLang = source.toLang || source.lang || "Japanese";
+  const toLang = source.toLang || source.to_lang || source.lang || "Japanese";
+
+  // Check if already saved
+  const existingSave = savedItems?.find(s =>
+    s.original === original &&
+    s.mode === "quick"
+  );
+  const saved = !!existingSave;
+
+  const showToast = () => {
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2200);
+  };
+
+  const handleSave = async () => {
+    if (!user) { navigate("upgrade"); return; }
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (saved && existingSave) {
+        await unsaveTranslation(user.id, existingSave.id);
+        setSavedItems(prev => prev.filter(s => s.id !== existingSave.id));
+      } else {
+        const newItem = await saveTranslation(user.id, {
+          mode: "quick",
+          original,
+          translated,
+          fromLang: source.fromLang || source.from_lang || "English",
+          toLang,
+        });
+        setSavedItems(prev => [newItem, ...prev]);
+        showToast();
+      }
+    } catch (e) {
+      console.error("Save failed:", e);
+      setError("Couldn't save — please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div style={{
@@ -39,9 +75,15 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
         <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
       </div>
 
+      {error && (
+        <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 8, fontSize: 12, color: "#e88", fontFamily: "'Lora',Georgia,serif" }}>
+          {error}
+        </div>
+      )}
+
       {/* 2 panels */}
       {[
-        { label: "ORIGINAL", content: original, lang: source.fromLang || "EN", muted: true, textToCopy: original },
+        { label: "ORIGINAL", content: original, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), muted: true, textToCopy: original },
         { label: "TRANSLATION · " + toLang.toUpperCase(), content: translated, lang: toLang.slice(0, 2).toUpperCase(), textToCopy: translated },
       ].map(({ label, content, lang, muted, textToCopy }, i) => (
         <div key={i} style={{
