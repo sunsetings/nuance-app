@@ -126,7 +126,7 @@ export default function App() {
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} apiKey={API_KEY} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "account": return <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} />;
-      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} />;
+      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user}/>;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       default: return <HomeScreen {...props} onTranslate={handleTranslate} />;
     }
