@@ -1,0 +1,81 @@
+import { useState } from "react";
+import { THEMES } from "../lib/constants.js";
+import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
+
+export function QuickResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount }) {
+  const t = THEMES[theme] || THEMES.dark;
+  const fromSaved = !!savedItem;
+  const source = savedItem || initialData || {};
+
+  const [saved, setSaved] = useState(fromSaved);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [shareVisible, setShareVisible] = useState(false);
+
+  const handleSave = () => {
+    setSaved(s => !s);
+    if (!saved) { setToastVisible(true); setTimeout(() => setToastVisible(false), 2200); }
+  };
+
+  const original = source.original || "";
+  const translated = source.translated || "";
+  const toLang = source.toLang || source.lang || "Japanese";
+
+  return (
+    <div style={{
+      padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif",
+      color: t.text, background: t.phoneBg,
+      display: "flex", flexDirection: "column", minHeight: "100%",
+    }}>
+      <Toast message="Translation saved to favourites" visible={toastVisible} theme={theme} />
+      <ShareSheet visible={shareVisible} onClose={() => setShareVisible(false)} theme={theme} />
+
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => navigate(fromSaved ? "saved" : "home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
+          <span style={{ fontSize: 15, fontWeight: "bold" }}>Translation</span>
+          {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
+        </div>
+        <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
+      </div>
+
+      {/* 2 panels */}
+      {[
+        { label: "ORIGINAL", content: original, lang: source.fromLang || "EN", muted: true, textToCopy: original },
+        { label: "TRANSLATION · " + toLang.toUpperCase(), content: translated, lang: toLang.slice(0, 2).toUpperCase(), textToCopy: translated },
+      ].map(({ label, content, lang, muted, textToCopy }, i) => (
+        <div key={i} style={{
+          background: t.surface, border: `1px solid ${t.border}`,
+          borderRadius: 12, padding: "12px 14px", marginBottom: 9,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+            <span style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.12em" }}>{label}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ fontSize: 9, color: t.textDim }}>{lang}</span>
+              <CopyBtn text={textToCopy} theme={theme} />
+            </div>
+          </div>
+          <div style={{ fontSize: 13, lineHeight: 1.65, color: muted ? t.textDim : t.textMuted }}>
+            {content || <span style={{ fontStyle: "italic", opacity: 0.5 }}>—</span>}
+          </div>
+        </div>
+      ))}
+
+      <ShareSaveRow isPremium={isPremium} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} theme={theme} />
+
+      {!fromSaved && (
+        <button onClick={() => navigate("home")} style={{
+          width: "100%", padding: "11px",
+          background: t.highlight, border: `1px dashed ${t.highlightBorder}`,
+          borderRadius: 10, color: theme === "light" ? "#2a6a2a" : "#8adc8a",
+          fontSize: 12, fontFamily: "'Lora',Georgia,serif",
+          cursor: "pointer", marginTop: 8, marginBottom: 4,
+        }}>
+          ✦ Want to refine the tone? Try Refine & Translate
+        </button>
+      )}
+
+      <BottomNav active="quickresults" navigate={navigate} theme={theme} />
+    </div>
+  );
+}
