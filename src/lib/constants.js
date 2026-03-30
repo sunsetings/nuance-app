@@ -35,5 +35,8 @@ export const THEMES = {
     notch:"#ddd9d0", proTag:"#a07010", swipeHint:"#3a3830",
   },
 };
-
+const toggleBM = lang => setBookmarked(prev =>
+    prev.includes(lang) ? prev.filter(l => l !== lang)
+    : prev.length < bookmarkLimit ? [...prev, lang] : prev
+  );
 
