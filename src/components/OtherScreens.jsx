@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, APP_LANGUAGES, DEMO_SAVED } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
+import { useAuth } from "../lib/supabase";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout }) {
@@ -114,6 +115,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
 // ─── UPGRADE ─────────────────────────────────────────────────
 export function UpgradeScreen({ navigate, setIsPremium, theme }) {
+  const { user } = useAuth();
   const t = THEMES[theme] || THEMES.dark;
   return (
     <div style={{ padding: "14px 20px 28px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
@@ -144,10 +146,21 @@ export function UpgradeScreen({ navigate, setIsPremium, theme }) {
 
       <div style={{ marginTop: 18 }}>
         {[
-          { label: "Annual", price: "$59.99 / year", sub: "Save 37% — best value", highlight: true },
-          { label: "Monthly", price: "$7.99 / month", sub: null },
-        ].map(opt => (
-          <button key={opt.label} onClick={() => { setIsPremium(true); navigate("home"); }} style={{
+          { label: "Annual", plan: "yearly", price: "$59.99 / year", sub: "Save 37% — best value", highlight: true },
+{ label: "Monthly", plan: "monthly", price: "$7.99 / month", sub: null },
+].map(opt => (
+  <button key={opt.label} onClick={async () => {
+    const priceId = opt.plan === "yearly"
+      ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
+      : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
+    const res = await fetch("/api/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId, userId: user?.id, userEmail: user?.email }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }}
             width: "100%", padding: "14px 16px", marginBottom: 8,
             background: opt.highlight ? t.accent : t.surface,
             border: `1px solid ${opt.highlight ? t.accent : t.border}`,
