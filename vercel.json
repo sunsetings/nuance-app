@@ -2,7 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/app", "dest": "/index.html" },
+    { "src": "/app/(.*)", "dest": "/index.html" },
+    { "src": "/", "dest": "/landing.html" }
   ]
 }
