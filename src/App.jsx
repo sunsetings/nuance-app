@@ -57,17 +57,19 @@ export default function App() {
   }, []);
 
   const loadUserData = async (userId) => {
-    try {
-      const [count, saved] = await Promise.all([
-        getUsageToday(userId),
-        getSavedTranslations(userId),
-      ]);
-      setUsageCount(count);
-      setSavedItems(saved);
-    } catch (e) {
-      console.error("Failed to load user data:", e);
-    }
-  };
+  try {
+    const [count, saved, profile] = await Promise.all([
+      getUsageToday(userId),
+      getSavedTranslations(userId),
+      supabase.from("profiles").select("is_pro").eq("id", userId).single(),
+    ]);
+    setUsageCount(count);
+    setSavedItems(saved);
+    if (profile?.data?.is_pro) setIsPremium(true);
+  } catch (e) {
+    console.error("Failed to load user data:", e);
+  }
+};
 
   const handleAuth = (user) => {
     setUser(user);
