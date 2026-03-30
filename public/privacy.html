@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — tonara.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #050505; --surface: #111;
+      --border: #252525;
+      --text: #d8d4cc; --muted: #edeae4; --dim: #d8d4cc; --faint: #b0aca6;
+      --accent: #c8f0a0; --accent-dark: #0a1a00;
+      --highlight: #0e1e0e; --highlight-border: #2a4a2a;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Lora', Georgia, serif; line-height: 1.8; overflow-x: hidden; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: rgba(5,5,5,0.95); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); text-decoration: none; }
+    .nav-cta { background: var(--accent); color: var(--accent-dark); border: none; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-family: 'Lora', serif; font-weight: 700; cursor: pointer; text-decoration: none; }
+    .container { max-width: 720px; margin: 0 auto; padding: 80px 24px 120px; }
+    .tag { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--faint); text-transform: uppercase; margin-bottom: 16px; }
+    h1 { font-size: 40px; font-weight: 700; letter-spacing: -1px; color: var(--muted); margin-bottom: 12px; line-height: 1.1; }
+    .updated { font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; margin-bottom: 48px; }
+    h2 { font-size: 18px; font-weight: 700; color: var(--muted); margin: 40px 0 12px; }
+    p { font-size: 15px; color: var(--dim); line-height: 1.8; margin-bottom: 16px; }
+    ul { margin: 0 0 16px 20px; }
+    ul li { font-size: 15px; color: var(--dim); line-height: 1.8; margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .divider { height: 1px; background: var(--border); margin: 40px 0; }
+    footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--faint); font-family: 'DM Mono', monospace; }
+    @media (max-width: 680px) {
+      nav { padding: 16px 20px; }
+      .container { padding: 60px 20px 80px; }
+      h1 { font-size: 30px; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/">tonara.</a>
+    <a class="nav-cta" href="/app">Try free →</a>
+  </nav>
+
+  <div class="container">
+    <div class="tag">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: March 2026</p>
+
+    <p>tonara. ("we", "us", or "our") is operated by Sunset Capital Pty Ltd, based in Australia. This Privacy Policy explains how we collect, use, and protect your personal information when you use tonara. at <a href="https://tonara.app">tonara.app</a>.</p>
+    <p>By using tonara., you agree to the collection and use of information as described in this policy.</p>
+
+    <div class="divider"></div>
+
+    <h2>1. Information we collect</h2>
+    <p>We collect the following information when you use tonara.:</p>
+    <ul>
+      <li><strong>Account information</strong> — your email address and name when you sign up or log in via Google.</li>
+      <li><strong>Usage data</strong> — the number of translations and refines you perform each day, to enforce free plan limits.</li>
+      <li><strong>Saved translations</strong> — if you are a Pro user, translations you choose to save are stored in our database.</li>
+      <li><strong>Payment information</strong> — if you subscribe to Pro, payments are processed by Stripe. We do not store your card details.</li>
+      <li><strong>Device preferences</strong> — language and display preferences stored locally on your device (localStorage). We do not transmit these to our servers.</li>
+    </ul>
+
+    <h2>2. How we use your information</h2>
+    <p>We use your information to:</p>
+    <ul>
+      <li>Provide and improve the tonara. service</li>
+      <li>Manage your account and subscription</li>
+      <li>Enforce usage limits on free accounts</li>
+      <li>Process payments via Stripe</li>
+      <li>Respond to support requests</li>
+    </ul>
+    <p>We do not sell your personal information to third parties. We do not use your data for advertising purposes.</p>
+
+    <h2>3. Your translation content</h2>
+    <p>Text you enter into tonara. is sent to OpenAI's API to perform translation and tone refinement. This text is processed in real time and is not stored by us unless you explicitly save a translation. Please refer to <a href="https://openai.com/policies/privacy-policy" target="_blank">OpenAI's Privacy Policy</a> for how they handle API data.</p>
+
+    <h2>4. Data storage</h2>
+    <p>Your account data and saved translations are stored securely using Supabase, hosted on infrastructure in the United States. We apply row-level security to ensure your data is only accessible by you.</p>
+
+    <h2>5. Third-party services</h2>
+    <p>tonara. uses the following third-party services:</p>
+    <ul>
+      <li><a href="https://openai.com" target="_blank">OpenAI</a> — AI translation and tone refinement</li>
+      <li><a href="https://supabase.com" target="_blank">Supabase</a> — authentication and database</li>
+      <li><a href="https://stripe.com" target="_blank">Stripe</a> — payment processing</li>
+      <li><a href="https://vercel.com" target="_blank">Vercel</a> — hosting and deployment</li>
+    </ul>
+
+    <h2>6. Cookies</h2>
+    <p>tonara. uses essential cookies for authentication (to keep you logged in). We do not use tracking or advertising cookies.</p>
+
+    <h2>7. Your rights (Australian Privacy Act)</h2>
+    <p>Under the Australian Privacy Act 1988, you have the right to:</p>
+    <ul>
+      <li>Access the personal information we hold about you</li>
+      <li>Request correction of inaccurate information</li>
+      <li>Request deletion of your account and associated data</li>
+    </ul>
+    <p>To exercise any of these rights, contact us at <a href="mailto:sunsetcapital.ptyltd@gmail.com">sunsetcapital.ptyltd@gmail.com</a>.</p>
+
+    <h2>8. Data retention</h2>
+    <p>We retain your account data for as long as your account is active. If you delete your account, we will delete your personal data within 30 days. Saved translations are deleted immediately upon account deletion.</p>
+
+    <h2>9. Children's privacy</h2>
+    <p>tonara. is not directed at children under the age of 13. We do not knowingly collect personal information from children.</p>
+
+    <h2>10. Changes to this policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by updating the date at the top of this page. Continued use of tonara. after changes constitutes acceptance of the updated policy.</p>
+
+    <h2>11. Contact us</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us at:<br/>
+    <a href="mailto:sunsetcapital.ptyltd@gmail.com">sunsetcapital.ptyltd@gmail.com</a></p>
+
+  </div>
+
+  <footer>
+    <span>tonara. © 2026</span>
+    <span><a href="/" style="color:inherit;">← back to tonara.</a></span>
+  </footer>
+</body>
+</html>
