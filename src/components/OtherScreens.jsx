@@ -25,7 +25,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
       {[
         { label: "Daily refines used", value: isPremium ? "Unlimited" : `${usageCount} / ${FREE_DAILY_CAP} today` },
-        { label: "Tones available", value: isPremium ? "All 13" : "3 of 13" },
+        { label: "Tones available", value: isPremium ? "All 13" : "3 of 16" },
         { label: "Audio dictation 🎙", value: isPremium ? "Enabled" : "Locked", locked: !isPremium },
         { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT} total` : `Up to ${FREE_BOOKMARK_LIMIT} total` },
         { label: "Saved favourites", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : "Locked", locked: !isPremium, warn: isPremium && savedCount >= PRO_SAVE_WARN },
@@ -86,7 +86,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
       </div>
 
       {[
-        ["13 tone options", "vs 3 on free — Assertive, Diplomatic, Empathetic + 7 more"],
+        ["16 tone options", "vs 3 on free — Assertive, Diplomatic, Empathetic + 10 more"],
         ["Unlimited daily use", `Free is capped at ${FREE_DAILY_CAP} refines / day`],
         ["Audio dictation 🎙", "Speak your message instead of typing"],
         [`${PRO_BOOKMARK_LIMIT} bookmarked languages`, `vs ${FREE_BOOKMARK_LIMIT} on free — shared across both selectors`],
