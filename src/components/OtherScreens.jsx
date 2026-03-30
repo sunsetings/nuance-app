@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, APP_LANGUAGES, DEMO_SAVED } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
-import { useAuth } from "../lib/supabase";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout }) {
@@ -114,8 +113,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 }
 
 // ─── UPGRADE ─────────────────────────────────────────────────
-export function UpgradeScreen({ navigate, setIsPremium, theme }) {
-  const { user } = useAuth();
+export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
   const t = THEMES[theme] || THEMES.dark;
   return (
     <div style={{ padding: "14px 20px 28px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
