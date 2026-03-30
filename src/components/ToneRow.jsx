@@ -34,33 +34,37 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
     toneOrder: loadOrder(),
     longPressTimer: null,
     touchDragActive: false,
+    touchStartX: null,
+    touchStartY: null,
   });
 
   useEffect(() => {
     setToneOrder(loadOrder());
   }, []);
 
-  // Keep stateRef in sync
-  useEffect(() => {
-    stateRef.current.toneOrder = toneOrder;
-  }, [toneOrder]);
+  useEffect(() => { stateRef.current.toneOrder = toneOrder; }, [toneOrder]);
+  useEffect(() => { stateRef.current.draggingIndex = draggingIndex; }, [draggingIndex]);
+  useEffect(() => { stateRef.current.dragOverIndex = dragOverIndex; }, [dragOverIndex]);
 
-  useEffect(() => {
-    stateRef.current.draggingIndex = draggingIndex;
-  }, [draggingIndex]);
-
-  useEffect(() => {
-    stateRef.current.dragOverIndex = dragOverIndex;
-  }, [dragOverIndex]);
-
-  // Attach non-passive touchmove to container
+  // Non-passive touchmove attached directly to DOM
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onTouchMove = (e) => {
-      if (!stateRef.current.touchDragActive) return;
-      e.preventDefault();
       const touch = e.touches[0];
+      if (!stateRef.current.touchDragActive) {
+        if (stateRef.current.touchStartX === null) {
+          stateRef.current.touchStartX = touch.clientX;
+          stateRef.current.touchStartY = touch.clientY;
+        }
+        const dx = Math.abs(touch.clientX - stateRef.current.touchStartX);
+        const dy = Math.abs(touch.clientY - stateRef.current.touchStartY);
+        if (dx > 8 || dy > 8) {
+          clearTimeout(stateRef.current.longPressTimer);
+        }
+        return;
+      }
+      e.preventDefault();
       const els = document.elementsFromPoint(touch.clientX, touch.clientY);
       els.forEach(target => {
         const idx = target.dataset?.pillIndex;
@@ -80,13 +84,15 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
   const handleTouchStart = (index) => {
     if (disabled) return;
     stateRef.current.touchDragActive = false;
+    stateRef.current.touchStartX = null;
+    stateRef.current.touchStartY = null;
     clearTimeout(stateRef.current.longPressTimer);
     stateRef.current.longPressTimer = setTimeout(() => {
       stateRef.current.touchDragActive = true;
       stateRef.current.draggingIndex = index;
       setDraggingIndex(index);
       if (navigator.vibrate) navigator.vibrate(40);
-    }, 500);
+    }, 400);
   };
 
   const handleTouchEnd = () => {
@@ -102,6 +108,8 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
     stateRef.current.touchDragActive = false;
     stateRef.current.draggingIndex = null;
     stateRef.current.dragOverIndex = null;
+    stateRef.current.touchStartX = null;
+    stateRef.current.touchStartY = null;
     setDraggingIndex(null);
     setDragOverIndex(null);
   };
@@ -111,6 +119,8 @@ export function ToneRow({ activeTone, toneCount, onSelect, onSetLevel, isPremium
     stateRef.current.touchDragActive = false;
     stateRef.current.draggingIndex = null;
     stateRef.current.dragOverIndex = null;
+    stateRef.current.touchStartX = null;
+    stateRef.current.touchStartY = null;
     setDraggingIndex(null);
     setDragOverIndex(null);
   };
