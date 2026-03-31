@@ -199,11 +199,14 @@ export default function App() {
   if (isMobile) {
     return (
       <div style={{
-        minHeight: "100vh", width: "100%",
+        minHeight: "100dvh",
+        height: "100dvh",
+        width: "100%",
         background: theme === "light" ? "#faf8f3" : "#0f0f0f",
         fontFamily: "'Lora',Georgia,serif",
         display: "flex", flexDirection: "column",
         position: "relative",
+        overflow: "hidden",
       }}>
         <Toast message={toastMessage} visible={toastVisible} theme={theme} />
         {isTranslating && (
@@ -214,7 +217,9 @@ export default function App() {
             </div>
           </div>
         )}
-        {screenContent}
+        <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+          {screenContent}
+        </div>
       </div>
     );
   }
