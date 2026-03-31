@@ -130,7 +130,7 @@ export function ToneRow({
                     </span>
                   )}
                   {isFavourite && status === "unlocked" && (
-                    <span style={{ position: "absolute", top: -7, right: -3, zIndex: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ position: "absolute", top: -8, right: -3, zIndex: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <SmallHeart size={10} color={t.proTag} filled />
                     </span>
                   )}
