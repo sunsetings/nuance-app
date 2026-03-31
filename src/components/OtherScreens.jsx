@@ -164,7 +164,7 @@ export function CapScreen({ navigate, userTier, theme }) {
     <div style={{ padding: "14px 20px 28px", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", fontFamily: "'Lora',Georgia,serif" }}>
       <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", alignSelf: "flex-start", marginTop: 4, marginBottom: 20 }}>←</button>
 
-      <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingBottom: 70 }}>
         <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10, letterSpacing: "-0.2px" }}>
           {isGuest ? "You've used today's 10 refines" : "You've used today's 30 refines"}
         </div>
@@ -217,20 +217,21 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
       </div>
 
       {!isPremium ? (
-        <div style={{ textAlign: "center", padding: "24px 16px" }}>
-          <div style={{ position: "relative", marginBottom: 20 }}>
-            <div style={{ background: t.surface, borderRadius: 10, padding: "12px 14px", opacity: 0.25, pointerEvents: "none" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+        <div style={{ textAlign: "center", padding: "8px 16px 0" }}>
+          <div style={{ position: "relative", marginBottom: 22, marginTop: 8 }}>
+            <div style={{ background: t.surface, borderRadius: 10, padding: "10px 14px", opacity: 0.25, pointerEvents: "none" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                 <span style={{ padding: "2px 8px", borderRadius: 8, background: t.highlight, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#78b86f" }}>Polite ×2</span>
                 <span style={{ fontSize: 10, color: t.textFaint }}>Today</span>
               </div>
-              <div style={{ fontSize: 12, color: t.textMuted }}>I need this report done by Friday…</div>
+              <div style={{ fontSize: 12, color: t.textMuted }}>I need this report done by Friday...</div>
             </div>
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: t.textFaint }}>🔒</div>
           </div>
           <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 8, letterSpacing: "-0.2px" }}>Save your best translations</div>
-          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.75 }}>Upgrade to save translations here and reopen them later.</div>
-          <button onClick={() => navigate("upgrade")} style={{ width: "100%", padding: "12px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro</button>
-          <button onClick={() => navigate("home")} style={{ width: "100%", padding: "10px", background: "transparent", color: t.textFaint, border: "none", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Back to home</button>
+          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.75 }}>Sign up free to save up to 3 translations. Reopen any time to keep refining.</div>
+          <button onClick={() => navigate("signin_save")} style={{ width: "100%", padding: "12px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 10, fontFamily: "'Lora',Georgia,serif" }}>Sign up free</button>
+          <button onClick={() => navigate("upgrade")} style={{ width: "100%", padding: "10px", background: "transparent", color: t.textFaint, border: "none", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>View Pro plan →</button>
         </div>
       ) : items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "36px 16px" }}>

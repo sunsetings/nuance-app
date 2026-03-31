@@ -7,13 +7,13 @@ const SIGNIN_CONTEXT = {
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
   tone: { title: "Unlock more tones", sub: "Sign up free — unlock Formal and Gen A." },
-  cap: { title: "You've used today's refines", sub: "Sign up free — 30 seconds, 30 refines a day." },
+  cap: { title: "You've used today's refines", sub: "Sign up free for 30 refines a day." },
   default: { title: "Welcome to tonara.", sub: "" },
 };
 
 export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const t = THEMES[theme] || THEMES.dark;
-  const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
+  const [mode, setMode] = useState("signup"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,6 +21,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const ctx = SIGNIN_CONTEXT[context] || SIGNIN_CONTEXT.default;
+  const showBenefits = context === "nav";
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -106,6 +107,21 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
             : (ctx.sub || (mode === "signup" ? "Create a free account to save translations and bookmark languages." : "Sign in to access your account."))}
         </div>
       </div>
+
+      {showBenefits && mode !== "forgot" && (
+        <div style={{ marginBottom: 22, padding: "15px 16px", background: t.surface, borderRadius: 12 }}>
+          {[
+            { icon: "◈", text: "Save up to 3 translations" },
+            { icon: "◉", text: "Bookmark 1 language" },
+            { icon: "◐", text: "Unlock more tones" },
+          ].map((item, index, arr) => (
+            <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
+              <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
+              <span style={{ fontSize: 12, color: t.textMuted }}>{item.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {mode !== "forgot" && (
         <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 12 }}>
@@ -201,7 +217,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
       )}
 
       {mode === "login" && (
-        <div style={{ textAlign: "right", marginBottom: 14 }}>
+        <div style={{ textAlign: "right", marginBottom: 14, display: "none" }}>
           <button onClick={() => { setMode("forgot"); setError(null); }} style={{
             background: "none", border: "none",
             color: t.textDim, fontSize: 11,
