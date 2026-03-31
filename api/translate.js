@@ -36,7 +36,7 @@ Respond in this exact JSON format (no markdown, no backticks):
 }
 
 async function callOpenAI({ mode, prompt }) {
-  const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("OpenAI API key is not configured on the server.");
   }

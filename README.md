@@ -6,10 +6,10 @@ A translation app with tone refinement.
 
 1. Clone this repo
 2. Run `npm install`
-3. Create a `.env` file in the root with your OpenAI key:
+3. Create a `.env` file in the root with your server-side OpenAI key:
 
 ```
-VITE_OPENAI_API_KEY=sk-your-key-here
+OPENAI_API_KEY=sk-your-key-here
 ```
 
 4. Run `npm run dev` to start locally
@@ -19,7 +19,7 @@ VITE_OPENAI_API_KEY=sk-your-key-here
 
 1. Push to GitHub
 2. Connect repo in Vercel dashboard
-3. Add `VITE_OPENAI_API_KEY` as an environment variable in Vercel settings
+3. Add `OPENAI_API_KEY` as an environment variable in Vercel settings
 4. Deploy
 
 ## Screens
