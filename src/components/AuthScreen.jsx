@@ -11,6 +11,15 @@ const SIGNIN_CONTEXT = {
   default: { title: "Welcome to tonara.", sub: "" },
 };
 
+const POST_AUTH_ROUTE = {
+  nav: "account",
+  save: "saved",
+  bm: "home",
+  tone: "home",
+  cap: "home",
+  default: "home",
+};
+
 export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const t = THEMES[theme] || THEMES.dark;
   const [mode, setMode] = useState("signup"); // "login" | "signup" | "forgot"
@@ -46,6 +55,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         onAuth(data.user);
+        navigate?.(POST_AUTH_ROUTE[context] || POST_AUTH_ROUTE.default);
       }
     } catch (e) {
       setError(e.message || "Something went wrong — please try again.");
