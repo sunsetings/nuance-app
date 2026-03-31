@@ -84,14 +84,30 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
         ))}
       </div>
 
+      <div style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 5, alignItems: "end" }}>
+        <div />
+        <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 8 }}>
+          <div style={{ fontSize: 10, color: t.textFaint, opacity: 0.6, letterSpacing: "0.04em" }}>Guest</div>
+        </div>
+        <div style={{ textAlign: "center", padding: "7px 4px", borderRadius: 8, background: t.surface }}>
+          <div style={{ fontSize: 11, fontWeight: "bold", color: t.textMuted }}>Free</div>
+        </div>
+        <div style={{ textAlign: "center", padding: "7px 4px 6px", borderRadius: 10, background: t.highlight, border: `1px solid ${t.highlightBorder}` }}>
+          <div style={{ fontSize: 8, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 2 }}>Most popular</div>
+          <div style={{ fontSize: 12, fontWeight: "bold", color: t.highlightText, letterSpacing: "-0.2px" }}>Pro</div>
+        </div>
+      </div>
+
       {[
         { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
         { label: "Tones", guest: "2", free: "4", pro: "All 20" },
+        { label: "Languages", guest: "13", free: "13", pro: "52" },
+        { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
         { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
-        { label: "Saved", guest: "—", free: "Locked", pro: `${PRO_SAVE_LIMIT}` },
         { label: "Dictation", guest: "—", free: "—", pro: "✓" },
+        { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
       ].map((row, i) => (
-        <div key={i} style={{ display: "grid", gridTemplateColumns: "90px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
+        <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
           <span style={{ fontSize: 10, color: t.textDim, lineHeight: 1.3 }}>{row.label}</span>
           <div style={{ textAlign: "center", padding: "6px 2px", borderRadius: 6 }}><span style={{ fontSize: 10, color: t.textFaint, opacity: 0.55 }}>{row.guest}</span></div>
           <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 6, background: t.surface }}><span style={{ fontSize: 10, color: t.textMuted }}>{row.free}</span></div>
@@ -132,8 +148,8 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
           </button>
         ))}
         <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
-        <button onClick={() => navigate("home")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif" }}>
-          Continue with free plan
+        <button onClick={() => navigate("account")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
+          Sign up free instead
         </button>
       </div>
     </div>
