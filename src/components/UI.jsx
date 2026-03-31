@@ -130,7 +130,7 @@ export function BottomNav({ active, navigate, theme, userTier }) {
   const isGuest = userTier === "guest";
   return (
     <div style={{
-      display: "flex", justifyContent: "space-around",
+      display: "flex",
       paddingTop: 10, paddingBottom: 2,
       borderTop: `1px solid ${t.borderLight}`, marginTop: 14,
     }}>
@@ -140,19 +140,26 @@ export function BottomNav({ active, navigate, theme, userTier }) {
         { id: "account", icon: "◎", label: isGuest ? "Sign in" : "Account" },
       ].map(item => (
         <button key={item.id} onClick={() => navigate(isGuest && item.id === "account" ? "account" : item.id)} style={{
+          flex: 1,
           background: "none", border: "none", cursor: "pointer",
           color: active === item.id ? t.accent : t.textDim,
           fontSize: 9, display: "flex", flexDirection: "column",
           alignItems: "center", gap: 3, transition: "color 0.15s",
           letterSpacing: "0.06em", textTransform: "uppercase",
           fontFamily: "'Lora',Georgia,serif",
+          minWidth: 0,
+          padding: "0 4px",
         }}>
-          {item.heart ? (
-            <SmallHeart size={16} color={active === item.id ? t.accent : t.textDim} filled={active === item.id} />
-          ) : (
-            <span style={{ fontSize: 16 }}>{item.icon}</span>
-          )}
-          {item.label}
+          <span style={{ height: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {item.heart ? (
+              <SmallHeart size={16} color={active === item.id ? t.accent : t.textDim} filled={active === item.id} />
+            ) : (
+              <span style={{ fontSize: 16, lineHeight: 1 }}>{item.icon}</span>
+            )}
+          </span>
+          <span style={{ display: "block", width: "100%", textAlign: "center", lineHeight: 1.2 }}>
+            {item.label}
+          </span>
         </button>
       ))}
     </div>
