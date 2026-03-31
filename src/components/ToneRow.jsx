@@ -32,7 +32,9 @@ export function ToneRow({
     ? DEFAULT_PRO_TONES
     : ["Polite", "Casual", "Formal", "Gen A"];
 
-  const orderedCandidates = [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
+  const orderedCandidates = userTier === "free"
+    ? [activeTone, ...FREE_TONES, ...favourites, ...ALL_TONES]
+    : [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
   const visibleTones = [];
 
   orderedCandidates.forEach((tone) => {
