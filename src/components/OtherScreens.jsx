@@ -234,6 +234,35 @@ export function CapScreen({ navigate, userTier, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   const isGuest = userTier === "guest";
   const isPro = userTier === "pro";
+  const variant = isGuest
+    ? {
+        title: "You've used today's 10 refines",
+        subtitle: "Sign up free — 30 seconds, 30 refines a day.",
+        primaryLabel: "Sign up free — 30 refines/day",
+        primaryAction: () => navigate("signin_cap"),
+        secondaryLabel: "View Pro plan →",
+        secondaryAction: () => navigate("upgrade"),
+        secondaryAccent: false,
+      }
+    : isPro
+      ? {
+          title: "You've used today's 500 refines",
+          subtitle: "Come back tomorrow for another 500 refines.",
+          primaryLabel: null,
+          primaryAction: null,
+          secondaryLabel: null,
+          secondaryAction: null,
+          secondaryAccent: false,
+        }
+      : {
+          title: "You've used today's 30 refines",
+          subtitle: "Upgrade to Pro for 500 refines a day.",
+          primaryLabel: null,
+          primaryAction: null,
+          secondaryLabel: "✦ Upgrade to Pro — 500/day",
+          secondaryAction: () => navigate("upgrade"),
+          secondaryAccent: true,
+        };
 
   return (
     <div style={{ padding: "14px 20px 28px", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", fontFamily: "'Lora',Georgia,serif" }}>
@@ -241,22 +270,22 @@ export function CapScreen({ navigate, userTier, theme }) {
 
       <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingBottom: 70 }}>
         <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10, letterSpacing: "-0.2px" }}>
-          {isGuest ? "You've used today's 10 refines" : isPro ? "You've used today's 500 refines" : "You've used today's 30 refines"}
+          {variant.title}
         </div>
         <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, marginBottom: 8, maxWidth: 270 }}>
-          {isGuest ? "Sign up free — 30 seconds, 30 refines a day." : isPro ? "Come back tomorrow for another 500 refines." : "Upgrade to Pro for 500 refines a day."}
+          {variant.subtitle}
         </div>
         <div style={{ height: 20 }} />
 
-        {isGuest && (
-          <button onClick={() => navigate("signin_cap")} style={{ width: "100%", maxWidth: 270, padding: "13px", background: t.accent, color: t.accentText, border: "none", borderRadius: 11, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
-            Sign up free — 30 refines/day
+        {variant.primaryLabel && variant.primaryAction && (
+          <button onClick={variant.primaryAction} style={{ width: "100%", maxWidth: 270, padding: "13px", background: t.accent, color: t.accentText, border: "none", borderRadius: 11, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
+            {variant.primaryLabel}
           </button>
         )}
 
-        {!isPro && (
-          <button onClick={() => navigate("upgrade")} style={{ width: "100%", maxWidth: 270, padding: "11px", background: isGuest ? "transparent" : t.accent, border: isGuest ? `1px solid ${t.border}` : "none", borderRadius: 11, fontSize: 12, fontWeight: isGuest ? "normal" : "bold", cursor: "pointer", color: isGuest ? t.textDim : t.accentText, marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
-            {isGuest ? "View Pro plan →" : "✦ Upgrade to Pro — 500/day"}
+        {variant.secondaryLabel && variant.secondaryAction && (
+          <button onClick={variant.secondaryAction} style={{ width: "100%", maxWidth: 270, padding: "11px", background: variant.secondaryAccent ? t.accent : "transparent", border: variant.secondaryAccent ? "none" : `1px solid ${t.border}`, borderRadius: 11, fontSize: 12, fontWeight: variant.secondaryAccent ? "bold" : "normal", cursor: "pointer", color: variant.secondaryAccent ? t.accentText : t.textDim, marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
+            {variant.secondaryLabel}
           </button>
         )}
 
