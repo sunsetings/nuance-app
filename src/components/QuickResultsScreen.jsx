@@ -89,6 +89,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
       padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif",
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column", minHeight: "100%",
+      boxSizing: "border-box",
     }}>
       <Toast message={toastMessage} visible={toastVisible} theme={theme} />
 
@@ -167,7 +168,9 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
         </button>
       )}
 
-      <BottomNav active="quickresults" navigate={navigate} theme={theme} userTier={userTier} />
+      <div style={{ marginTop: "auto" }}>
+        <BottomNav active="quickresults" navigate={navigate} theme={theme} userTier={userTier} />
+      </div>
     </div>
   );
 }

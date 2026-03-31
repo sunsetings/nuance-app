@@ -367,6 +367,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif",
       color: t.text, position: "relative", background: t.phoneBg,
       display: "flex", flexDirection: "column", minHeight: "100%",
+      boxSizing: "border-box",
     }}>
       <Toast message={toastMessage} visible={toastVisible} theme={theme} />
       <ToneSheet
@@ -436,7 +437,9 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       ))}
 
       <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
-      <BottomNav active="results" navigate={navigate} theme={theme} userTier={userTier} />
+      <div style={{ marginTop: "auto" }}>
+        <BottomNav active="results" navigate={navigate} theme={theme} userTier={userTier} />
+      </div>
     </div>
   );
 }

@@ -288,7 +288,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
   };
 
   return (
-    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
+    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 4 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
@@ -353,7 +353,9 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
           ))}
         </>
       )}
-      <BottomNav active="saved" navigate={navigate} theme={theme} userTier={userTier} />
+      <div style={{ marginTop: "auto" }}>
+        <BottomNav active="saved" navigate={navigate} theme={theme} userTier={userTier} />
+      </div>
     </div>
   );
 }
