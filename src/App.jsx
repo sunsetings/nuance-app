@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUserTier, THEMES } from "./lib/constants.js";
+import { getUserTier, PRO_SAVED_TONE_LIMIT, THEMES } from "./lib/constants.js";
 import { supabase } from "./lib/supabase.js";
 import { PhoneFrame } from "./components/UI.jsx";
 import { AuthScreen } from "./components/AuthScreen.jsx";
@@ -123,11 +123,16 @@ export default function App() {
   };
 
   const toggleSavedTone = (tone) => {
-    setSavedTones((prev) => (
-      prev.includes(tone)
-        ? prev.filter((item) => item !== tone)
-        : [tone, ...prev].slice(0, 5)
-    ));
+    setSavedTones((prev) => {
+      if (prev.includes(tone)) {
+        return prev.filter((item) => item !== tone);
+      }
+      if (prev.length >= PRO_SAVED_TONE_LIMIT) {
+        window.alert("You can save up to 5 tones. Unsave one to make room for another.");
+        return prev;
+      }
+      return [tone, ...prev];
+    });
   };
 
   const handleTranslate = async ({ text, tone, fromLang, toLang, mode }) => {
