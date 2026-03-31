@@ -317,11 +317,12 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       lang: sourceLangCode,
       textToCopy: original,
       contentStyle: {
-        padding: "0 0 4px 12px",
+        padding: "0 20px 4px 20px",
         borderLeft: `2px solid ${t.border}`,
         color: t.textDim,
         fontSize: 12,
         lineHeight: 1.72,
+        boxSizing: "border-box",
       },
       labelColor: t.textFaint,
     },
