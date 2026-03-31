@@ -13,7 +13,7 @@ export function Toast({ message, visible, theme }) {
       padding: "10px 20px", borderRadius: 24, fontSize: 12,
       fontFamily: "'Lora',Georgia,serif", whiteSpace: "nowrap",
       opacity: visible ? 1 : 0, transition: "all 0.3s ease",
-      zIndex: 500, pointerEvents: "none",
+      zIndex: 700, pointerEvents: "none",
       boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
       display: "flex", alignItems: "center", gap: 8,
     }}>
