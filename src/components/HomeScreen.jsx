@@ -201,20 +201,24 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
           }}
         />
         <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center",
           padding: "8px 14px 10px", borderTop: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}`, gap: 8,
         }}>
-          <button onClick={handlePaste} style={{
-            background: "transparent",
-            border: "none",
-            padding: 0,
-            color: t.textFaint,
-            fontSize: 11, fontFamily: "'Lora',Georgia,serif",
-            cursor: "pointer", transition: "all 0.2s",
-            letterSpacing: "0.04em",
-          }}>Paste</button>
-          <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} />
-          <div style={{ width: 48 }} />
+          <div style={{ display: "flex", justifyContent: "flex-start" }}>
+            <button onClick={handlePaste} style={{
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              color: t.textFaint,
+              fontSize: 11, fontFamily: "'Lora',Georgia,serif",
+              cursor: "pointer", transition: "all 0.2s",
+              letterSpacing: "0.04em",
+            }}>Paste</button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} />
+          </div>
+          <div />
         </div>
       </div>
 
