@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES, MAX_SAME_TONE, getToneStatus } from "../lib/constants.js";
+import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus } from "../lib/constants.js";
 import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
@@ -26,6 +26,15 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const [translated, setTranslated] = useState(source.translated || "");
   const original = source.original || "";
   const toLang = source.toLang || source.to_lang || source.lang || "Japanese";
+  const cap = getCapForTier(userTier);
+
+  const ensureWithinCap = () => {
+    if (usageCount >= cap) {
+      navigate("cap");
+      return false;
+    }
+    return true;
+  };
 
   // Check if this translation is already saved
   const existingSave = savedItems?.find(s =>
@@ -67,6 +76,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
 
   const handleSelect = async tone => {
+    if (!ensureWithinCap()) return;
     const status = getToneStatus(tone, userTier);
     if (status !== "unlocked") {
       navigate(status === "free_locked" ? "account" : "upgrade");
@@ -86,11 +96,13 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
 
   const handleSetLevel = async lvl => {
+    if (!ensureWithinCap()) return;
     setToneCount(lvl);
     await doRefine(activeTone, lvl);
   };
 
   const handleSheetSelect = async (tone) => {
+    if (!ensureWithinCap()) return;
     if (tone === activeTone) {
       if (toneCount !== 1) {
         setToneCount(1);

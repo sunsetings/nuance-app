@@ -99,7 +99,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleTranslate = () => {
     if (!hasText) return;
-    if (atLimit) { navigate(userTier === "guest" ? "cap" : "upgrade"); return; }
+    if (atLimit) { navigate("cap"); return; }
     onTranslate({ text, tone, fromLang, toLang, mode });
   };
 
@@ -268,14 +268,15 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
       {/* CTA */}
       {atLimit ? (
-        <button onClick={() => navigate("upgrade")} style={{
+        <button onClick={() => navigate("cap")} style={{
           width: "100%", padding: "15px",
-          background: t.proTag, color: "#000",
-          border: "none", borderRadius: 13,
+          background: userTier === "pro" ? t.surface : t.proTag, color: userTier === "pro" ? t.textMuted : "#000",
+          border: userTier === "pro" ? `1px solid ${t.border}` : "none",
+          borderRadius: 13,
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          ✦ Daily limit reached ({cap}) — Go Pro for 500/day
+          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Go Pro for 500/day`}
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
