@@ -382,61 +382,63 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         theme={theme}
       />
 
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, marginTop: 6 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button onClick={() => navigate(fromSaved ? "saved" : "home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
-          <span style={{ fontSize: 15, fontWeight: "bold" }}>Results</span>
-          {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, marginTop: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button onClick={() => navigate(fromSaved ? "saved" : "home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
+            <span style={{ fontSize: 15, fontWeight: "bold" }}>Results</span>
+            {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
+          </div>
+          <ResultsHeaderCTA userTier={userTier} navigate={navigate} theme={theme} />
         </div>
-        <ResultsHeaderCTA userTier={userTier} navigate={navigate} theme={theme} />
-      </div>
 
-      {/* Tone row */}
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.1em", marginBottom: 4 }}>REFINE FURTHER</div>
-        <ToneRow
-          activeTone={activeTone} toneCount={toneCount}
-          onSelect={handleSelect} onSetLevel={handleSetLevel}
-          onOpenSheet={() => setSheetOpen(true)}
-          userTier={userTier}
-          favourites={prioritizedTones}
-          disabled={loading}
-          isHomeScreen={false}
-          navigate={navigate}
-          theme={theme}
-        />
-      </div>
-
-      {loading && (
-        <div style={{ textAlign: "center", padding: "20px", color: t.textDim, fontSize: 13, fontStyle: "italic", letterSpacing: "0.05em" }}>
-          refining…
+        {/* Tone row */}
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.1em", marginBottom: 4 }}>REFINE FURTHER</div>
+          <ToneRow
+            activeTone={activeTone} toneCount={toneCount}
+            onSelect={handleSelect} onSetLevel={handleSetLevel}
+            onOpenSheet={() => setSheetOpen(true)}
+            userTier={userTier}
+            favourites={prioritizedTones}
+            disabled={loading}
+            isHomeScreen={false}
+            navigate={navigate}
+            theme={theme}
+          />
         </div>
-      )}
 
-      {error && (
-        <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 8, fontSize: 12, color: "#e88", fontFamily: "'Lora',Georgia,serif" }}>
-          {error}
-        </div>
-      )}
+        {loading && (
+          <div style={{ textAlign: "center", padding: "20px", color: t.textDim, fontSize: 13, fontStyle: "italic", letterSpacing: "0.05em" }}>
+            refining…
+          </div>
+        )}
 
-      {/* 3 panels */}
-      {!loading && resultSections.map(({ label, content, lang, textToCopy, contentStyle, labelColor, labelWeight }, i) => (
-        <div key={i} style={{ marginBottom: i < resultSections.length - 1 ? 10 : 8 }}>
-          <div style={sectionMetaStyle}>
-            <span style={{ ...sectionLabelStyle, color: labelColor, fontWeight: labelWeight || "normal" }}>{label}</span>
-            <div style={inlineCopyWrapStyle}>
-              <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>{lang}</span>
-              <CopyBtn text={textToCopy} theme={theme} variant="inline" />
+        {error && (
+          <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 8, fontSize: 12, color: "#e88", fontFamily: "'Lora',Georgia,serif" }}>
+            {error}
+          </div>
+        )}
+
+        {/* 3 panels */}
+        {!loading && resultSections.map(({ label, content, lang, textToCopy, contentStyle, labelColor, labelWeight }, i) => (
+          <div key={i} style={{ marginBottom: i < resultSections.length - 1 ? 10 : 8 }}>
+            <div style={sectionMetaStyle}>
+              <span style={{ ...sectionLabelStyle, color: labelColor, fontWeight: labelWeight || "normal" }}>{label}</span>
+              <div style={inlineCopyWrapStyle}>
+                <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>{lang}</span>
+                <CopyBtn text={textToCopy} theme={theme} variant="inline" />
+              </div>
+            </div>
+            <div style={contentStyle}>
+              {content || <span style={{ fontStyle: "italic", opacity: 0.5 }}>—</span>}
             </div>
           </div>
-          <div style={contentStyle}>
-            {content || <span style={{ fontStyle: "italic", opacity: 0.5 }}>—</span>}
-          </div>
-        </div>
-      ))}
+        ))}
 
-      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
+        <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
+      </div>
       <div style={{ marginTop: "auto" }}>
         <BottomNav active="results" navigate={navigate} theme={theme} userTier={userTier} />
       </div>
