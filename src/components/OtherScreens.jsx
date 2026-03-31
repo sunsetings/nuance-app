@@ -1,38 +1,44 @@
-import { useState } from "react";
-import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT } from "../lib/constants.js";
+import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, PRO_SAVED_TONE_LIMIT, FREE_SAVE_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, usageCount, user, onLogout, savedItems }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, onLogout, savedItems, setIsPremium }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
+  const planRows = [
+    { label: "Daily refines", value: isPremium ? `${PRO_DAILY_CAP} / day` : `${FREE_DAILY_CAP} / day`, accent: true },
+    { label: "Tones", value: isPremium ? "All 20" : "4 of 20", accent: true },
+    { label: "Dictation", value: isPremium ? "On" : "Pro only", accent: false },
+    { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
+    { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
+    { label: "Saved tones", value: isPremium ? `Up to ${PRO_SAVED_TONE_LIMIT}` : "Pro only", accent: false },
+  ];
+  const displayOptions = [
+    { id: "system", label: "System", icon: "◐" },
+    { id: "dark", label: "Dark", icon: "☾" },
+    { id: "light", label: "Light", icon: "☀" },
+  ];
 
   return (
-    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, marginTop: 4 }}>
+    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22, marginTop: 4 }}>
         <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
         <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px" }}>Account</span>
       </div>
 
-      <div style={{ background: isPremium ? t.highlight : t.surface, borderRadius: 14, padding: "18px", marginBottom: 16, textAlign: "center" }}>
-        <div style={{ fontSize: 15, fontWeight: "bold", color: isPremium ? t.highlightText : t.text, marginBottom: 3 }}>{isPremium ? "✦ Pro Member" : "Free Plan"}</div>
-        <div style={{ fontSize: 11, color: t.textFaint, letterSpacing: "0.04em" }}>{user?.email || "user@email.com"}</div>
+      <div style={{ background: t.surface, borderRadius: 14, padding: "18px 18px 16px", marginBottom: 18, textAlign: "center" }}>
+        <div style={{ fontSize: 15, fontWeight: "bold", color: t.text, marginBottom: 3 }}>{isPremium ? "Pro Plan" : "Free Plan"}</div>
+        <div style={{ fontSize: 11, color: t.textFaint, letterSpacing: "0.01em" }}>{user?.email || "user@email.com"}</div>
         {!isPremium && (
           <button onClick={() => navigate("upgrade")} style={{ marginTop: 12, padding: "8px 20px", background: t.accent, color: t.accentText, border: "none", borderRadius: 8, fontSize: 12, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro →</button>
         )}
       </div>
 
-      {[
-        { label: "Daily refines", value: isPremium ? `${usageCount} / ${PRO_DAILY_CAP} today` : `${usageCount} / ${FREE_DAILY_CAP} today` },
-        { label: "Tones", value: isPremium ? "All 20" : "4 of 20" },
-        { label: "Dictation", value: isPremium ? "Enabled" : "Locked", locked: !isPremium },
-        { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}` },
-        { label: "Saved favourites", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : "Locked", locked: !isPremium, warn: isPremium && savedCount >= PRO_SAVE_WARN },
-      ].map((item, i) => (
+      {planRows.map((item, i) => (
         <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           <span style={{ fontSize: 12, color: t.textMuted }}>{item.label}</span>
-          <span style={{ fontSize: 12, color: item.locked ? t.textFaint : item.warn ? t.proTag : t.accent }}>
-            {item.locked ? "Pro only" : item.value}
+          <span style={{ fontSize: 12, color: item.accent ? t.accent : t.textFaint, fontWeight: item.accent ? "bold" : "normal" }}>
+            {item.value}
           </span>
         </div>
       ))}
@@ -41,20 +47,48 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
 
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>Display</div>
-        <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2 }}>
-          {[{ id: "dark", icon: "🌙", label: "Dark" }, { id: "light", icon: "☀️", label: "Light" }].map(opt => (
-            <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: theme === opt.id ? t.surface2 : "transparent", color: theme === opt.id ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: theme === opt.id ? "bold" : "normal", transition: "all 0.15s" }}>
+        <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 8 }}>
+          {displayOptions.map(opt => (
+            <button key={opt.id} onClick={() => opt.id !== "system" && setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: (opt.id === "system" ? false : theme === opt.id) ? t.surface2 : "transparent", color: (opt.id === "system" ? t.textFaint : theme === opt.id) ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: (opt.id === "system" ? false : theme === opt.id) ? "bold" : "normal", transition: "all 0.15s" }}>
               {opt.icon} {opt.label}
             </button>
           ))}
         </div>
+        <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2 }}>
+          {[
+            { id: "guest", label: "Guest" },
+            { id: "free", label: "Free" },
+            { id: "pro", label: "Pro" },
+          ].map((opt) => {
+            const active = opt.id === userTier || (opt.id === "pro" && isPremium) || (opt.id === "free" && !isPremium && userTier !== "guest");
+            return (
+              <button
+                key={opt.id}
+                onClick={() => {
+                  if (opt.id === "guest") {
+                    onLogout?.();
+                    navigate("home");
+                    return;
+                  }
+                  if (opt.id === "pro") {
+                    setIsPremium?.(true);
+                    return;
+                  }
+                  setIsPremium?.(false);
+                }}
+                style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: active ? t.surface2 : "transparent", color: active ? t.accent : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: active ? "bold" : "normal", transition: "all 0.15s" }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ textAlign: "center", marginTop: 4, fontSize: 10, color: t.textFaint }}>Demo switch tier</div>
       </div>
 
-      <button onClick={onLogout} style={{ width: "100%", padding: "11px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 9, color: t.textDim, fontSize: 13, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", marginBottom: 4 }}>
-        Sign out
-      </button>
-
-      <BottomNav active="account" navigate={navigate} theme={theme} userTier={userTier} />
+      <div style={{ marginTop: "auto" }}>
+        <BottomNav active="account" navigate={navigate} theme={theme} userTier={userTier} />
+      </div>
     </div>
   );
 }
