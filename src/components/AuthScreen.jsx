@@ -7,12 +7,20 @@ export function AuthScreen({ theme, onAuth, navigate }) {
   const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   const handleSubmit = async () => {
-    if (!email || !password) { setError("Please enter your email and password."); return; }
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+    if (mode === "signup" && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -67,33 +75,27 @@ export function AuthScreen({ theme, onAuth, navigate }) {
 
   return (
     <div style={{
-      padding: "22px 24px 28px",
+      padding: "14px 22px 28px",
       fontFamily: "'Lora',Georgia,serif",
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column",
       minHeight: "100%", boxSizing: "border-box",
     }}>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
-        <button
-          onClick={() => navigate?.("home")}
-          style={{
-            background: "none",
-            border: "none",
-            color: t.textMuted,
-            fontSize: 18,
-            cursor: "pointer",
-            lineHeight: 1,
-            padding: 0,
-          }}
-        >
-          ←
-        </button>
+      <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, marginTop: 6, height: 36 }}>
+        <button onClick={() => navigate?.("home")} style={{ position: "absolute", left: 0, background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>←</button>
+        <span style={{ fontSize: 24, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
       </div>
 
-      <div style={{ textAlign: "center", marginBottom: 22, marginTop: 10 }}>
-        <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: 6 }}>tonara.</div>
-        <div style={{ fontSize: 12, color: t.textDim }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 17, fontWeight: "bold", marginBottom: 7, letterSpacing: "-0.2px" }}>
           {mode === "login" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset your password"}
+        </div>
+        <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, maxWidth: 290, margin: "0 auto" }}>
+          {mode === "login"
+            ? "Sign in to access your account."
+            : mode === "signup"
+              ? "Create a free account to save translations and bookmark languages."
+              : "Enter your email and we'll send you a reset link."}
         </div>
       </div>
 
@@ -117,19 +119,20 @@ export function AuthScreen({ theme, onAuth, navigate }) {
       {mode !== "forgot" && (
         <>
           <button onClick={handleGoogle} disabled={loading} style={{
-            width: "100%", padding: "13px",
+            width: "100%", padding: "12px 16px",
             background: t.surface, border: `1px solid ${t.border2}`,
-            borderRadius: 12, color: t.textMuted,
+            borderRadius: 12, color: t.text,
             fontSize: 13, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", marginBottom: 16,
             display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
             transition: "all 0.2s",
           }}>
-            <span style={{ fontSize: 16 }}>G</span> Continue with Google
+            <span style={{ fontSize: 14, fontWeight: "bold", fontFamily: "sans-serif", color: t.textDim }}>G</span>
+            Continue with Google
           </button>
 
           {/* Divider */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
             <div style={{ flex: 1, height: 1, background: t.border }} />
             <span style={{ fontSize: 11, color: t.textFaint }}>or</span>
             <div style={{ flex: 1, height: 1, background: t.border }} />
@@ -137,15 +140,13 @@ export function AuthScreen({ theme, onAuth, navigate }) {
         </>
       )}
 
-      {/* Email */}
-      <div style={{ marginBottom: 10 }}>
-        <div style={{ fontSize: 10, color: t.textDim, letterSpacing: "0.1em", marginBottom: 6 }}>EMAIL</div>
+      <div style={{ marginBottom: 8 }}>
         <input
           type="email" value={email}
           onChange={e => setEmail(e.target.value)}
-          placeholder="you@example.com"
+          placeholder="Email address"
           style={{
-            width: "100%", padding: "12px 14px",
+            width: "100%", padding: "11px 14px",
             background: t.surface, border: `1px solid ${t.border}`,
             borderRadius: 10, color: t.text, fontSize: 13,
             fontFamily: "'Lora',Georgia,serif", outline: "none",
@@ -154,17 +155,15 @@ export function AuthScreen({ theme, onAuth, navigate }) {
         />
       </div>
 
-      {/* Password */}
       {mode !== "forgot" && (
-        <div style={{ marginBottom: 6 }}>
-          <div style={{ fontSize: 10, color: t.textDim, letterSpacing: "0.1em", marginBottom: 6 }}>PASSWORD</div>
+        <div style={{ marginBottom: mode === "signup" ? 8 : 8 }}>
           <input
             type="password" value={password}
             onChange={e => setPassword(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleSubmit()}
-            placeholder="••••••••"
+            placeholder="Password"
             style={{
-              width: "100%", padding: "12px 14px",
+              width: "100%", padding: "11px 14px",
               background: t.surface, border: `1px solid ${t.border}`,
               borderRadius: 10, color: t.text, fontSize: 13,
               fontFamily: "'Lora',Georgia,serif", outline: "none",
@@ -174,9 +173,27 @@ export function AuthScreen({ theme, onAuth, navigate }) {
         </div>
       )}
 
-      {/* Forgot password link */}
+      {mode === "signup" && (
+        <div style={{ marginBottom: 14 }}>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSubmit()}
+            placeholder="Confirm password"
+            style={{
+              width: "100%", padding: "11px 14px",
+              background: t.surface, border: `1px solid ${t.border}`,
+              borderRadius: 10, color: t.text, fontSize: 13,
+              fontFamily: "'Lora',Georgia,serif", outline: "none",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+      )}
+
       {mode === "login" && (
-        <div style={{ textAlign: "right", marginBottom: 18 }}>
+        <div style={{ textAlign: "right", marginBottom: 14 }}>
           <button onClick={() => { setMode("forgot"); setError(null); }} style={{
             background: "none", border: "none",
             color: t.textDim, fontSize: 11,
@@ -203,26 +220,24 @@ export function AuthScreen({ theme, onAuth, navigate }) {
 
       {/* Main CTA */}
       <button onClick={mode === "forgot" ? handleForgot : handleSubmit} disabled={loading} style={{
-        width: "100%", padding: "14px",
+        width: "100%", padding: "13px",
         background: t.accent, color: t.accentText,
         border: "none", borderRadius: 12,
         fontSize: 14, fontFamily: "'Lora',Georgia,serif",
         fontWeight: "bold", cursor: loading ? "default" : "pointer",
         opacity: loading ? 0.7 : 1, transition: "opacity 0.2s",
-        marginBottom: 16, marginTop: mode === "login" ? 0 : 18,
+        marginBottom: 10, marginTop: mode === "forgot" ? 18 : 0,
+        letterSpacing: "-0.1px",
       }}>
-        {loading ? "…" : mode === "login" ? "Log in" : mode === "signup" ? "Create account" : "Send reset email"}
+        {loading ? "…" : mode === "login" ? "Sign in" : mode === "signup" ? "Create free account" : "Send reset email"}
       </button>
 
-      <div style={{ textAlign: "center", fontSize: 12, color: t.textDim }}>
-        {mode === "forgot" && (
-          <button onClick={() => { setMode("login"); setError(null); }} style={{ background: "none", border: "none", color: t.accent, cursor: "pointer", fontSize: 12, fontFamily: "'Lora',Georgia,serif" }}>← Back to sign in</button>
+      <div style={{ textAlign: "center", marginTop: "auto", paddingTop: 14 }}>
+        {mode === "forgot" ? (
+          <button onClick={() => { setMode("login"); setError(null); setSuccess(null); }} style={{ background: "none", border: "none", color: t.textFaint, cursor: "pointer", fontSize: 11, fontFamily: "'Lora',Georgia,serif" }}>← Back to sign in</button>
+        ) : (
+          <button onClick={() => navigate?.("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Continue without an account</button>
         )}
-      </div>
-
-      {/* Terms */}
-      <div style={{ marginTop: "auto", paddingTop: 24, textAlign: "center", fontSize: 10, color: t.textFaint, lineHeight: 1.6 }}>
-        By continuing you agree to our Terms of Service and Privacy Policy
       </div>
     </div>
   );
