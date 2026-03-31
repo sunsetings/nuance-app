@@ -39,7 +39,10 @@ Task 1 — REFINE:
 Rewrite the following message in a "${tone}" tone. Keep the core meaning identical. Only change the tone and phrasing.${toneInstruction}${levelDesc}
 Output ONLY the refined text, nothing else. No labels, no explanations.
 Task 2 — TRANSLATE:
-Translate the refined text from ${fromLang} into ${toLang}.
+Translate the refined text from ${fromLang} into ${toLang}. The translation must preserve both:
+1. the meaning of the refined text
+2. the "${tone}" tone selected by the user
+Make the translation sound natural in ${toLang}, but keep the same emotional style, intent, and tone intensity rather than doing a flat literal translation.
 Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
