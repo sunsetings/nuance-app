@@ -3,7 +3,7 @@ import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LI
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, onLogout, savedItems, setIsPremium }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
   const planRows = [
@@ -55,36 +55,6 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
             </button>
           ))}
         </div>
-        <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2 }}>
-          {[
-            { id: "guest", label: "Guest" },
-            { id: "free", label: "Free" },
-            { id: "pro", label: "Pro" },
-          ].map((opt) => {
-            const active = opt.id === userTier || (opt.id === "pro" && isPremium) || (opt.id === "free" && !isPremium && userTier !== "guest");
-            return (
-              <button
-                key={opt.id}
-                onClick={() => {
-                  if (opt.id === "guest") {
-                    onLogout?.();
-                    navigate("home");
-                    return;
-                  }
-                  if (opt.id === "pro") {
-                    setIsPremium?.(true);
-                    return;
-                  }
-                  setIsPremium?.(false);
-                }}
-                style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: active ? t.surface2 : "transparent", color: active ? t.accent : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: active ? "bold" : "normal", transition: "all 0.15s" }}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
-        <div style={{ textAlign: "center", marginTop: 4, fontSize: 10, color: t.textFaint }}>Demo switch tier</div>
       </div>
 
       <div style={{ marginTop: "auto" }}>
