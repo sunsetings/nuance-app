@@ -192,7 +192,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       labelWeight: "bold",
     },
   ];
-  const prioritizedTones = [...recentTones, ...savedTones];
+  const prioritizedTones = [...savedTones, ...recentTones];
 
   return (
     <div style={{

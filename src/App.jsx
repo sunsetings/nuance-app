@@ -126,9 +126,7 @@ export default function App() {
     setSavedTones((prev) => (
       prev.includes(tone)
         ? prev.filter((item) => item !== tone)
-        : prev.length < 5
-          ? [...prev, tone]
-          : prev
+        : [tone, ...prev].slice(0, 5)
     ));
   };
 
