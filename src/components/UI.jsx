@@ -96,7 +96,7 @@ export function PhoneFrame({ children, theme }) {
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: t.border2 }} />
         <div style={{ width: 38, height: 5, borderRadius: 3, background: t.border2 }} />
       </div>
-      <div style={{ height: "100%", overflowY: "auto", paddingTop: 30 }}>
+      <div style={{ height: "100%", overflow: "hidden", paddingTop: 30, display: "flex", flexDirection: "column" }}>
         {children}
       </div>
     </div>
