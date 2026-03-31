@@ -95,7 +95,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
 }
 
 // ─── UPGRADE ─────────────────────────────────────────────────
-export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
+export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier }) {
   const t = THEMES[theme] || THEMES.dark;
   const [checkoutError, setCheckoutError] = useState(null);
   const [loadingPlan, setLoadingPlan] = useState(null);
@@ -219,10 +219,12 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
             </div>
           </button>
         ))}
-        <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
-        <button onClick={() => navigate("account")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
-          Sign up free instead
-        </button>
+        <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: userTier === "guest" ? 12 : 0, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
+        {userTier === "guest" && (
+          <button onClick={() => navigate("signin_nav")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
+            Sign up free instead
+          </button>
+        )}
       </div>
     </div>
   );
