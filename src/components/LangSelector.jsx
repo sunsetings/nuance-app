@@ -34,15 +34,16 @@ export function LangSelector({
   const open = openId === myId;
   const isPro = userTier === "pro";
   const canBookmarkAny = userTier !== "guest";
-  const canBookmark = bookmarked.length < bookmarkLimit;
+  const visibleBookmarked = canBookmarkAny ? bookmarked : [];
+  const canBookmark = visibleBookmarked.length < bookmarkLimit;
 
   const filterList = (list) => (
     search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
   );
 
-  const bookmarkedFiltered = bookmarked.filter((lang) => filterList([lang]).length > 0);
-  const baseFiltered = filterList(BASE_LANGUAGES.filter((lang) => !bookmarked.includes(lang)));
-  const proFiltered = filterList(PRO_LANGUAGES.filter((lang) => !bookmarked.includes(lang)));
+  const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
+  const baseFiltered = filterList(BASE_LANGUAGES.filter((lang) => !visibleBookmarked.includes(lang)));
+  const proFiltered = filterList(PRO_LANGUAGES.filter((lang) => !visibleBookmarked.includes(lang)));
 
   const handleOpen = () => {
     if (open) {
@@ -78,7 +79,7 @@ export function LangSelector({
         }}
       >
         <span style={{ flex: 1, textAlign: label === "TO" ? "right" : "left" }}>{value}</span>
-        {bookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
+        {visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && !isPro && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
             PRO
@@ -138,8 +139,8 @@ export function LangSelector({
 
           {canBookmarkAny && (
             <div style={{ padding: "4px 14px 4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
-                {bookmarked.length}/{bookmarkLimit} bookmarked
+              <span style={{ fontSize: 9, color: visibleBookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
+                {visibleBookmarked.length}/{bookmarkLimit} bookmarked
               </span>
               {!canBookmark && <span style={{ fontSize: 9, color: t.proTag }}>limit reached</span>}
             </div>
