@@ -18,7 +18,8 @@ Respond in this exact JSON format (no markdown, no backticks):
 
   const toneGuide = {
     Casual: "Relaxed, everyday language — like texting a close friend. Short sentences, natural contractions, no formality.",
-    "Gen A": "Gen Alpha and Gen Z internet slang — use terms like 'no cap', 'lowkey', 'fr fr', 'slay', 'it's giving', 'bussin', 'rizz', 'understood the assignment', 'ate that', 'periodt', emojis where natural. Very online, very current. Should sound distinctly different from just being casual.",
+    "Gen A": "Gen Alpha and Gen Z internet-native language — use a broad rotating mix of current expressions, playful phrasing, meme-adjacent wording, and casually online rhythm. Pull from a wider pool than the same few catchphrases, and vary the wording naturally between responses. Can include things like 'lowkey', 'highkey', 'fr', 'fr fr', 'no cap', 'it's giving', 'ate', 'core', 'vibes', 'delulu', 'iconic', 'wild', 'mid', 'bet', 'say less', or emojis when natural, but avoid sounding repetitive, forced, or copy-pasted. Should sound distinctly different from just being casual.",
+    Flirty: "Playful, lightly romantic, and charming. Keep it smooth, modern, and natural — teasing or affectionate when appropriate, but never archaic, theatrical, or overly poetic. Do not use words like 'alas'.",
     "19th Century": "Formal Victorian-era prose — elaborate, eloquent, and ornate. Use archaic vocabulary and constructions appropriate to 19th century written English, adapted naturally to the target language.",
   };
 
