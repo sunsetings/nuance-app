@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, getBookmarkLimitForTier, getCapForTier } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
+import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 
 const LS_FROM = "tonara_fromLang";
@@ -28,6 +29,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
   const [focused, setFocused] = useState(false);
   const [swapping, setSwapping] = useState(false);
   const [openLang, setOpenLang] = useState(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const textareaRef = useRef(null);
 
   const isRefine = mode === "refine";
@@ -77,6 +79,16 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
       color: t.text, display: "flex", flexDirection: "column",
       height: "100%", boxSizing: "border-box", background: t.phoneBg,
     }}>
+      <ToneSheet
+        visible={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        activeTone={tone}
+        userTier={userTier}
+        favourites={[]}
+        onSelectTone={setTone}
+        navigate={navigate}
+        theme={theme}
+      />
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
         <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
@@ -147,7 +159,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
           <ToneRow
             activeTone={tone} toneCount={1}
             onSelect={setTone} onSetLevel={() => {}}
-            onOpenSheet={() => {}}
+            onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={[]}
             disabled={false}

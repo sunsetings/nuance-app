@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { THEMES, MAX_SAME_TONE, getToneStatus } from "../lib/constants.js";
 import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
+import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
@@ -16,6 +17,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [shareVisible, setShareVisible] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -188,6 +190,19 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     }}>
       <Toast message={toastMessage} visible={toastVisible} theme={theme} />
       <ShareSheet visible={shareVisible} onClose={() => setShareVisible(false)} theme={theme} />
+      <ToneSheet
+        visible={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        activeTone={activeTone}
+        userTier={userTier}
+        favourites={recentTones}
+        onSelectTone={(tone) => {
+          setActiveTone(tone);
+          setToneCount(1);
+        }}
+        navigate={navigate}
+        theme={theme}
+      />
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, marginTop: 6 }}>
@@ -205,7 +220,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         <ToneRow
           activeTone={activeTone} toneCount={toneCount}
           onSelect={handleSelect} onSetLevel={handleSetLevel}
-          onOpenSheet={() => {}}
+          onOpenSheet={() => setSheetOpen(true)}
           userTier={userTier}
           favourites={recentTones}
           disabled={loading}
