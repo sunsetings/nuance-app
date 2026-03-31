@@ -10,8 +10,6 @@ import { AccountScreen, UpgradeScreen, SavedScreen } from "./components/OtherScr
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, incrementUsageDB, getSavedTranslations } from "./lib/userdata.js";
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY || "";
-
 const SCREEN_LABELS = {
   home: "Home", results: "Results — Refine",
   quickresults: "Results — Quick", account: "Account",
@@ -108,12 +106,12 @@ export default function App() {
     setIsTranslating(true);
     try {
       if (mode === "quick") {
-        const result = await quickTranslate({ text, fromLang, toLang, apiKey: API_KEY });
+        const result = await quickTranslate({ text, fromLang, toLang });
         if (user) { const count = await incrementUsageDB(user.id); setUsageCount(count); }
         setTranslationData({ original: text, translated: result.translated, fromLang, toLang, tone, mode: "quick" });
         setScreen("quickresults");
       } else {
-        const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount: 1, apiKey: API_KEY });
+        const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount: 1 });
         if (user) { const count = await incrementUsageDB(user.id); setUsageCount(count); }
         addRecentTone(tone);
         setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang, toLang, tone, toneCount: 1, mode: "refine" });
@@ -133,7 +131,7 @@ export default function App() {
   const renderScreen = () => {
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} />;
-      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} apiKey={API_KEY} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
+      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "account": return user ? <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
@@ -197,7 +195,7 @@ export default function App() {
       <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256 }}>
         <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>Interactive Preview</div>
         <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>tonara.</div>
-        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>{API_KEY ? "✓ API key loaded" : "⚠ No API key"}</div>
+        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>✓ AI runs server-side</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.6 }}>{user ? `✓ ${user.email}` : "◎ Not logged in"}</div>
         {user && (
           <>

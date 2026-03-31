@@ -7,7 +7,7 @@ import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, apiKey, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
+export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
@@ -43,7 +43,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
 
   const doRefine = async (tone, count) => {
-    if (!apiKey) { setError("No API key — add your OpenAI key in settings."); return; }
     setLoading(true);
     setError(null);
     try {
@@ -53,7 +52,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         fromLang: source.fromLang || source.from_lang || "English",
         toLang,
         toneCount: count,
-        apiKey,
       });
       setRefined(result.refined);
       setTranslated(result.translated);
