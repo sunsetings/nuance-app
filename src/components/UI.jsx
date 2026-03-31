@@ -128,6 +128,16 @@ function MicIcon({ size = 15, color }) {
   );
 }
 
+function ShareIcon({ size = 14, color }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <path d="M6 10L11.5 4.5" stroke={color} strokeWidth="1.35" strokeLinecap="round" />
+      <path d="M8.5 4.5H11.5V7.5" stroke={color} strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 9.5V11C12 12.1 11.1 13 10 13H5C3.9 13 3 12.1 3 11V6C3 4.9 3.9 4 5 4H6.5" stroke={color} strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function BottomNav({ active, navigate, theme, userTier }) {
   const t = THEMES[theme] || THEMES.dark;
   const isGuest = userTier === "guest";
@@ -293,7 +303,8 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
         fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
       }}>
-        <span style={{ fontSize: 13 }}>↗</span> Share
+        <ShareIcon size={14} color={t.textFaint} />
+        <span>Share</span>
       </button>
       <button
         onClick={handleSave}
