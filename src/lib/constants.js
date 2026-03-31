@@ -1,13 +1,14 @@
 // ─── PLAN LIMITS ─────────────────────────────────────────────
-export const GUEST_TONES = ["Polite", "Casual"];
-export const FREE_TONES = ["Polite", "Casual", "Formal", "Gen A"];
+export const GUEST_TONES = ["Polite", "Playful"];
+export const FREE_TONES = ["Polite", "Playful", "Casual", "Gen A"];
 export const PRO_TONES = [
   "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
-  "19th Century", "Playful", "Professional", "Motivational", "Humble",
+  "19th Century", "Professional", "Motivational", "Humble",
+  "Anger", "Charming", "Cheeky", "Royal", "Poetic", "Flirty",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
-export const DEFAULT_PRO_TONES = ["Formal", "Professional", "Diplomatic", "Empathetic"];
+export const DEFAULT_PRO_TONES = ["Charming", "Poetic", "Diplomatic", "Empathetic"];
 export const MAX_SAME_TONE = 3;
 export const GUEST_DAILY_CAP = 10;
 export const FREE_DAILY_CAP = 30;
@@ -38,17 +39,17 @@ export const DEFAULT_FROM_LANG = "English";
 export const DEFAULT_TO_LANG = "Korean";
 
 export const TONE_CATEGORIES = [
-  { label: "Everyday", tones: ["Polite", "Casual", "Formal", "Friendly", "Gen A"] },
-  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious"] },
-  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
-  { label: "Expressive", tones: ["Enthusiastic", "Playful", "Urgent", "19th Century"] },
+  { label: "Everyday", tones: ["Polite", "Playful", "Casual", "Friendly", "Gen A", "Charming", "Cheeky", "Flirty"] },
+  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious", "Royal"] },
+  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger"] },
+  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "19th Century", "Poetic"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
   Polite: "Respectful and considerate",
   Casual: "Relaxed and everyday",
-  Formal: "Structured and official",
   "Gen A": "Current, internet-native tone",
+  Playful: "Light and witty",
   Friendly: "Warm and approachable",
   Sincere: "Genuine and heartfelt",
   Serious: "Measured and no-nonsense",
@@ -61,10 +62,15 @@ export const TONE_DESCRIPTIONS = {
   Urgent: "Pressing and time-sensitive",
   Warm: "Caring and personal",
   "19th Century": "Formal Victorian prose",
-  Playful: "Light and witty",
   Professional: "Clean and corporate-safe",
   Motivational: "Energising and encouraging",
   Humble: "Deferential and respectful",
+  Anger: "Sharp and openly frustrated",
+  Charming: "Smooth and winsome",
+  Cheeky: "Bold and mischievous",
+  Royal: "Regal and elevated",
+  Poetic: "Lyrical and expressive",
+  Flirty: "Playful and romantic",
 };
 
 export function getUserTier(user, isPremium) {

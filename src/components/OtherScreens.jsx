@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, PRO_SAVED_TONE_LIMIT, FREE_SAVE_LIMIT } from "../lib/constants.js";
+import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
@@ -9,7 +9,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
   const savedCount = savedItems?.length || 0;
   const planRows = [
     { label: "Daily refines", value: isPremium ? `${PRO_DAILY_CAP} / day` : `${FREE_DAILY_CAP} / day`, accent: true },
-    { label: "Tones", value: isPremium ? "All 20" : "4 of 20", accent: true },
+    { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
     { label: "Dictation", value: isPremium ? "On" : "Pro only", accent: false },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
     { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
@@ -147,7 +147,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
 
       {[
         { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
-        { label: "Tones", guest: "2", free: "4", pro: "All 20" },
+        { label: "Tones", guest: `${GUEST_TONES.length}`, free: "4", pro: `All ${ALL_TONES.length}` },
         { label: "Languages", guest: "13", free: "13", pro: "52" },
         { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
         { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },

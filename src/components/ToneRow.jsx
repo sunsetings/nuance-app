@@ -31,7 +31,7 @@ export function ToneRow({
   const t = THEMES[theme] || THEMES.dark;
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
-    : ["Polite", "Casual", "Formal", "Gen A"];
+    : ["Polite", "Playful", "Casual", "Gen A"];
 
   const orderedCandidates = priorityTonesOverride?.length
     ? [...priorityTonesOverride, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]

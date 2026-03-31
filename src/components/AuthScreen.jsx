@@ -6,7 +6,7 @@ const SIGNIN_CONTEXT = {
   nav: { title: "Welcome back", sub: "Sign in to access your account." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
-  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Formal and Gen A." },
+  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Casual and Gen A." },
   cap: { title: "You've used today's refines", sub: "Sign up free for 30 refines a day." },
   default: { title: "Welcome to tonara.", sub: "" },
 };

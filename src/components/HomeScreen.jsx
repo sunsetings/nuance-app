@@ -20,7 +20,7 @@ function buildHomeToneOrder(userTier, savedTones = []) {
     FREE_TONES.forEach(add);
   } else {
     savedTones.forEach(add);
-    ["Polite", "Casual", "Formal", "Gen A"].forEach(add);
+    ["Polite", "Playful", "Casual", "Gen A"].forEach(add);
   }
 
   ALL_TONES.forEach(add);
