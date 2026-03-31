@@ -22,7 +22,7 @@ Respond in this exact JSON format (no markdown, no backticks):
     Cheeky: "Bold, mischievous, and lightly teasing. Keep it modern, playful, and a little cheeky without sounding archaic, theatrical, or overly literary. Do not use words like 'alas'.",
     Flirty: "Playful, lightly romantic, and charming. Keep it smooth, modern, and natural — teasing or affectionate when appropriate, but never archaic, theatrical, or overly poetic. Do not use words like 'alas'.",
     Shakespearean: "Theatrical, elevated, and Bard-like — use expressive, dramatic phrasing inspired by Shakespearean English without becoming unreadable. Favor lyrical turns of phrase, grand feeling, and stage-like rhythm, adapted naturally to the target language.",
-    Dramatic: "Emotionally heightened and intense. Make the wording feel bigger, more vivid, and more cinematic, while keeping the core meaning the same.",
+    Dramatic: "Modern-day emotional intensity — vivid, expressive, and a little cinematic, but still current and natural. Make it feel heightened and dramatic without sounding theatrical, archaic, poetic, or like an old play.",
     Noir: "Moody and mysterious. Use shadowy, understated, slightly cinematic wording with a cool, enigmatic edge. Keep it modern and readable, not cheesy detective parody.",
   };
 
