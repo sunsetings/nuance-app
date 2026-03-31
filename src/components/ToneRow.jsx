@@ -1,4 +1,4 @@
-import { DEFAULT_PRO_TONES, FREE_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
+import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
 
 export function ToneRow({
   activeTone,
@@ -14,22 +14,31 @@ export function ToneRow({
   theme,
 }) {
   const t = THEMES[theme] || THEMES.dark;
-  const isPro = userTier === "pro";
-  const baseVisibleTones = isPro
-    ? (favourites.length > 0 ? favourites.slice(0, 4) : DEFAULT_PRO_TONES.slice(0, 4))
-    : userTier === "free"
-      ? FREE_TONES.slice(0, 4)
-      : ["Polite", "Casual", "Formal", "Gen A"];
+  const defaultPriorityTones = userTier === "pro"
+    ? DEFAULT_PRO_TONES
+    : ["Polite", "Casual", "Formal", "Gen A"];
 
-  const visibleTones = baseVisibleTones.includes(activeTone)
-    ? baseVisibleTones
-    : [activeTone, ...baseVisibleTones].slice(0, 5);
+  const orderedCandidates = [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
+  const visibleTones = [];
+
+  orderedCandidates.forEach((tone) => {
+    if (!tone || visibleTones.includes(tone)) return;
+    visibleTones.push(tone);
+  });
+
+  while (visibleTones.length < 5) {
+    const nextTone = ALL_TONES.find((tone) => !visibleTones.includes(tone));
+    if (!nextTone) break;
+    visibleTones.push(nextTone);
+  }
+
+  const rowTones = visibleTones.slice(0, 5);
 
   const pills = [];
   if (isHomeScreen) {
-    visibleTones.forEach((tone) => pills.push({ tone, level: 1, type: "tone" }));
+    rowTones.forEach((tone) => pills.push({ tone, level: 1, type: "tone" }));
   } else {
-    visibleTones.forEach((tone) => {
+    rowTones.forEach((tone) => {
       if (tone === activeTone) {
         const stackMax = Math.min(toneCount + 1, MAX_SAME_TONE);
         for (let level = 1; level <= stackMax; level += 1) {
