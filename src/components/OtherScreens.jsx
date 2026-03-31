@@ -297,6 +297,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
         {!isGuest && <span style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>{items.length} / {saveLimit}</span>}
       </div>
 
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
       {isGuest ? (
         <div style={{ textAlign: "center", padding: "8px 16px 0" }}>
           <div style={{ position: "relative", marginBottom: 22, marginTop: 8 }}>
@@ -353,6 +354,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
           ))}
         </>
       )}
+      </div>
       <div style={{ marginTop: "auto" }}>
         <BottomNav active="saved" navigate={navigate} theme={theme} userTier={userTier} />
       </div>
