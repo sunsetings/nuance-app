@@ -10,7 +10,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
   const planRows = [
     { label: "Daily refines", value: isPremium ? `${PRO_DAILY_CAP} / day` : `${FREE_DAILY_CAP} / day`, accent: true },
     { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
-    { label: "Dictation", value: isPremium ? "On" : "Pro only", accent: false },
+    { label: "Dictation", value: "On", accent: true },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
     { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
     { label: "Saved tones", value: isPremium ? `Up to ${PRO_SAVED_TONE_LIMIT}` : "Pro only", accent: false },
@@ -151,7 +151,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
         { label: "Languages", guest: "13", free: "13", pro: "52" },
         { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
         { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
-        { label: "Dictation", guest: "—", free: "—", pro: "✓" },
+        { label: "Dictation", guest: "✓", free: "✓", pro: "✓" },
         { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
       ].map((row, i) => (
         <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>

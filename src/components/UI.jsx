@@ -214,10 +214,8 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 // ─── MIC BUTTON ──────────────────────────────────────────────
 export function MicButton({ userTier, onDictate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
-  const isPro = userTier === "pro";
   const [listening, setListening] = useState(false);
   const handleTap = () => {
-    if (!isPro) { onDictate("upgrade"); return; }
     if (listening) return;
     setListening(true);
 
@@ -250,22 +248,14 @@ export function MicButton({ userTier, onDictate, theme }) {
       <button onClick={handleTap} style={{
         width: 34, height: 34, borderRadius: "50%",
         background: "transparent",
-        border: `1px solid ${listening ? t.accent : isPro ? t.border : t.borderLight}`,
-        color: listening ? t.accent : isPro ? t.textDim : t.textFaint,
+        border: `1px solid ${listening ? t.accent : t.border}`,
+        color: listening ? t.accent : t.textDim,
         fontSize: 16, cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center",
         transition: "all 0.2s", position: "relative",
         boxShadow: listening ? `0 0 0 3px ${t.highlight}` : "none",
       }}>
-        <MicIcon size={15} color={listening ? t.accentText : isPro ? t.textDim : t.textFaint} />
-        {!isPro && (
-          <span style={{
-            position: "absolute", top: -5, right: -3,
-            background: t.proTag, color: "#000",
-            fontSize: 6, padding: "1px 4px", borderRadius: 5,
-            fontWeight: "bold", lineHeight: 1.3,
-          }}>PRO</span>
-        )}
+        <MicIcon size={15} color={listening ? t.accentText : t.textDim} />
       </button>
       <span style={{
         fontSize: 8, color: listening ? t.accent : "transparent",
