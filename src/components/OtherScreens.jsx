@@ -3,7 +3,7 @@ import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVE_WARN, F
 import { BottomNav } from "./UI.jsx";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setTheme, usageCount, user, onLogout, savedItems }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, usageCount, user, onLogout, savedItems }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
 
@@ -54,7 +54,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
         Sign out
       </button>
 
-      <BottomNav active="account" navigate={navigate} theme={theme} user={user} />
+      <BottomNav active="account" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
   );
 }
@@ -139,7 +139,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
     </div>
   );
 }// ─── SAVED FAVOURITES ────────────────────────────────────────
-export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItems, setSavedItems, user }) {
+export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const items = savedItems || [];
 
@@ -216,7 +216,7 @@ export function SavedScreen({ navigate, isPremium, theme, onOpenSaved, savedItem
           ))}
         </>
       )}
-      <BottomNav active="saved" navigate={navigate} theme={theme} user={user} />
+      <BottomNav active="saved" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
   );
 }

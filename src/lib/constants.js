@@ -1,54 +1,121 @@
 // ─── PLAN LIMITS ─────────────────────────────────────────────
+export const GUEST_TONES = ["Polite", "Casual"];
 export const FREE_TONES = ["Polite", "Casual", "Formal", "Gen A"];
 export const PRO_TONES = [
-  "Friendly", "Sincere", "Serious", "Succinct", "Assertive",
-  "Diplomatic", "Empathetic", "Apologetic", "Enthusiastic",
-  "Urgent", "Warm", "19th Century", "Playful", "Professional",
-  "Motivational", "Humble",
+  "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
+  "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
+  "19th Century", "Playful", "Professional", "Motivational", "Humble",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
+export const DEFAULT_PRO_TONES = ["Formal", "Professional", "Diplomatic", "Empathetic"];
 export const MAX_SAME_TONE = 3;
+export const GUEST_DAILY_CAP = 10;
 export const FREE_DAILY_CAP = 30;
 export const PRO_DAILY_CAP = 500;
 export const PRO_SAVE_LIMIT = 50;
 export const PRO_SAVE_WARN = 45;
-export const FREE_BOOKMARK_LIMIT = 2;
+export const FREE_SAVE_LIMIT = 3;
+export const FREE_BOOKMARK_LIMIT = 1;
 export const PRO_BOOKMARK_LIMIT = 6;
+export const PRO_SAVED_TONE_LIMIT = 5;
 export const CHAR_LIMIT = 500;
 
-export const ALL_LANGUAGES = [
-  "Arabic", "Bengali", "Bulgarian", "Catalan", "Croatian", "Czech",
-  "Danish", "Dutch", "English", "Estonian", "Finnish", "French",
-  "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Indonesian",
-  "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Malay",
-  "Mandarin", "Norwegian", "Persian", "Polish", "Portuguese", "Romanian",
-  "Russian", "Serbian", "Slovak", "Slovenian", "Spanish", "Swahili",
-  "Swedish", "Tagalog", "Tamil", "Telugu", "Thai", "Turkish",
-  "Ukrainian", "Urdu", "Vietnamese", "Welsh", "Afrikaans", "Albanian",
-  "Azerbaijani", "Georgian", "Icelandic", "Kazakh"
+export const BASE_LANGUAGES = [
+  "Arabic", "Dutch", "English", "French", "German", "Italian", "Japanese",
+  "Korean", "Mandarin", "Portuguese", "Russian", "Spanish", "Vietnamese",
 ];
-
-export const APP_LANGUAGES = [...ALL_LANGUAGES];
+export const PRO_LANGUAGES = [
+  "Amharic", "Azerbaijani", "Bengali", "Burmese", "Catalan", "Croatian",
+  "Czech", "Danish", "Finnish", "Greek", "Gujarati", "Haitian Creole",
+  "Hausa", "Hebrew", "Hindi", "Hungarian", "Indonesian", "Kazakh", "Khmer",
+  "Kurdish", "Malay", "Marathi", "Norwegian", "Persian", "Polish",
+  "Romanian", "Serbian", "Sinhala", "Swahili", "Swedish", "Tagalog",
+  "Tamil", "Telugu", "Thai", "Turkish", "Ukrainian", "Urdu", "Yoruba", "Zulu",
+];
+export const ALL_LANGUAGES = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 
 export const DEFAULT_FROM_LANG = "English";
 export const DEFAULT_TO_LANG = "Korean";
 
+export const TONE_CATEGORIES = [
+  { label: "Everyday", tones: ["Polite", "Casual", "Formal", "Friendly", "Gen A"] },
+  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious"] },
+  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
+  { label: "Expressive", tones: ["Enthusiastic", "Playful", "Urgent", "19th Century"] },
+];
+
+export const TONE_DESCRIPTIONS = {
+  Polite: "Respectful and considerate",
+  Casual: "Relaxed and everyday",
+  Formal: "Structured and official",
+  "Gen A": "Current, internet-native tone",
+  Friendly: "Warm and approachable",
+  Sincere: "Genuine and heartfelt",
+  Serious: "Measured and no-nonsense",
+  Succinct: "Short and to the point",
+  Assertive: "Confident and direct",
+  Diplomatic: "Tactful and balanced",
+  Empathetic: "Understanding and caring",
+  Apologetic: "Remorseful and soft",
+  Enthusiastic: "Energetic and excited",
+  Urgent: "Pressing and time-sensitive",
+  Warm: "Caring and personal",
+  "19th Century": "Formal Victorian prose",
+  Playful: "Light and witty",
+  Professional: "Clean and corporate-safe",
+  Motivational: "Energising and encouraging",
+  Humble: "Deferential and respectful",
+};
+
+export function getUserTier(user, isPremium) {
+  if (!user) return "guest";
+  return isPremium ? "pro" : "free";
+}
+
+export function getCapForTier(userTier) {
+  if (userTier === "pro") return PRO_DAILY_CAP;
+  if (userTier === "free") return FREE_DAILY_CAP;
+  return GUEST_DAILY_CAP;
+}
+
+export function getBookmarkLimitForTier(userTier) {
+  return userTier === "pro" ? PRO_BOOKMARK_LIMIT : userTier === "free" ? FREE_BOOKMARK_LIMIT : 0;
+}
+
+export function getUnlockedTones(userTier) {
+  if (userTier === "pro") return ALL_TONES;
+  if (userTier === "free") return FREE_TONES;
+  return GUEST_TONES;
+}
+
+export function getToneStatus(tone, userTier) {
+  if (getUnlockedTones(userTier).includes(tone)) return "unlocked";
+  if (FREE_TONES.includes(tone)) return "free_locked";
+  return "pro_locked";
+}
+
 // ─── THEMES ──────────────────────────────────────────────────
 export const THEMES = {
   dark: {
-    bg:"#050505", phoneBg:"#0f0f0f", surface:"#181818", surface2:"#222",
-    border:"#333", border2:"#444",
-    text:"#d8d4cc", textMuted:"#edeae4", textDim:"#d8d4cc", textFaint:"#b0aca6",
-    accent:"#c8f0a0", accentText:"#0a1a00",
-    highlight:"#0e1e0e", highlightBorder:"#304e30", highlightText:"#c8e8a0",
-    notch:"#1c1c1c", proTag:"#e8c547", swipeHint:"#b0aca6",
+    bg:"#060606", phoneBg:"#0c0c0c", surface:"#161616", surface2:"#1e1e1e", surface3:"#121212",
+    border:"#2a2a2a", border2:"#383838", borderLight:"#202020",
+    text:"#f0ece0", textMuted:"#cac6ba", textDim:"#a7a39d", textFaint:"#97938c",
+    accent:"#c8f0a0", accentText:"#0a1a00", accentDim:"#72a852",
+    highlight:"#0c1c0c", highlightBorder:"#2a4a2a", highlightText:"#b8e090",
+    highlight2:"#0a1810", highlightBorder2:"#1e3828", highlightText2:"#90c878",
+    notch:"#181818", proTag:"#d4b040", freeTag:"#5a98e0",
+    cOk:"#97938c", cWarn:"#d4b040", cCrit:"#c86060",
+    inputBg:"#101010",
   },
   light: {
-    bg:"#e8e4da", phoneBg:"#faf8f3", surface:"#f0ece3", surface2:"#e6e2d8",
-    border:"#d0ccbf", border2:"#b8b4a8",
-    text:"#1a1a0a", textMuted:"#3a3830", textDim:"#6a6860", textFaint:"#9a9890",
-    accent:"#2a7a2a", accentText:"#f0ece0",
-    highlight:"#dff0df", highlightBorder:"#8ac08a", highlightText:"#1a4a1a",
-    notch:"#ddd9d0", proTag:"#a07010", swipeHint:"#3a3830",
+    bg:"#e4e0d6", phoneBg:"#f8f4ef", surface:"#eeeae0", surface2:"#e4e0d6", surface3:"#f2eee4",
+    border:"#cac6ba", border2:"#aea8a0", borderLight:"#dedad0",
+    text:"#1a180e", textMuted:"#3a3828", textDim:"#5a5848", textFaint:"#7a7868",
+    accent:"#2a7020", accentText:"#f0ece0", accentDim:"#3a8a30",
+    highlight:"#daeeda", highlightBorder:"#7ab87a", highlightText:"#1a401a",
+    highlight2:"#e4f0e0", highlightBorder2:"#90c890", highlightText2:"#204020",
+    notch:"#d8d4c8", proTag:"#906010", freeTag:"#1a5890",
+    cOk:"#7a7868", cWarn:"#906010", cCrit:"#a83030",
+    inputBg:"#f2ede4",
   },
 };

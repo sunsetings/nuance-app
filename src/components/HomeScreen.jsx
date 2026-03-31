@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { THEMES, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, CHAR_LIMIT, FREE_DAILY_CAP, DEFAULT_FROM_LANG, DEFAULT_TO_LANG } from "../lib/constants.js";
+import { THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, getBookmarkLimitForTier, getCapForTier } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneRow } from "./ToneRow.jsx";
@@ -8,9 +8,9 @@ const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
 
-export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate, user }) {
+export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate }) {
   const t = THEMES[theme] || THEMES.dark;
-  const bookmarkLimit = isPremium ? PRO_BOOKMARK_LIMIT : FREE_BOOKMARK_LIMIT;
+  const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
   // Load last-used languages from localStorage, fall back to defaults
   const [fromLang, setFromLang] = useState(() => localStorage.getItem(LS_FROM) || DEFAULT_FROM_LANG);
@@ -27,11 +27,13 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
   const [swapping, setSwapping] = useState(false);
+  const [openLang, setOpenLang] = useState(null);
   const textareaRef = useRef(null);
 
   const isRefine = mode === "refine";
   const hasText = text.trim().length > 0;
-  const atLimit = !isPremium && usageCount >= FREE_DAILY_CAP;
+  const cap = getCapForTier(userTier);
+  const atLimit = usageCount >= cap;
 
   // Persist language choices whenever they change
   useEffect(() => { localStorage.setItem(LS_FROM, fromLang); }, [fromLang]);
@@ -39,7 +41,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
   useEffect(() => { localStorage.setItem(LS_BOOKMARKS, JSON.stringify(bookmarked)); }, [bookmarked]);
 
   const toggleBM = lang => setBookmarked(prev =>
-    prev.includes(lang) ? prev.filter(l => l !== lang)
+    userTier === "guest" ? prev : prev.includes(lang) ? prev.filter(l => l !== lang)
     : prev.length < bookmarkLimit ? [...prev, lang] : prev
   );
 
@@ -78,20 +80,28 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
         <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
-        {isPremium ? (
+        {userTier === "pro" ? (
           <button onClick={() => navigate("account")} style={{ background: "transparent", border: `1px solid ${t.highlightBorder}`, borderRadius: 10, padding: "5px 11px", color: t.accent, fontSize: 11, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>
             ✦ Pro
           </button>
-        ) : userHasAccountLabel(isPremium, navigate, t)}
+        ) : userTier === "free" ? (
+          <button onClick={() => navigate("upgrade")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+            ✦ Go Pro
+          </button>
+        ) : (
+          <button onClick={() => navigate("account")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+            Sign up free
+          </button>
+        )}
       </div>
       <div style={{ marginBottom: 8, minHeight: 14 }}>
-        <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
+        <RefineCounter usageCount={usageCount} userTier={userTier} theme={theme} />
       </div>
 
       {/* Language bar */}
       <div style={{ marginBottom: 11, position: "relative", zIndex: 300 }}>
         <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, background: t.surface, borderRadius: 12 }}>
-          <LangSelector label="FROM" value={fromLang} onChange={setFromLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
+          <LangSelector label="FROM" value={fromLang} onChange={setFromLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="from" navigate={navigate} theme={theme} />
           <button onClick={swapLanguages} style={{
             background: "transparent", border: "none",
             width: 28, height: 28,
@@ -100,13 +110,13 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
             flexShrink: 0, transition: "transform 0.3s",
             transform: swapping ? "rotate(180deg)" : "rotate(0deg)",
           }}>⇄</button>
-          <LangSelector label="TO" value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
+          <LangSelector label="TO" value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="to" navigate={navigate} theme={theme} />
         </div>
-        {bookmarked.length > 0 && (
+        {userTier !== "guest" && bookmarked.length > 0 && (
           <div style={{ padding: "4px 14px 0", display: "flex", justifyContent: "flex-end" }}>
             <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
               {bookmarked.length}/{bookmarkLimit} bookmarked
-              {!isPremium && bookmarked.length >= bookmarkLimit && (
+              {userTier === "free" && bookmarked.length >= bookmarkLimit && (
                 <span style={{ color: t.proTag }}>
                   {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 6</span>
                 </span>
@@ -137,8 +147,13 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
           <ToneRow
             activeTone={tone} toneCount={1}
             onSelect={setTone} onSetLevel={() => {}}
-            isPremium={isPremium} disabled={false}
-            isHomeScreen={true} theme={theme}
+            onOpenSheet={() => {}}
+            userTier={userTier}
+            favourites={[]}
+            disabled={false}
+            isHomeScreen={true}
+            navigate={navigate}
+            theme={theme}
           />
         </div>
       )}
@@ -186,7 +201,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
             cursor: "pointer", transition: "all 0.2s",
             letterSpacing: "0.04em",
           }}>Paste</button>
-          <MicButton isPremium={isPremium} onDictate={handleDictate} theme={theme} />
+          <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} />
           <div style={{ width: 48 }} />
         </div>
       </div>
@@ -200,7 +215,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          ✦ Daily limit reached (30) — Go Pro for 500/day
+          ✦ Daily limit reached ({cap}) — Go Pro for 500/day
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
@@ -218,15 +233,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
         </button>
       )}
 
-      <BottomNav active="home" navigate={navigate} theme={theme} user={user} />
+      <BottomNav active="home" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
-  );
-}
-
-function userHasAccountLabel(isPremium, navigate, t) {
-  return (
-    <button onClick={() => navigate("upgrade")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-      ✦ Go Pro
-    </button>
   );
 }

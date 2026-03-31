@@ -1,116 +1,242 @@
-import { useState, useEffect, useRef } from "react";
-import { THEMES, ALL_LANGUAGES } from "../lib/constants.js";
+import { useState } from "react";
+import { BASE_LANGUAGES, PRO_LANGUAGES, THEMES } from "../lib/constants.js";
 
-export function LangSelector({ label, value, onChange, bookmarked, onToggleBookmark, bookmarkLimit, theme }) {
+function SmallHeart({ size = 14, color, filled = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <path
+        d="M7 12C7 12 2 8.5 2 5C2 3.5 3.2 2.5 4.7 2.5C5.6 2.5 6.4 2.9 7 3.6C7.6 2.9 8.4 2.5 9.3 2.5C10.8 2.5 12 3.5 12 5C12 8.5 7 12 7 12Z"
+        stroke={color}
+        strokeWidth="1.4"
+        fill={filled ? color : "none"}
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function LangSelector({
+  label,
+  value,
+  onChange,
+  bookmarked,
+  onToggleBookmark,
+  bookmarkLimit,
+  userTier,
+  openId,
+  setOpenId,
+  myId,
+  navigate,
+  theme,
+}) {
   const t = THEMES[theme] || THEMES.dark;
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const [search, setSearch] = useState("");
+  const open = openId === myId;
+  const isPro = userTier === "pro";
+  const canBookmarkAny = userTier !== "guest";
+  const canBookmark = bookmarked.length < bookmarkLimit;
 
-  // Close when clicking outside
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    document.addEventListener("touchstart", handler);
-    return () => {
-      document.removeEventListener("mousedown", handler);
-      document.removeEventListener("touchstart", handler);
-    };
-  }, [open]);
+  const filterList = (list) => (
+    search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
+  );
 
-  const canAdd = bookmarked.length < bookmarkLimit;
+  const bookmarkedFiltered = bookmarked.filter((lang) => filterList([lang]).length > 0);
+  const baseFiltered = filterList(BASE_LANGUAGES.filter((lang) => !bookmarked.includes(lang)));
+  const proFiltered = filterList(PRO_LANGUAGES.filter((lang) => !bookmarked.includes(lang)));
 
-  // Bookmarked languages float to the top, rest alphabetical
-  const sorted = [...ALL_LANGUAGES].sort((a, b) => {
-    const aB = bookmarked.includes(a), bB = bookmarked.includes(b);
-    if (aB && !bB) return -1;
-    if (!aB && bB) return 1;
-    return a.localeCompare(b);
-  });
+  const handleOpen = () => {
+    if (open) {
+      setOpenId(null);
+      setSearch("");
+      return;
+    }
+    setOpenId(myId);
+    setSearch("");
+  };
+
+  const handleClose = () => {
+    setOpenId(null);
+    setSearch("");
+  };
 
   return (
-    <div ref={ref} style={{ flex: 1, position: "relative" }}>
+    <div style={{ flex: 1, position: "relative" }}>
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={handleOpen}
         style={{
-          width: "100%", background: "transparent", border: "none",
-          color: t.text, fontSize: 13, fontFamily: "'Lora',Georgia,serif",
-          cursor: "pointer", padding: 0,
-          display: "flex", alignItems: "center", gap: 4,
-        }}>
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          color: t.text,
+          fontSize: 13,
+          cursor: "pointer",
+          padding: 0,
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          fontFamily: "'Lora',Georgia,serif",
+        }}
+      >
         <span style={{ flex: 1, textAlign: label === "TO" ? "right" : "left" }}>{value}</span>
-        {bookmarked.includes(value) && <span style={{ fontSize: 9, color: t.proTag }}>♥</span>}
-        <span style={{ color: t.textDim, fontSize: 9 }}>▾</span>
+        {bookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
+        {PRO_LANGUAGES.includes(value) && !isPro && (
+          <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
+            PRO
+          </span>
+        )}
+        <span style={{ color: t.textFaint, fontSize: 10, marginLeft: 2 }}>{open ? "▴" : "▾"}</span>
       </button>
 
       {open && (
-        <div style={{
-          position: "absolute",
-          top: "calc(100% + 10px)",
-          left: label === "TO" ? "auto" : "-14px",
-          right: label === "TO" ? "-14px" : "auto",
-          width: 220,
-          background: theme === "light" ? "#fff" : "#1c1c1c",
-          border: `1px solid ${t.border2}`,
-          borderRadius: 14, zIndex: 400, overflow: "hidden",
-          boxShadow: theme === "light" ? "0 8px 24px rgba(0,0,0,0.12)" : "0 12px 32px rgba(0,0,0,0.6)",
-        }}>
-          {/* Bookmark counter */}
-          <div style={{
-            padding: "9px 14px 8px",
-            borderBottom: `1px solid ${t.border}`,
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-          }}>
-            <span style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.1em" }}>
-              ♥ {bookmarked.length}/{bookmarkLimit} bookmarks used
-            </span>
-            {!canAdd && <span style={{ fontSize: 9, color: t.proTag }}>limit reached</span>}
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 12px)",
+            left: label === "TO" ? "auto" : "-14px",
+            right: label === "TO" ? "-14px" : "auto",
+            width: 244,
+            background: theme === "light" ? "#faf6ee" : "#1a1a1a",
+            borderRadius: 14,
+            zIndex: 400,
+            overflow: "hidden",
+            boxShadow: theme === "light" ? "0 8px 32px rgba(0,0,0,0.1)" : "0 12px 40px rgba(0,0,0,0.7)",
+          }}
+        >
+          <div style={{ padding: "10px 12px 8px" }}>
+            <input
+              autoFocus
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search languages…"
+              style={{
+                width: "100%",
+                background: t.surface2,
+                border: "none",
+                borderRadius: 8,
+                padding: "7px 11px",
+                color: t.text,
+                fontSize: 12,
+                outline: "none",
+                fontFamily: "'Lora',Georgia,serif",
+              }}
+            />
           </div>
 
-          <div style={{ maxHeight: 230, overflowY: "auto" }}>
-            {sorted.map((lang, i) => {
-              const isB = bookmarked.includes(lang), isSel = lang === value;
-              const isFirst = !isB && i > 0 && bookmarked.includes(sorted[i - 1]);
-              return (
-                <div key={lang}>
-                  {isFirst && bookmarked.length > 0 && (
-                    <div style={{ height: 1, background: t.border, margin: "0 12px" }} />
-                  )}
-                  <div style={{
-                    display: "flex", alignItems: "center", padding: "9px 14px",
-                    background: isSel ? t.surface2 : "transparent",
-                  }}>
+          {!canBookmarkAny && (
+            <div style={{ padding: "6px 14px 8px", borderBottom: `1px solid ${t.borderLight}` }}>
+              <button
+                onClick={() => {
+                  handleClose();
+                  navigate("account");
+                }}
+                style={{ background: "none", border: "none", cursor: "pointer", fontSize: 10, color: t.freeTag, padding: 0, letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}
+              >
+                ✦ Sign up free to bookmark languages
+              </button>
+            </div>
+          )}
+
+          {canBookmarkAny && (
+            <div style={{ padding: "4px 14px 4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
+                {bookmarked.length}/{bookmarkLimit} bookmarked
+              </span>
+              {!canBookmark && <span style={{ fontSize: 9, color: t.proTag }}>limit reached</span>}
+            </div>
+          )}
+
+          <div style={{ maxHeight: 240, overflowY: "auto" }}>
+            {bookmarkedFiltered.length > 0 && (
+              <div>
+                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Bookmarked</div>
+                {bookmarkedFiltered.map((lang) => (
+                  <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
                     <button
-                      onClick={() => { onChange(lang); setOpen(false); }}
+                      onClick={() => {
+                        onChange(lang);
+                        handleClose();
+                      }}
                       style={{
-                        flex: 1, background: "none", border: "none",
-                        color: isSel ? t.accent : t.textMuted,
-                        fontSize: 13, fontFamily: "'Lora',Georgia,serif",
-                        cursor: "pointer", textAlign: "left",
-                        display: "flex", alignItems: "center", gap: 6,
-                      }}>
-                      {isB && <span style={{ fontSize: 9, color: t.proTag }}>♥</span>}
+                        flex: 1,
+                        background: "none",
+                        border: "none",
+                        color: lang === value ? t.accent : t.textMuted,
+                        fontSize: 13,
+                        cursor: "pointer",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontFamily: "'Lora',Georgia,serif",
+                      }}
+                    >
+                      <SmallHeart size={10} color={t.proTag} filled />
                       {lang}
                     </button>
-                    <button
-                      onClick={() => { if (isB || canAdd) onToggleBookmark(lang); }}
-                      style={{
-                        background: "none", border: "none",
-                        color: isB ? t.proTag : canAdd ? t.textDim : t.border,
-                        fontSize: 15,
-                        cursor: (isB || canAdd) ? "pointer" : "default",
-                        padding: "0 2px",
-                      }}>
-                      {isB ? "♥" : "♡"}
+                    <button onClick={() => onToggleBookmark(lang)} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center" }}>
+                      <SmallHeart size={13} color={t.proTag} filled />
                     </button>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            )}
+
+            {baseFiltered.length > 0 && (
+              <div>
+                {bookmarkedFiltered.length > 0 && <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />}
+                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Available</div>
+                {baseFiltered.map((lang) => (
+                  <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
+                    <button
+                      onClick={() => {
+                        onChange(lang);
+                        handleClose();
+                      }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      {lang}
+                    </button>
+                    {canBookmarkAny && (
+                      <button
+                        onClick={() => onToggleBookmark(lang)}
+                        style={{ background: "none", border: "none", cursor: canBookmark ? "pointer" : "default", padding: "2px", display: "flex", alignItems: "center", opacity: canBookmark ? 1 : 0.3 }}
+                      >
+                        <SmallHeart size={13} color={t.textFaint} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {proFiltered.length > 0 && (
+              <div>
+                <div style={{ height: 1, background: t.borderLight, margin: "4px 12px" }} />
+                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.proTag, letterSpacing: "0.1em", textTransform: "uppercase" }}>Pro languages</div>
+                {proFiltered.map((lang) => (
+                  <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", opacity: isPro ? 1 : 0.5 }}>
+                    <button
+                      onClick={() => {
+                        if (!isPro) {
+                          navigate("upgrade");
+                          return;
+                        }
+                        onChange(lang);
+                        handleClose();
+                      }}
+                      style={{ flex: 1, background: "none", border: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: isPro ? t.textMuted : t.textDim, fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      {lang}
+                      <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>PRO</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {bookmarkedFiltered.length === 0 && baseFiltered.length === 0 && proFiltered.length === 0 && (
+              <div style={{ padding: "18px 14px", textAlign: "center", fontSize: 12, color: t.textDim }}>No languages found</div>
+            )}
           </div>
         </div>
       )}

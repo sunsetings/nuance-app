@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { THEMES } from "../lib/constants.js";
-import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
+import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function QuickResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
+export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
@@ -75,7 +75,6 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
           <span style={{ fontSize: 15, fontWeight: "bold" }}>Translation</span>
           {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
         </div>
-        <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
       </div>
 
       {error && (
@@ -130,7 +129,7 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
         </div>
       ))}
 
-      <ShareSaveRow isPremium={isPremium} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} theme={theme} />
+      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
 
       {!fromSaved && (
         <button onClick={() => navigate("home")} style={{
@@ -144,7 +143,7 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
         </button>
       )}
 
-      <BottomNav active="quickresults" navigate={navigate} theme={theme} user={user} />
+      <BottomNav active="quickresults" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
   );
 }

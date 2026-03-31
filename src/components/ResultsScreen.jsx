@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { THEMES, FREE_TONES, MAX_SAME_TONE, FREE_DAILY_CAP } from "../lib/constants.js";
+import { THEMES, MAX_SAME_TONE, getToneStatus } from "../lib/constants.js";
 import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function ResultsScreen({ navigate, isPremium, theme, initialData, savedItem, usageCount, setUsageCount, apiKey, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
+export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, apiKey, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
@@ -34,8 +34,6 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
   );
   const saved = !!existingSave;
 
-  const atLimit = !isPremium && usageCount >= FREE_DAILY_CAP;
-
   const showToast = (msg) => {
     setToastMessage(msg);
     setToastVisible(true);
@@ -44,8 +42,6 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
 
   const doRefine = async (tone, count) => {
     if (!apiKey) { setError("No API key — add your OpenAI key in settings."); return; }
-    if (atLimit && !isPremium) { navigate("upgrade"); return; }
-
     setLoading(true);
     setError(null);
     try {
@@ -71,6 +67,11 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
   };
 
   const handleSelect = async tone => {
+    const status = getToneStatus(tone, userTier);
+    if (status !== "unlocked") {
+      navigate(status === "free_locked" ? "account" : "upgrade");
+      return;
+    }
     if (tone === activeTone) {
       if (toneCount >= MAX_SAME_TONE) return;
       const newCount = toneCount + 1;
@@ -195,7 +196,7 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
           <span style={{ fontSize: 15, fontWeight: "bold" }}>Results</span>
           {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
         </div>
-        <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
+        <ResultsHeaderCTA userTier={userTier} navigate={navigate} theme={theme} />
       </div>
 
       {/* Tone row */}
@@ -204,8 +205,13 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
         <ToneRow
           activeTone={activeTone} toneCount={toneCount}
           onSelect={handleSelect} onSetLevel={handleSetLevel}
-          isPremium={isPremium} disabled={loading}
-          isHomeScreen={false} recentTones={recentTones} theme={theme}
+          onOpenSheet={() => {}}
+          userTier={userTier}
+          favourites={recentTones}
+          disabled={loading}
+          isHomeScreen={false}
+          navigate={navigate}
+          theme={theme}
         />
       </div>
 
@@ -237,8 +243,19 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
         </div>
       ))}
 
-      <ShareSaveRow isPremium={isPremium} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} theme={theme} />
-      <BottomNav active="results" navigate={navigate} theme={theme} user={user} />
+      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
+      <BottomNav active="results" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
   );
+}
+
+function ResultsHeaderCTA({ userTier, navigate, theme }) {
+  const t = THEMES[theme] || THEMES.dark;
+  if (userTier === "guest") {
+    return <button onClick={() => navigate("account")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock free tones →</button>;
+  }
+  if (userTier === "free") {
+    return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock Pro tones →</button>;
+  }
+  return <span style={{ fontSize: 10, color: t.accentDim, letterSpacing: "0.02em" }}>✦ Pro — all tones unlocked</span>;
 }

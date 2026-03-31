@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { THEMES } from "./lib/constants.js";
+import { getUserTier, THEMES } from "./lib/constants.js";
 import { supabase } from "./lib/supabase.js";
 import { PhoneFrame } from "./components/UI.jsx";
 import { AuthScreen } from "./components/AuthScreen.jsx";
@@ -33,6 +33,7 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const t = THEMES[theme] || THEMES.dark;
+  const userTier = getUserTier(user, isPremium);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -127,7 +128,7 @@ export default function App() {
     }
   };
 
-  const props = { navigate, isPremium, theme, usageCount, user };
+  const props = { navigate, isPremium, userTier, theme, usageCount, user };
 
   const renderScreen = () => {
     switch (screen) {

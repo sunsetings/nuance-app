@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES } from "../lib/constants.js";
+import { THEMES, FREE_DAILY_CAP, FREE_SAVE_LIMIT, GUEST_DAILY_CAP, PRO_DAILY_CAP } from "../lib/constants.js";
 
 // ─── TOAST ───────────────────────────────────────────────────
 export function Toast({ message, visible, theme }) {
@@ -75,25 +75,25 @@ export function PhoneFrame({ children, theme }) {
     <div style={{
       width: 375, height: 780,
       background: t.phoneBg, borderRadius: 44,
-      border: `10px solid ${t.surface2}`,
+      border: `8px solid ${t.surface2}`,
       boxShadow: theme === "light"
-        ? "0 0 0 1px #bbb,0 40px 80px rgba(0,0,0,0.15)"
-        : "0 0 0 1px #333,0 48px 96px rgba(0,0,0,0.8)",
+        ? "0 0 0 1px #bbb,0 40px 80px rgba(0,0,0,0.12)"
+        : "0 0 0 1px #222,0 48px 96px rgba(0,0,0,0.9)",
       overflow: "hidden", position: "relative",
       flexShrink: 0, transition: "all 0.3s",
     }}>
       {/* Notch */}
       <div style={{
         position: "absolute", top: 0, left: "50%",
-        transform: "translateX(-50%)", width: 126, height: 30,
-        background: t.notch, borderRadius: "0 0 20px 20px",
+        transform: "translateX(-50%)", width: 120, height: 28,
+        background: t.notch, borderRadius: "0 0 18px 18px",
         zIndex: 100, display: "flex", alignItems: "center",
         justifyContent: "center", gap: 7,
       }}>
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: t.border2 }} />
-        <div style={{ width: 42, height: 6, borderRadius: 4, background: t.border2 }} />
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: t.border2 }} />
+        <div style={{ width: 38, height: 5, borderRadius: 3, background: t.border2 }} />
       </div>
-      <div style={{ height: "100%", overflowY: "auto", paddingTop: 32 }}>
+      <div style={{ height: "100%", overflowY: "auto", paddingTop: 30 }}>
         {children}
       </div>
     </div>
@@ -101,27 +101,57 @@ export function PhoneFrame({ children, theme }) {
 }
 
 // ─── BOTTOM NAV ──────────────────────────────────────────────
-export function BottomNav({ active, navigate, theme, user }) {
+function SmallHeart({ size = 14, color, filled = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <path
+        d="M7 12C7 12 2 8.5 2 5C2 3.5 3.2 2.5 4.7 2.5C5.6 2.5 6.4 2.9 7 3.6C7.6 2.9 8.4 2.5 9.3 2.5C10.8 2.5 12 3.5 12 5C12 8.5 7 12 7 12Z"
+        stroke={color}
+        strokeWidth="1.4"
+        fill={filled ? color : "none"}
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MicIcon({ size = 15, color }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 17" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <rect x="5.5" y="1.5" width="5" height="8" rx="2.5" stroke={color} strokeWidth="1.35" fill="none" />
+      <path d="M3 9C3 11.761 5.239 14 8 14C10.761 14 13 11.761 13 9" stroke={color} strokeWidth="1.35" strokeLinecap="round" fill="none" />
+      <line x1="8" y1="14" x2="8" y2="15.5" stroke={color} strokeWidth="1.35" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function BottomNav({ active, navigate, theme, userTier }) {
   const t = THEMES[theme] || THEMES.dark;
+  const isGuest = userTier === "guest";
   return (
     <div style={{
       display: "flex", justifyContent: "space-around",
       paddingTop: 10, paddingBottom: 2,
-      borderTop: `1px solid ${t.border}`, marginTop: 12,
+      borderTop: `1px solid ${t.borderLight}`, marginTop: 14,
     }}>
       {[
         { id: "home", icon: "⌂", label: "Home" },
-        { id: "saved", icon: "♥", label: "Saved" },
-        { id: "account", icon: "◎", label: user ? "Account" : "Sign in" },
+        { id: "saved", icon: "♥", label: "Saved", heart: true },
+        { id: "account", icon: "◎", label: isGuest ? "Sign in" : "Account" },
       ].map(item => (
-        <button key={item.id} onClick={() => navigate(item.id)} style={{
+        <button key={item.id} onClick={() => navigate(isGuest && item.id === "account" ? "account" : item.id)} style={{
           background: "none", border: "none", cursor: "pointer",
           color: active === item.id ? t.accent : t.textDim,
-          fontSize: 10, display: "flex", flexDirection: "column",
+          fontSize: 9, display: "flex", flexDirection: "column",
           alignItems: "center", gap: 3, transition: "color 0.15s",
+          letterSpacing: "0.06em", textTransform: "uppercase",
           fontFamily: "'Lora',Georgia,serif",
         }}>
-          <span style={{ fontSize: item.id === "saved" ? 19 : 17 }}>{item.icon}</span>
+          {item.heart ? (
+            <SmallHeart size={16} color={active === item.id ? t.accent : t.textDim} filled={active === item.id} />
+          ) : (
+            <span style={{ fontSize: 16 }}>{item.icon}</span>
+          )}
           {item.label}
         </button>
       ))}
@@ -172,11 +202,12 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 }
 
 // ─── MIC BUTTON ──────────────────────────────────────────────
-export function MicButton({ isPremium, onDictate, theme }) {
+export function MicButton({ userTier, onDictate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const isPro = userTier === "pro";
   const [listening, setListening] = useState(false);
   const handleTap = () => {
-    if (!isPremium) { onDictate("upgrade"); return; }
+    if (!isPro) { onDictate("upgrade"); return; }
     if (listening) return;
     setListening(true);
 
@@ -207,22 +238,17 @@ export function MicButton({ isPremium, onDictate, theme }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
       <button onClick={handleTap} style={{
-        width: 38, height: 38, borderRadius: "50%",
+        width: 34, height: 34, borderRadius: "50%",
         background: "transparent",
-        border: `1.5px solid ${listening ? t.accent : isPremium ? t.border2 : t.border}`,
-        color: listening ? t.accent : isPremium ? t.textMuted : t.textFaint,
+        border: `1px solid ${listening ? t.accent : isPro ? t.border : t.borderLight}`,
+        color: listening ? t.accent : isPro ? t.textDim : t.textFaint,
         fontSize: 16, cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center",
         transition: "all 0.2s", position: "relative",
-        boxShadow: listening ? `0 0 0 4px ${t.highlight}` : "none",
+        boxShadow: listening ? `0 0 0 3px ${t.highlight}` : "none",
       }}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <rect x="5.25" y="2.25" width="5.5" height="8" rx="2.75" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M3.75 7.75C3.75 10.0972 5.65279 12 8 12C10.3472 12 12.25 10.0972 12.25 7.75" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          <path d="M8 12V14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          <path d="M5.75 14H10.25" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-        {!isPremium && (
+        <MicIcon size={15} color={listening ? t.accentText : isPro ? t.textDim : t.textFaint} />
+        {!isPro && (
           <span style={{
             position: "absolute", top: -5, right: -3,
             background: t.proTag, color: "#000",
@@ -234,7 +260,7 @@ export function MicButton({ isPremium, onDictate, theme }) {
       <span style={{
         fontSize: 8, color: listening ? t.accent : "transparent",
         letterSpacing: "0.05em", whiteSpace: "nowrap",
-        transition: "color 0.2s", height: 10,
+        transition: "color 0.2s", height: 9,
         fontFamily: "'Lora',Georgia,serif",
       }}>
         {listening ? "listening…" : "​"}
@@ -244,74 +270,70 @@ export function MicButton({ isPremium, onDictate, theme }) {
 }
 
 // ─── SHARE + SAVE ROW ────────────────────────────────────────
-export function ShareSaveRow({ isPremium, saved, onSave, onShare, navigate, theme }) {
+export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveCount = 0, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const handleSave = () => {
+    if (userTier === "guest") {
+      navigate("account");
+      return;
+    }
+    if (userTier === "free" && saveCount >= FREE_SAVE_LIMIT) {
+      navigate("upgrade");
+      return;
+    }
+    onSave();
+  };
+  const saveLabel = userTier === "guest" ? "Sign in to save" : saved ? "Saved" : `Save${userTier === "free" ? ` (${saveCount}/${FREE_SAVE_LIMIT})` : ""}`;
   return (
-    <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+    <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
       <button onClick={onShare} style={{
-        flex: 1, padding: "12px", background: t.surface,
-        border: `1px solid ${t.border}`, borderRadius: 11,
-        color: t.textMuted, fontSize: 13,
+        flex: 1, padding: "11px", background: "transparent",
+        border: `1px solid ${t.border}`, borderRadius: 10,
+        color: t.textDim, fontSize: 12,
         fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
       }}>
-        <span style={{ fontSize: 14 }}>↗</span> Share
+        <span style={{ fontSize: 13 }}>↗</span> Share
       </button>
       <button
-        onClick={() => { if (!isPremium) { navigate("upgrade"); return; } onSave(); }}
+        onClick={handleSave}
         style={{
-          flex: 1, padding: "12px",
-          background: saved ? t.highlight : t.surface,
+          flex: 1, padding: "11px",
+          background: saved ? t.highlight : "transparent",
           border: `1px solid ${saved ? t.highlightBorder : t.border}`,
-          borderRadius: 11, color: saved ? t.accent : t.textMuted,
-          fontSize: 13, fontFamily: "'Lora',Georgia,serif",
+          borderRadius: 10, color: saved ? t.highlightText : t.textDim,
+          fontSize: userTier === "guest" ? 10 : 12, fontFamily: "'Lora',Georgia,serif",
           cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center",
           gap: 7, transition: "all 0.2s",
         }}>
-        <span style={{ fontSize: 22, lineHeight: 1, color: saved ? t.accent : theme === "light" ? "#bbb" : "#666" }}>
-          {saved ? "♥" : "♡"}
-        </span>
-        <span>{saved ? "Saved" : "Save"}</span>
-        {!isPremium && (
-          <span style={{ fontSize: 8, background: t.proTag, color: "#000", padding: "1px 5px", borderRadius: 4, fontWeight: "bold", marginLeft: 2 }}>PRO</span>
-        )}
+        <SmallHeart size={14} color={saved ? t.accent : t.textFaint} filled={saved} />
+        <span>{saveLabel}</span>
       </button>
     </div>
   );
 }
 
 // ─── REFINE COUNTER (top right, free tier) ───────────────────
-export function RefineCounter({ isPremium, usageCount, navigate, theme }) {
+export function RefineCounter({ usageCount, userTier, theme }) {
   const t = THEMES[theme] || THEMES.dark;
-  const FREE_DAILY_CAP = 30;
-  const nearLimit = usageCount >= FREE_DAILY_CAP - 5;
-
-  if (isPremium) {
-    return (
-      <button onClick={() => navigate("upgrade")} style={{
-        background: "transparent",
-        border: `1px solid ${t.highlightBorder}`,
-        borderRadius: 12, padding: "4px 10px",
-        color: t.accent, fontSize: 11,
-        fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
-        display: "flex", alignItems: "center", gap: 5,
-      }}>
-        ✦ Pro · 500/day
-      </button>
-    );
-  }
-
+  if (userTier === "pro") return null;
+  const cap = userTier === "free" ? FREE_DAILY_CAP : GUEST_DAILY_CAP;
+  const remaining = Math.max(0, cap - usageCount);
+  const pct = usageCount / cap;
+  let color = t.cOk;
+  if (pct >= 0.85) color = t.cCrit;
+  else if (pct >= 0.6) color = t.cWarn;
   return (
-    <button onClick={() => navigate("upgrade")} style={{
-      background: nearLimit ? t.highlight : "transparent",
-      border: `1px solid ${nearLimit ? t.highlightBorder : t.border}`,
-      borderRadius: 12, padding: "4px 10px",
-      color: nearLimit ? t.accent : t.textDim, fontSize: 11,
-      fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
-      transition: "all 0.2s",
-    }}>
-      {usageCount}/{FREE_DAILY_CAP} refines
-    </button>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
+      <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.04em" }}>
+        {remaining} of {cap} refines
+      </span>
+      {remaining <= 3 && (
+        <span style={{ fontSize: 9, color: t.proTag }}>
+          {userTier === "guest" ? "· sign up for more" : "· upgrade for 500"}
+        </span>
+      )}
+    </div>
   );
 }
