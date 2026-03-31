@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUserTier, PRO_SAVED_TONE_LIMIT, THEMES } from "./lib/constants.js";
 import { supabase } from "./lib/supabase.js";
-import { PhoneFrame } from "./components/UI.jsx";
+import { PhoneFrame, Toast } from "./components/UI.jsx";
 import { AuthScreen } from "./components/AuthScreen.jsx";
 import { HomeScreen } from "./components/HomeScreen.jsx";
 import { ResultsScreen } from "./components/ResultsScreen.jsx";
@@ -42,6 +42,8 @@ export default function App() {
       return [];
     }
   });
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [savedItems, setSavedItems] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -122,13 +124,19 @@ export default function App() {
     setRecentTones(prev => [tone, ...prev.filter(t => t !== tone)].slice(0, 5));
   };
 
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2200);
+  };
+
   const toggleSavedTone = (tone) => {
     setSavedTones((prev) => {
       if (prev.includes(tone)) {
         return prev.filter((item) => item !== tone);
       }
       if (prev.length >= PRO_SAVED_TONE_LIMIT) {
-        window.alert("You can save up to 5 tones. Unsave one to make room for another.");
+        showToast("You can save up to 5 tones. Unsave one to make room for another.");
         return prev;
       }
       return [tone, ...prev];
@@ -194,7 +202,9 @@ export default function App() {
         background: theme === "light" ? "#faf8f3" : "#0f0f0f",
         fontFamily: "'Lora',Georgia,serif",
         display: "flex", flexDirection: "column",
+        position: "relative",
       }}>
+        <Toast message={toastMessage} visible={toastVisible} theme={theme} />
         {isTranslating && (
           <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ background: theme === "light" ? "#faf8f3" : "#1c1c1c", borderRadius: 20, padding: "28px 40px", textAlign: "center", border: `1px solid ${t.border2}` }}>
@@ -226,6 +236,7 @@ export default function App() {
       )}
 
       <PhoneFrame theme={theme}>
+        <Toast message={toastMessage} visible={toastVisible} theme={theme} />
         {screenContent}
       </PhoneFrame>
 
