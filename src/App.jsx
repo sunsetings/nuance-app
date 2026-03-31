@@ -50,6 +50,7 @@ export default function App() {
 
   const t = THEMES[theme] || THEMES.dark;
   const userTier = getUserTier(user, isPremium);
+  const visibleSavedTones = userTier === "pro" ? savedTones : [];
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -174,8 +175,8 @@ export default function App() {
       return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} />;
     }
     switch (screen) {
-      case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={savedTones} onToggleSavedTone={toggleSavedTone} />;
-      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={savedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
+      case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} />;
+      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "account": return user ? <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
