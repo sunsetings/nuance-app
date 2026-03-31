@@ -229,6 +229,8 @@ export function CapScreen({ navigate, userTier, theme }) {
 export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const items = savedItems || [];
+  const isGuest = userTier === "guest";
+  const saveLimit = isPremium ? PRO_SAVE_LIMIT : FREE_SAVE_LIMIT;
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -247,10 +249,10 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
           <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
           <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px" }}>Saved</span>
         </div>
-        {isPremium && <span style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>{items.length} / {PRO_SAVE_LIMIT}</span>}
+        {!isGuest && <span style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>{items.length} / {saveLimit}</span>}
       </div>
 
-      {!isPremium ? (
+      {isGuest ? (
         <div style={{ textAlign: "center", padding: "8px 16px 0" }}>
           <div style={{ position: "relative", marginBottom: 22, marginTop: 8 }}>
             <div style={{ background: t.surface, borderRadius: 10, padding: "10px 14px", opacity: 0.25, pointerEvents: "none" }}>
@@ -271,7 +273,9 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
         <div style={{ textAlign: "center", padding: "36px 16px" }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>♡</div>
           <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 8 }}>Nothing saved yet</div>
-          <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65 }}>Tap the heart on any translation to save it here.</div>
+          <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65 }}>
+            {isPremium ? "Tap the heart on any translation to save it here." : `Tap the heart on any translation to save up to ${FREE_SAVE_LIMIT} here.`}
+          </div>
         </div>
       ) : (
         <>
