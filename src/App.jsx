@@ -9,6 +9,7 @@ import { QuickResultsScreen } from "./components/QuickResultsScreen.jsx";
 import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./components/OtherScreens.jsx";
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, incrementUsageDB, getSavedTranslations } from "./lib/userdata.js";
+import { getQuickTranslationsToday, incrementUsage } from "./lib/usage.js";
 
 const SCREEN_LABELS = {
   home: "Home", results: "Results — Refine",
@@ -33,6 +34,7 @@ export default function App() {
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(0);
+  const [quickUsageCount, setQuickUsageCount] = useState(() => getQuickTranslationsToday());
   const [recentTones, setRecentTones] = useState([]);
   const [savedTones, setSavedTones] = useState(() => {
     try {
@@ -56,6 +58,10 @@ export default function App() {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setQuickUsageCount(getQuickTranslationsToday());
   }, []);
 
   useEffect(() => {
@@ -145,11 +151,18 @@ export default function App() {
   };
 
   const handleTranslate = async ({ text, tone, fromLang, toLang, mode }) => {
+    const cap = userTier === "pro" ? 500 : userTier === "free" ? 30 : 10;
+    if (mode === "quick" && quickUsageCount >= cap) {
+      showToast(`You've used today's ${cap} standard translations. Come back tomorrow.`);
+      return;
+    }
+
     setIsTranslating(true);
     try {
       if (mode === "quick") {
         const result = await quickTranslate({ text, fromLang, toLang });
-        if (user) { const count = await incrementUsageDB(user.id); setUsageCount(count); }
+        const updated = incrementUsage("quick");
+        setQuickUsageCount(updated.count);
         setTranslationData({ original: text, translated: result.translated, fromLang, toLang, tone, mode: "quick" });
         setScreen("quickresults");
       } else {

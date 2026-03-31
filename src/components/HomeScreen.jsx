@@ -54,7 +54,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const isRefine = mode === "refine";
   const hasText = text.trim().length > 0;
   const cap = getCapForTier(userTier);
-  const atLimit = usageCount >= cap;
+  const atLimit = isRefine && usageCount >= cap;
 
   // Persist language choices whenever they change
   useEffect(() => { localStorage.setItem(LS_FROM, fromLang); }, [fromLang]);
@@ -99,7 +99,6 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleTranslate = () => {
     if (!hasText) return;
-    if (atLimit) { navigate("cap"); return; }
     onTranslate({ text, tone, fromLang, toLang, mode });
   };
 

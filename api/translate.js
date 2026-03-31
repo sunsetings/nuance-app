@@ -106,7 +106,7 @@ async function getSignedInUsageContext(userId, req) {
   return { count, cap };
 }
 
-async function enforceRequestAccess(req) {
+async function enforceRequestAccess(req, mode) {
   const token = getBearerToken(req);
   const user = await getAuthenticatedUser(token);
 
@@ -115,11 +115,13 @@ async function enforceRequestAccess(req) {
     return { user: null };
   }
 
-  const usage = await getSignedInUsageContext(user.id, req);
-  if (usage.count >= usage.cap) {
-    const error = new Error(`Daily refine limit reached for this account (${usage.cap}/day).`);
-    error.statusCode = 429;
-    throw error;
+  if (mode === "refine") {
+    const usage = await getSignedInUsageContext(user.id, req);
+    if (usage.count >= usage.cap) {
+      const error = new Error(`Daily refine limit reached for this account (${usage.cap}/day).`);
+      error.statusCode = 429;
+      throw error;
+    }
   }
 
   return { user };
@@ -190,7 +192,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Text is too long." });
     }
 
-    await enforceRequestAccess(req);
+    await enforceRequestAccess(req, mode);
 
     const prompt = buildPrompt({ mode, text, tone, fromLang, toLang, toneCount });
     const result = await callOpenAI({ mode, prompt });

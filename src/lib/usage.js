@@ -9,16 +9,21 @@
  * It persists between sessions but is per-device.
  */
 
-const KEY = "tonara_usage";
+const REFINE_KEY = "tonara_usage";
+const QUICK_KEY = "tonara_quick_usage";
 
 function getTodayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 
-export function getUsage() {
+function getStorageKey(mode = "refine") {
+  return mode === "quick" ? QUICK_KEY : REFINE_KEY;
+}
+
+export function getUsage(mode = "refine") {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(getStorageKey(mode));
     if (!raw) return { count: 0, day: getTodayKey() };
     const data = JSON.parse(raw);
     // If it's a new day, reset
@@ -31,17 +36,21 @@ export function getUsage() {
   }
 }
 
-export function incrementUsage() {
-  const current = getUsage();
+export function incrementUsage(mode = "refine") {
+  const current = getUsage(mode);
   const updated = { count: current.count + 1, day: getTodayKey() };
-  localStorage.setItem(KEY, JSON.stringify(updated));
+  localStorage.setItem(getStorageKey(mode), JSON.stringify(updated));
   return updated;
 }
 
 export function getRefinesToday() {
-  return getUsage().count;
+  return getUsage("refine").count;
 }
 
-export function resetUsage() {
-  localStorage.setItem(KEY, JSON.stringify({ count: 0, day: getTodayKey() }));
+export function getQuickTranslationsToday() {
+  return getUsage("quick").count;
+}
+
+export function resetUsage(mode = "refine") {
+  localStorage.setItem(getStorageKey(mode), JSON.stringify({ count: 0, day: getTodayKey() }));
 }
