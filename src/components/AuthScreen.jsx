@@ -12,8 +12,8 @@ const SIGNIN_CONTEXT = {
 };
 
 const POST_AUTH_ROUTE = {
-  nav: "account",
-  save: "saved",
+  nav: "home",
+  save: "home",
   bm: "home",
   tone: "home",
   cap: "home",
