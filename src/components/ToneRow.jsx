@@ -54,7 +54,7 @@ export function ToneRow({
               const handleClick = () => {
                 if (disabled) return;
                 if (status !== "unlocked") {
-                  navigate(status === "free_locked" ? "account" : "upgrade");
+                  navigate(status === "free_locked" ? "signin_tone" : "upgrade");
                   return;
                 }
                 if (pill.type === "stack") {

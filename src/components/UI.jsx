@@ -281,7 +281,7 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
   const t = THEMES[theme] || THEMES.dark;
   const handleSave = () => {
     if (userTier === "guest") {
-      navigate("account");
+      navigate("signin_save");
       return;
     }
     if (userTier === "free" && saveCount >= FREE_SAVE_LIMIT) {

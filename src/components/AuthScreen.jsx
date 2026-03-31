@@ -2,7 +2,16 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
 
-export function AuthScreen({ theme, onAuth, navigate }) {
+const SIGNIN_CONTEXT = {
+  nav: { title: "Welcome back", sub: "Sign in to access your account." },
+  save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
+  bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
+  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Formal and Gen A." },
+  cap: { title: "You've used today's refines", sub: "Sign up free — 30 seconds, 30 refines a day." },
+  default: { title: "Welcome to tonara.", sub: "" },
+};
+
+export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const t = THEMES[theme] || THEMES.dark;
   const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
@@ -11,6 +20,7 @@ export function AuthScreen({ theme, onAuth, navigate }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const ctx = SIGNIN_CONTEXT[context] || SIGNIN_CONTEXT.default;
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -88,14 +98,12 @@ export function AuthScreen({ theme, onAuth, navigate }) {
 
       <div style={{ textAlign: "center", marginBottom: 20 }}>
         <div style={{ fontSize: 17, fontWeight: "bold", marginBottom: 7, letterSpacing: "-0.2px" }}>
-          {mode === "login" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset your password"}
+          {mode === "forgot" ? "Reset your password" : ctx.title}
         </div>
         <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, maxWidth: 290, margin: "0 auto" }}>
-          {mode === "login"
-            ? "Sign in to access your account."
-            : mode === "signup"
-              ? "Create a free account to save translations and bookmark languages."
-              : "Enter your email and we'll send you a reset link."}
+          {mode === "forgot"
+            ? "Enter your email and we'll send you a reset link."
+            : (ctx.sub || (mode === "signup" ? "Create a free account to save translations and bookmark languages." : "Sign in to access your account."))}
         </div>
       </div>
 

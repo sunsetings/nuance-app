@@ -154,7 +154,44 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
       </div>
     </div>
   );
-}// ─── SAVED FAVOURITES ────────────────────────────────────────
+}
+
+export function CapScreen({ navigate, userTier, theme }) {
+  const t = THEMES[theme] || THEMES.dark;
+  const isGuest = userTier === "guest";
+
+  return (
+    <div style={{ padding: "14px 20px 28px", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", fontFamily: "'Lora',Georgia,serif" }}>
+      <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", alignSelf: "flex-start", marginTop: 4, marginBottom: 20 }}>←</button>
+
+      <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10, letterSpacing: "-0.2px" }}>
+          {isGuest ? "You've used today's 10 refines" : "You've used today's 30 refines"}
+        </div>
+        <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, marginBottom: 8, maxWidth: 270 }}>
+          {isGuest ? "Sign up free — 30 seconds, 30 refines a day." : "Upgrade to Pro for 500 refines a day."}
+        </div>
+        <div style={{ fontSize: 10, color: t.textFaint, marginBottom: 28, letterSpacing: "0.04em" }}>Resets in ~6 hours</div>
+
+        {isGuest && (
+          <button onClick={() => navigate("signin_cap")} style={{ width: "100%", maxWidth: 270, padding: "13px", background: t.accent, color: t.accentText, border: "none", borderRadius: 11, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
+            Sign up free — 30 refines/day
+          </button>
+        )}
+
+        <button onClick={() => navigate("upgrade")} style={{ width: "100%", maxWidth: 270, padding: "11px", background: isGuest ? "transparent" : t.accent, border: isGuest ? `1px solid ${t.border}` : "none", borderRadius: 11, fontSize: 12, fontWeight: isGuest ? "normal" : "bold", cursor: "pointer", color: isGuest ? t.textDim : t.accentText, marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
+          {isGuest ? "View Pro plan →" : "✦ Upgrade to Pro — 500/day"}
+        </button>
+
+        <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+          Come back tomorrow
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── SAVED FAVOURITES ────────────────────────────────────────
 export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const items = savedItems || [];

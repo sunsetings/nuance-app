@@ -91,7 +91,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
 
   const handleSave = async () => {
-    if (!user) { navigate("upgrade"); return; }
+    if (!user) { navigate("signin_save"); return; }
     if (saving) return;
     setSaving(true);
     try {
@@ -265,7 +265,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 function ResultsHeaderCTA({ userTier, navigate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   if (userTier === "guest") {
-    return <button onClick={() => navigate("account")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock free tones →</button>;
+    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock free tones →</button>;
   }
   if (userTier === "free") {
     return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock Pro tones →</button>;

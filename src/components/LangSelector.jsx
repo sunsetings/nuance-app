@@ -128,7 +128,7 @@ export function LangSelector({
               <button
                 onClick={() => {
                   handleClose();
-                  navigate("account");
+                  navigate("signin_bm");
                 }}
                 style={{ background: "none", border: "none", cursor: "pointer", fontSize: 10, color: t.freeTag, padding: 0, letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}
               >

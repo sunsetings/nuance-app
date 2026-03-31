@@ -33,7 +33,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   };
 
   const handleSave = async () => {
-    if (!user) { navigate("upgrade"); return; }
+    if (!user) { navigate("signin_save"); return; }
     if (saving) return;
     setSaving(true);
     try {

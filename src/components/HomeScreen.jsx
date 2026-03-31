@@ -66,7 +66,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
 
   const handleTranslate = () => {
     if (!hasText) return;
-    if (atLimit) { navigate("upgrade"); return; }
+    if (atLimit) { navigate(userTier === "guest" ? "cap" : "upgrade"); return; }
     onTranslate({ text, tone, fromLang, toLang, mode });
   };
 
@@ -101,7 +101,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
             ✦ Go Pro
           </button>
         ) : (
-          <button onClick={() => navigate("account")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+          <button onClick={() => navigate("signin_nav")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
             Sign up free
           </button>
         )}

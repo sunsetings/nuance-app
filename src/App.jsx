@@ -6,7 +6,7 @@ import { AuthScreen } from "./components/AuthScreen.jsx";
 import { HomeScreen } from "./components/HomeScreen.jsx";
 import { ResultsScreen } from "./components/ResultsScreen.jsx";
 import { QuickResultsScreen } from "./components/QuickResultsScreen.jsx";
-import { AccountScreen, UpgradeScreen, SavedScreen } from "./components/OtherScreens.jsx";
+import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./components/OtherScreens.jsx";
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, incrementUsageDB, getSavedTranslations } from "./lib/userdata.js";
 
@@ -14,6 +14,12 @@ const SCREEN_LABELS = {
   home: "Home", results: "Results — Refine",
   quickresults: "Results — Quick", account: "Account",
   upgrade: "Upgrade to Pro", saved: "Saved Favourites",
+  signin_nav: "Sign In (account / nav)",
+  signin_save: "Sign In (save)",
+  signin_bm: "Sign In (bookmark)",
+  signin_tone: "Sign In (tone unlock)",
+  signin_cap: "Sign In (cap hit)",
+  cap: "Daily Cap Hit",
 };
 
 export default function App() {
@@ -129,6 +135,9 @@ export default function App() {
   const props = { navigate, isPremium, userTier, theme, usageCount, user };
 
   const renderScreen = () => {
+    if (screen.startsWith("signin_")) {
+      return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} />;
+    }
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
@@ -136,6 +145,7 @@ export default function App() {
       case "account": return user ? <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
+      case "cap": return <CapScreen {...props} />;
       default: return <HomeScreen {...props} onTranslate={handleTranslate} />;
     }
   };
