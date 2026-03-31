@@ -1,5 +1,19 @@
 import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
 
+function SmallHeart({ size = 10, color, filled = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <path
+        d="M7 12C7 12 2 8.5 2 5C2 3.5 3.2 2.5 4.7 2.5C5.6 2.5 6.4 2.9 7 3.6C7.6 2.9 8.4 2.5 9.3 2.5C10.8 2.5 12 3.5 12 5C12 8.5 7 12 7 12Z"
+        stroke={color}
+        strokeWidth="1.4"
+        fill={filled ? color : "none"}
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function ToneRow({
   activeTone,
   toneCount,
@@ -57,6 +71,7 @@ export function ToneRow({
           <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", opacity: disabled ? 0.2 : 1, paddingBottom: 2, paddingTop: 10, paddingRight: 2 }}>
             {pills.map((pill, index) => {
               const status = getToneStatus(pill.tone, userTier);
+              const isFavourite = favourites.includes(pill.tone);
               const isActive = pill.tone === activeTone && (isHomeScreen || pill.level === toneCount);
               const isPast = !isHomeScreen && pill.tone === activeTone && pill.level < toneCount;
               const isNext = !isHomeScreen && pill.tone === activeTone && pill.level === toneCount + 1 && toneCount < MAX_SAME_TONE;
@@ -112,6 +127,11 @@ export function ToneRow({
                   {status === "pro_locked" && (
                     <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
                       PRO
+                    </span>
+                  )}
+                  {isFavourite && status === "unlocked" && (
+                    <span style={{ position: "absolute", top: -7, right: -3, zIndex: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <SmallHeart size={10} color={t.proTag} filled />
                     </span>
                   )}
                 </button>
