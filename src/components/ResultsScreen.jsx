@@ -7,7 +7,7 @@ import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
-export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, onAddRecentTone, savedItems, setSavedItems, user }) {
+export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
@@ -192,6 +192,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       labelWeight: "bold",
     },
   ];
+  const prioritizedTones = [...recentTones, ...savedTones];
 
   return (
     <div style={{
@@ -206,7 +207,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         onClose={() => setSheetOpen(false)}
         activeTone={activeTone}
         userTier={userTier}
-        favourites={recentTones}
+        favourites={savedTones}
+        onToggleFav={onToggleSavedTone}
         onSelectTone={handleSheetSelect}
         navigate={navigate}
         theme={theme}
@@ -230,7 +232,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
           onSelect={handleSelect} onSetLevel={handleSetLevel}
           onOpenSheet={() => setSheetOpen(true)}
           userTier={userTier}
-          favourites={recentTones}
+          favourites={prioritizedTones}
           disabled={loading}
           isHomeScreen={false}
           navigate={navigate}

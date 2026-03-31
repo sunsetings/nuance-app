@@ -22,6 +22,8 @@ const SCREEN_LABELS = {
   cap: "Daily Cap Hit",
 };
 
+const LS_SAVED_TONES = "tonara_saved_tones";
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -32,6 +34,14 @@ export default function App() {
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(0);
   const [recentTones, setRecentTones] = useState([]);
+  const [savedTones, setSavedTones] = useState(() => {
+    try {
+      const stored = localStorage.getItem(LS_SAVED_TONES);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isTranslating, setIsTranslating] = useState(false);
   const [savedItems, setSavedItems] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -44,6 +54,10 @@ export default function App() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LS_SAVED_TONES, JSON.stringify(savedTones));
+  }, [savedTones]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -108,6 +122,16 @@ export default function App() {
     setRecentTones(prev => [tone, ...prev.filter(t => t !== tone)].slice(0, 5));
   };
 
+  const toggleSavedTone = (tone) => {
+    setSavedTones((prev) => (
+      prev.includes(tone)
+        ? prev.filter((item) => item !== tone)
+        : prev.length < 5
+          ? [...prev, tone]
+          : prev
+    ));
+  };
+
   const handleTranslate = async ({ text, tone, fromLang, toLang, mode }) => {
     setIsTranslating(true);
     try {
@@ -139,8 +163,8 @@ export default function App() {
       return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} />;
     }
     switch (screen) {
-      case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} />;
-      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
+      case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={savedTones} onToggleSavedTone={toggleSavedTone} />;
+      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={savedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "account": return user ? <AccountScreen {...props} setIsPremium={setIsPremium} setTheme={setTheme} onLogout={handleLogout} savedItems={savedItems} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;

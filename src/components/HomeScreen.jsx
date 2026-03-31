@@ -9,7 +9,7 @@ const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
 
-export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate }) {
+export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone }) {
   const t = THEMES[theme] || THEMES.dark;
   const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
@@ -84,7 +84,8 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
         onClose={() => setSheetOpen(false)}
         activeTone={tone}
         userTier={userTier}
-        favourites={[]}
+        favourites={savedTones}
+        onToggleFav={onToggleSavedTone}
         onSelectTone={setTone}
         navigate={navigate}
         theme={theme}
@@ -161,7 +162,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate 
             onSelect={setTone} onSetLevel={() => {}}
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
-            favourites={[]}
+            favourites={savedTones}
             disabled={false}
             isHomeScreen={true}
             navigate={navigate}
