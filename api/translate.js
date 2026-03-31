@@ -92,18 +92,54 @@ function getRequestedLocalDate(req) {
     : new Date().toISOString().split("T")[0];
 }
 
+function getUsageDateKey(req, mode) {
+  const base = getRequestedLocalDate(req);
+  return mode === "quick" ? `${base}__quick` : base;
+}
+
 async function getSignedInUsageContext(userId, req) {
   const supabase = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-  const today = getRequestedLocalDate(req);
+  const refineDateKey = getUsageDateKey(req, "refine");
+  const quickDateKey = getUsageDateKey(req, "quick");
 
-  const [{ data: usage }, { data: profile }] = await Promise.all([
-    supabase.from("usage").select("count").eq("user_id", userId).eq("date", today).single(),
+  const [{ data: refineUsage }, { data: quickUsage }, { data: profile }] = await Promise.all([
+    supabase.from("usage").select("count").eq("user_id", userId).eq("date", refineDateKey).single(),
+    supabase.from("usage").select("count").eq("user_id", userId).eq("date", quickDateKey).single(),
     supabase.from("profiles").select("is_pro").eq("id", userId).single(),
   ]);
 
-  const count = usage?.count || 0;
   const cap = profile?.is_pro ? 500 : 30;
-  return { count, cap };
+  return {
+    cap,
+    refineCount: refineUsage?.count || 0,
+    quickCount: quickUsage?.count || 0,
+  };
+}
+
+async function incrementSignedInUsage(userId, req, mode) {
+  const supabase = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const dateKey = getUsageDateKey(req, mode);
+
+  const { data: existing } = await supabase
+    .from("usage")
+    .select("id, count")
+    .eq("user_id", userId)
+    .eq("date", dateKey)
+    .single();
+
+  if (existing) {
+    await supabase
+      .from("usage")
+      .update({ count: existing.count + 1 })
+      .eq("id", existing.id);
+    return existing.count + 1;
+  }
+
+  await supabase
+    .from("usage")
+    .insert({ user_id: userId, date: dateKey, count: 1 });
+
+  return 1;
 }
 
 async function enforceRequestAccess(req, mode) {
@@ -115,13 +151,13 @@ async function enforceRequestAccess(req, mode) {
     return { user: null };
   }
 
-  if (mode === "refine") {
-    const usage = await getSignedInUsageContext(user.id, req);
-    if (usage.count >= usage.cap) {
-      const error = new Error(`Daily refine limit reached for this account (${usage.cap}/day).`);
-      error.statusCode = 429;
-      throw error;
-    }
+  const usage = await getSignedInUsageContext(user.id, req);
+  const currentCount = mode === "quick" ? usage.quickCount : usage.refineCount;
+  if (currentCount >= usage.cap) {
+    const label = mode === "quick" ? "standard translations" : "refines";
+    const error = new Error(`Daily ${label} limit reached for this account (${usage.cap}/day).`);
+    error.statusCode = 429;
+    throw error;
   }
 
   return { user };
@@ -192,10 +228,13 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Text is too long." });
     }
 
-    await enforceRequestAccess(req, mode);
+    const access = await enforceRequestAccess(req, mode);
 
     const prompt = buildPrompt({ mode, text, tone, fromLang, toLang, toneCount });
     const result = await callOpenAI({ mode, prompt });
+    if (access.user?.id) {
+      await incrementSignedInUsage(access.user.id, req, mode);
+    }
     return res.status(200).json(result);
   } catch (error) {
     console.error("Translate API error:", error.message);

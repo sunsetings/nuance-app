@@ -8,9 +8,14 @@ function getLocalDateKey() {
   return `${year}-${month}-${day}`
 }
 
+function getUsageDateKey(type = 'refine') {
+  const base = getLocalDateKey()
+  return type === 'quick' ? `${base}__quick` : base
+}
+
 // ─── USAGE ───────────────────────────────────────────────────
-export async function getUsageToday(userId) {
-  const today = getLocalDateKey()
+export async function getUsageToday(userId, type = 'refine') {
+  const today = getUsageDateKey(type)
   const { data, error } = await supabase
     .from('usage')
     .select('count')
@@ -21,8 +26,8 @@ export async function getUsageToday(userId) {
   return data.count
 }
 
-export async function incrementUsageDB(userId) {
-  const today = getLocalDateKey()
+export async function incrementUsageDB(userId, type = 'refine') {
+  const today = getUsageDateKey(type)
   const { data: existing } = await supabase
     .from('usage')
     .select('id, count')

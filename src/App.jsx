@@ -8,7 +8,7 @@ import { ResultsScreen } from "./components/ResultsScreen.jsx";
 import { QuickResultsScreen } from "./components/QuickResultsScreen.jsx";
 import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./components/OtherScreens.jsx";
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
-import { getUsageToday, incrementUsageDB, getSavedTranslations } from "./lib/userdata.js";
+import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, incrementUsage } from "./lib/usage.js";
 
 const SCREEN_LABELS = {
@@ -84,6 +84,7 @@ export default function App() {
       } else {
         setUser(null);
         setUsageCount(0);
+        setQuickUsageCount(getQuickTranslationsToday());
         setSavedItems([]);
       }
     });
@@ -93,12 +94,14 @@ export default function App() {
 
   const loadUserData = async (userId) => {
     try {
-      const [count, saved, profile] = await Promise.all([
-        getUsageToday(userId),
+      const [count, quickCount, saved, profile] = await Promise.all([
+        getUsageToday(userId, "refine"),
+        getUsageToday(userId, "quick"),
         getSavedTranslations(userId),
         supabase.from("profiles").select("is_pro").eq("id", userId).single(),
       ]);
       setUsageCount(count);
+      setQuickUsageCount(quickCount);
       setSavedItems(saved);
       setIsPremium(profile?.data?.is_pro === true);
     } catch (e) {
@@ -161,13 +164,19 @@ export default function App() {
     try {
       if (mode === "quick") {
         const result = await quickTranslate({ text, fromLang, toLang });
-        const updated = incrementUsage("quick");
-        setQuickUsageCount(updated.count);
+        if (user) {
+          setQuickUsageCount((prev) => prev + 1);
+        } else {
+          const updated = incrementUsage("quick");
+          setQuickUsageCount(updated.count);
+        }
         setTranslationData({ original: text, translated: result.translated, fromLang, toLang, tone, mode: "quick" });
         setScreen("quickresults");
       } else {
         const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount: 1 });
-        if (user) { const count = await incrementUsageDB(user.id); setUsageCount(count); }
+        if (user) {
+          setUsageCount((prev) => prev + 1);
+        }
         addRecentTone(tone);
         setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang, toLang, tone, toneCount: 1, mode: "refine" });
         setScreen("results");

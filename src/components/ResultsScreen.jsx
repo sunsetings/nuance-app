@@ -5,7 +5,7 @@ import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
-import { incrementUsageDB, saveTranslation, unsaveTranslation } from "../lib/userdata.js";
+import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -65,8 +65,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       setRefined(result.refined);
       setTranslated(result.translated);
       if (user?.id) {
-        const count = await incrementUsageDB(user.id);
-        setUsageCount(count);
+        setUsageCount((prev) => prev + 1);
       } else {
         const updated = incrementUsage();
         setUsageCount(updated.count);
