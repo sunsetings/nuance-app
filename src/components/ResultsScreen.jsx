@@ -90,6 +90,19 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     await doRefine(activeTone, lvl);
   };
 
+  const handleSheetSelect = async (tone) => {
+    if (tone === activeTone) {
+      if (toneCount !== 1) {
+        setToneCount(1);
+        await doRefine(tone, 1);
+      }
+      return;
+    }
+    setActiveTone(tone);
+    setToneCount(1);
+    await doRefine(tone, 1);
+  };
+
   const handleSave = async () => {
     if (!user) { navigate("signin_save"); return; }
     if (saving) return;
@@ -194,10 +207,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         activeTone={activeTone}
         userTier={userTier}
         favourites={recentTones}
-        onSelectTone={(tone) => {
-          setActiveTone(tone);
-          setToneCount(1);
-        }}
+        onSelectTone={handleSheetSelect}
         navigate={navigate}
         theme={theme}
       />
