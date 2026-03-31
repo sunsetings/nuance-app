@@ -4,11 +4,12 @@ import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems, usageCount = 0 }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
+  const dailyRefineCap = isPremium ? PRO_DAILY_CAP : FREE_DAILY_CAP;
   const planRows = [
-    { label: "Daily refines", value: isPremium ? `${PRO_DAILY_CAP} / day` : `${FREE_DAILY_CAP} / day`, accent: true },
+    { label: "Daily refines", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
     { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
     { label: "Dictation", value: "On", accent: true },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
