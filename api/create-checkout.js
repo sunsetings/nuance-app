@@ -5,13 +5,19 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { priceId, userId, userEmail } = req.body;
+  const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+  const { priceId, userId, userEmail } = body;
 
-  if (!priceId || !userId) {
-    return res.status(400).json({ error: "Missing priceId or userId" });
+  if (!priceId) {
+    return res.status(400).json({ error: "Missing priceId" });
+  }
+
+  if (!userId) {
+    return res.status(400).json({ error: "Please sign in before upgrading." });
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || req.headers.origin;
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -20,8 +26,8 @@ module.exports = async function handler(req, res) {
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
       customer_email: userEmail,
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/upgrade`,
+      success_url: `${siteUrl}/app`,
+      cancel_url: `${siteUrl}/app`,
     });
 
     return res.status(200).json({ url: session.url });

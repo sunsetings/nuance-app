@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, PRO_SAVED_TONE_LIMIT, FREE_SAVE_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
@@ -96,6 +97,46 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
 // ─── UPGRADE ─────────────────────────────────────────────────
 export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
   const t = THEMES[theme] || THEMES.dark;
+  const [checkoutError, setCheckoutError] = useState(null);
+  const [loadingPlan, setLoadingPlan] = useState(null);
+
+  const handleCheckout = async (plan) => {
+    if (!user?.id) {
+      navigate("signin_nav");
+      return;
+    }
+
+    const priceId = plan === "yearly"
+      ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
+      : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
+
+    if (!priceId) {
+      setCheckoutError("Payment setup is missing. Please try again in a moment.");
+      return;
+    }
+
+    setCheckoutError(null);
+    setLoadingPlan(plan);
+
+    try {
+      const res = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Couldn't open checkout. Please try again.");
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      setCheckoutError(error.message || "Couldn't open checkout. Please try again.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
   return (
     <div style={{ padding: "16px 20px 28px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg }}>
       <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginTop: 4, marginBottom: 14, height: 36 }}>
@@ -155,29 +196,26 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
         Best for everyday use and important conversations
       </div>
 
+      {checkoutError && (
+        <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#e88", textAlign: "center" }}>
+          {checkoutError}
+        </div>
+      )}
+
       <div>
         {[
           { label: "Annual", plan: "yearly", price: "$59.99 / year", sub: "$5.00 / mo — save 37%", highlight: true },
           { label: "Monthly", plan: "monthly", price: "$7.99 / month", sub: null },
         ].map(opt => (
-          <button key={opt.label} onClick={async () => {
-            const priceId = opt.plan === "yearly"
-              ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
-              : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
-            const res = await fetch("/api/create-checkout", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ priceId, userId: user?.id, userEmail: user?.email }),
-            });
-            const data = await res.json();
-            if (data.url) window.location.href = data.url;
-          }} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted }}>
+          <button key={opt.label} onClick={() => handleCheckout(opt.plan)} disabled={loadingPlan !== null} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: loadingPlan ? "default" : "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted, opacity: loadingPlan && loadingPlan !== opt.plan ? 0.55 : 1 }}>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: opt.highlight ? 13 : 12, fontWeight: "bold", letterSpacing: "-0.2px" }}>{opt.label}</div>
               {opt.sub && <div style={{ fontSize: 10, opacity: 0.75, marginTop: 1 }}>{opt.sub}</div>}
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: opt.highlight ? 14 : 12, fontWeight: opt.highlight ? "bold" : "normal" }}>{opt.price}</div>
+              <div style={{ fontSize: opt.highlight ? 14 : 12, fontWeight: opt.highlight ? "bold" : "normal" }}>
+                {loadingPlan === opt.plan ? "Loading…" : opt.price}
+              </div>
             </div>
           </button>
         ))}
