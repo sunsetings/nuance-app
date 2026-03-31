@@ -122,6 +122,62 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
   };
 
   const refinedLabel = `REFINED · ${activeTone.toUpperCase()}${toneCount > 1 ? ` ×${toneCount}` : ""}`;
+  const sourceLangCode = (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase();
+  const targetLangCode = toLang.slice(0, 2).toUpperCase();
+  const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
+  const sectionLabelStyle = { fontSize: 9, letterSpacing: "0.12em" };
+  const inlineCopyWrapStyle = { display: "flex", alignItems: "center", gap: 8 };
+
+  const resultSections = [
+    {
+      label: "ORIGINAL",
+      content: original,
+      lang: sourceLangCode,
+      textToCopy: original,
+      contentStyle: {
+        padding: "0 0 4px 12px",
+        borderLeft: `2px solid ${t.border}`,
+        color: t.textDim,
+        fontSize: 12,
+        lineHeight: 1.72,
+      },
+      labelColor: t.textFaint,
+    },
+    {
+      label: refinedLabel,
+      content: refined,
+      lang: sourceLangCode,
+      textToCopy: refined,
+      contentStyle: {
+        padding: "16px 20px",
+        background: t.highlight,
+        borderRadius: 14,
+        border: `1px solid ${t.highlightBorder}`,
+        color: t.highlightText,
+        fontSize: 13,
+        lineHeight: 1.76,
+      },
+      labelColor: theme === "light" ? "#2a6a2a" : "#78b86f",
+      labelWeight: "bold",
+    },
+    {
+      label: "REFINED AND TRANSLATED",
+      content: translated,
+      lang: targetLangCode,
+      textToCopy: translated,
+      contentStyle: {
+        padding: "16px 20px",
+        background: t.highlight,
+        borderRadius: 14,
+        border: `1px solid ${t.highlightBorder}`,
+        color: t.highlightText,
+        fontSize: 12,
+        lineHeight: 1.76,
+      },
+      labelColor: theme === "light" ? "#2a6a2a" : "#78b86f",
+      labelWeight: "bold",
+    },
+  ];
 
   return (
     <div style={{
@@ -166,31 +222,23 @@ export function ResultsScreen({ navigate, isPremium, theme, initialData, savedIt
       )}
 
       {/* 3 panels */}
-      {!loading && [
-        { label: "ORIGINAL", content: original, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), muted: true, highlight: false, textToCopy: original },
-        { label: refinedLabel, content: refined, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), highlight: true, textToCopy: refined },
-        { label: "TRANSLATED · " + toLang.toUpperCase(), content: translated, lang: toLang.slice(0, 2).toUpperCase(), highlight: false, textToCopy: translated },
-      ].map(({ label, content, lang, muted, highlight, textToCopy }, i) => (
-        <div key={i} style={{
-          background: highlight ? t.highlight : t.surface,
-          border: `1px solid ${highlight ? t.highlightBorder : t.border}`,
-          borderRadius: 12, padding: "11px 13px", marginBottom: 8,
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 9, color: highlight ? (theme === "light" ? "#2a6a2a" : "#8adc8a") : t.textDim, letterSpacing: "0.12em" }}>{label}</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 9, color: t.textDim }}>{lang}</span>
-              <CopyBtn text={textToCopy} theme={theme} />
+      {!loading && resultSections.map(({ label, content, lang, textToCopy, contentStyle, labelColor, labelWeight }, i) => (
+        <div key={i} style={{ marginBottom: i < resultSections.length - 1 ? 10 : 8 }}>
+          <div style={sectionMetaStyle}>
+            <span style={{ ...sectionLabelStyle, color: labelColor, fontWeight: labelWeight || "normal" }}>{label}</span>
+            <div style={inlineCopyWrapStyle}>
+              <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>{lang}</span>
+              <CopyBtn text={textToCopy} theme={theme} variant="inline" />
             </div>
           </div>
-          <div style={{ fontSize: 12, lineHeight: 1.68, color: muted ? t.textDim : highlight ? t.highlightText : t.textMuted }}>
+          <div style={contentStyle}>
             {content || <span style={{ fontStyle: "italic", opacity: 0.5 }}>—</span>}
           </div>
         </div>
       ))}
 
       <ShareSaveRow isPremium={isPremium} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} theme={theme} />
-      <BottomNav active="results" navigate={navigate} theme={theme} />
+      <BottomNav active="results" navigate={navigate} theme={theme} user={user} />
     </div>
   );
 }

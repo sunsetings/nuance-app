@@ -67,19 +67,34 @@ export function AuthScreen({ theme, onAuth }) {
 
   return (
     <div style={{
-      padding: "40px 28px 28px",
+      padding: "22px 24px 28px",
       fontFamily: "'Lora',Georgia,serif",
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column",
       minHeight: "100%", boxSizing: "border-box",
     }}>
-      {/* Logo */}
-      <div style={{ textAlign: "center", marginBottom: 36, marginTop: 20 }}>
+      <div style={{ textAlign: "center", marginBottom: 22, marginTop: 10 }}>
         <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: 6 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim }}>
           {mode === "login" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset your password"}
         </div>
       </div>
+
+      {mode !== "forgot" && (
+        <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 12 }}>
+          {[{ id: "signup", label: "Create account" }, { id: "login", label: "Sign in" }].map(opt => (
+            <button key={opt.id} onClick={() => { setMode(opt.id); setError(null); }} style={{
+              flex: 1, padding: "8px 6px", borderRadius: 8, border: "none",
+              background: mode === opt.id ? t.surface2 : "transparent",
+              color: mode === opt.id ? t.text : t.textFaint,
+              fontSize: 12, cursor: "pointer", fontWeight: mode === opt.id ? "bold" : "normal",
+              fontFamily: "'Lora',Georgia,serif",
+            }}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Google button */}
       {mode !== "forgot" && (
@@ -182,18 +197,9 @@ export function AuthScreen({ theme, onAuth }) {
         {loading ? "…" : mode === "login" ? "Log in" : mode === "signup" ? "Create account" : "Send reset email"}
       </button>
 
-      {/* Toggle mode */}
       <div style={{ textAlign: "center", fontSize: 12, color: t.textDim }}>
-        {mode === "login" ? (
-          <>Don't have an account?{" "}
-            <button onClick={() => { setMode("signup"); setError(null); }} style={{ background: "none", border: "none", color: t.accent, cursor: "pointer", fontSize: 12, fontFamily: "'Lora',Georgia,serif" }}>Sign up</button>
-          </>
-        ) : mode === "signup" ? (
-          <>Already have an account?{" "}
-            <button onClick={() => { setMode("login"); setError(null); }} style={{ background: "none", border: "none", color: t.accent, cursor: "pointer", fontSize: 12, fontFamily: "'Lora',Georgia,serif" }}>Log in</button>
-          </>
-        ) : (
-          <button onClick={() => { setMode("login"); setError(null); }} style={{ background: "none", border: "none", color: t.accent, cursor: "pointer", fontSize: 12, fontFamily: "'Lora',Georgia,serif" }}>← Back to login</button>
+        {mode === "forgot" && (
+          <button onClick={() => { setMode("login"); setError(null); }} style={{ background: "none", border: "none", color: t.accent, cursor: "pointer", fontSize: 12, fontFamily: "'Lora',Georgia,serif" }}>← Back to sign in</button>
         )}
       </div>
 

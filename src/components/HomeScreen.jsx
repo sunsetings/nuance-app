@@ -8,7 +8,7 @@ const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
 
-export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate }) {
+export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const bookmarkLimit = isPremium ? PRO_BOOKMARK_LIMIT : FREE_BOOKMARK_LIMIT;
 
@@ -71,82 +71,94 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
 
   return (
     <div style={{
-      padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif",
+      padding: "12px 20px 8px", fontFamily: "'Lora',Georgia,serif",
       color: t.text, display: "flex", flexDirection: "column",
       height: "100%", boxSizing: "border-box", background: t.phoneBg,
     }}>
       {/* Top bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 13, marginTop: 6 }}>
-        <span style={{ fontSize: 20, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
+        <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
+        {isPremium ? (
+          <button onClick={() => navigate("account")} style={{ background: "transparent", border: `1px solid ${t.highlightBorder}`, borderRadius: 10, padding: "5px 11px", color: t.accent, fontSize: 11, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>
+            ✦ Pro
+          </button>
+        ) : userHasAccountLabel(isPremium, navigate, t)}
+      </div>
+      <div style={{ marginBottom: 8, minHeight: 14 }}>
         <RefineCounter isPremium={isPremium} usageCount={usageCount} navigate={navigate} theme={theme} />
       </div>
 
       {/* Language bar */}
-      <div style={{ background: t.surface2, border: `1px solid ${t.border}`, borderRadius: 12, marginBottom: 11, position: "relative", zIndex: 300 }}>
-        <div style={{ padding: "9px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ marginBottom: 11, position: "relative", zIndex: 300 }}>
+        <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, background: t.surface, borderRadius: 12 }}>
           <LangSelector label="FROM" value={fromLang} onChange={setFromLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
           <button onClick={swapLanguages} style={{
-            background: "transparent", border: `1px solid ${t.border2}`,
-            borderRadius: "50%", width: 30, height: 30,
-            color: t.accent, fontSize: 15, cursor: "pointer",
+            background: "transparent", border: "none",
+            width: 28, height: 28,
+            color: t.textFaint, fontSize: 14, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0, transition: "transform 0.3s",
             transform: swapping ? "rotate(180deg)" : "rotate(0deg)",
           }}>⇄</button>
           <LangSelector label="TO" value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} theme={theme} />
         </div>
-        <div style={{ padding: "0 14px 8px", display: "flex", justifyContent: "flex-end" }}>
-          <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint }}>
-            ♥ {bookmarked.length}/{bookmarkLimit} bookmarks
-            {!isPremium && bookmarked.length >= bookmarkLimit && (
-              <span style={{ color: t.proTag }}>
-                {" "}— <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 6</span>
-              </span>
-            )}
-          </span>
-        </div>
+        {bookmarked.length > 0 && (
+          <div style={{ padding: "4px 14px 0", display: "flex", justifyContent: "flex-end" }}>
+            <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
+              {bookmarked.length}/{bookmarkLimit} bookmarked
+              {!isPremium && bookmarked.length >= bookmarkLimit && (
+                <span style={{ color: t.proTag }}>
+                  {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 6</span>
+                </span>
+              )}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Mode toggle */}
-      <div style={{ display: "flex", background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, padding: 3, marginBottom: 11, gap: 3 }}>
-        {[{ id: "refine", label: "Refine & Translate" }, { id: "quick", label: "Quick Translate" }].map(opt => (
+      <div style={{ display: "flex", marginBottom: 10, gap: 2, padding: "2px", background: t.surface, borderRadius: 10 }}>
+        {[{ id: "refine", label: "Refine & Translate" }, { id: "quick", label: "Standard Translate" }].map(opt => (
           <button key={opt.id} onClick={() => setMode(opt.id)} style={{
-            flex: 1, padding: "9px 6px", borderRadius: 8, border: "none",
+            flex: 1, padding: "8px 4px", borderRadius: 8, border: "none",
             background: mode === opt.id ? t.surface2 : "transparent",
-            color: mode === opt.id ? t.text : t.textDim,
-            fontSize: 12, fontFamily: "'Lora',Georgia,serif",
+            color: mode === opt.id ? t.text : t.textFaint,
+            fontSize: 11, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", fontWeight: mode === opt.id ? "bold" : "normal",
             transition: "all 0.18s",
-            borderBottom: mode === opt.id && opt.id === "refine" ? `1.5px solid ${t.accent}` : "none",
           }}>{opt.label}</button>
         ))}
       </div>
 
       {/* Tone row */}
-      <div style={{ marginBottom: 8 }}>
-        <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.12em", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-          TONE
-          {!isRefine
-            ? <span style={{ fontSize: 9, color: t.textDim, fontStyle: "italic" }}>— not used in Quick Translate</span>
-            : !isPremium && <span style={{ fontSize: 9, color: t.textDim }}>3 free · <span style={{ color: t.proTag }}>Pro</span> unlocks 13</span>
-          }
+      {isRefine && (
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 2 }}>Tone</div>
+          <ToneRow
+            activeTone={tone} toneCount={1}
+            onSelect={setTone} onSetLevel={() => {}}
+            isPremium={isPremium} disabled={false}
+            isHomeScreen={true} theme={theme}
+          />
         </div>
-        <ToneRow
-          activeTone={tone} toneCount={1}
-          onSelect={setTone} onSetLevel={() => {}}
-          isPremium={isPremium} disabled={!isRefine}
-          isHomeScreen={true} theme={theme}
-        />
-      </div>
+      )}
 
       {/* Text input */}
       <div style={{
         flex: 1, display: "flex", flexDirection: "column",
-        background: t.surface,
-        border: `1px solid ${focused ? t.border2 : t.border}`,
-        borderRadius: 12, overflow: "hidden",
+        background: theme === "light" ? "#f2eee4" : "#151515",
+        borderRadius: 14,
         transition: "border-color 0.2s", marginBottom: 10, minHeight: 0,
+        boxShadow: theme === "dark" ? "0 0 0 1px #1e1e1e" : "0 0 0 1px #d4d0c4",
       }}>
+        <div style={{ padding: "13px 16px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
+          <span style={{ fontSize: 10, color: t.textFaint, fontStyle: "italic", letterSpacing: "0.03em" }}>
+            {isRefine ? "Say what you really mean" : "Translate directly, without tone refinement"}
+          </span>
+          <span style={{ fontSize: 10, color: charsNearLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em", transition: "color 0.2s" }}>
+            {charsLeft} left
+          </span>
+        </div>
         <textarea
           ref={textareaRef}
           value={text}
@@ -156,33 +168,26 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
           placeholder={isRefine ? "Type your message — we'll refine and translate it..." : "Type or paste text to translate..."}
           style={{
             flex: 1, background: "transparent", border: "none",
-            padding: "12px 14px", color: t.text, fontSize: 13,
+            padding: "12px 16px", color: t.text, fontSize: 13,
             fontFamily: "'Lora',Georgia,serif", resize: "none",
-            lineHeight: 1.65, outline: "none", minHeight: 80,
+            lineHeight: 1.7, outline: "none", minHeight: 70,
           }}
         />
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "6px 12px 4px", borderTop: `1px solid ${t.border}`, gap: 8,
+          padding: "8px 14px 10px", borderTop: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}`, gap: 8,
         }}>
           <button onClick={handlePaste} style={{
-            display: "flex", alignItems: "center", gap: 5,
-            background: focused ? t.surface2 : "transparent",
-            border: `1px solid ${focused ? t.border2 : t.border}`,
-            borderRadius: 7, padding: "4px 10px",
-            color: focused ? t.textMuted : t.textDim,
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            color: t.textFaint,
             fontSize: 11, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", transition: "all 0.2s",
-          }}>⎘ Paste</button>
+            letterSpacing: "0.04em",
+          }}>Paste</button>
           <MicButton isPremium={isPremium} onDictate={handleDictate} theme={theme} />
-          <span style={{
-            fontSize: 10,
-            color: charsNearLimit ? t.proTag : t.textFaint,
-            minWidth: 60, textAlign: "right",
-            transition: "color 0.2s",
-          }}>
-            {charsNearLimit ? `${charsLeft} left` : `${text.length}/${CHAR_LIMIT}`}
-          </span>
+          <div style={{ width: 48 }} />
         </div>
       </div>
 
@@ -199,20 +204,29 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
-          width: "100%", padding: "15px",
-          background: hasText ? t.accent : t.surface2,
-          color: hasText ? t.accentText : t.textDim,
-          border: `1px solid ${hasText ? t.accent : t.border}`,
-          borderRadius: 13, fontSize: 15,
+          width: "100%", padding: "14px",
+          background: hasText ? t.accent : t.surface,
+          color: hasText ? t.accentText : t.textFaint,
+          border: "none",
+          borderRadius: 12, fontSize: 14,
           fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: hasText ? "pointer" : "default",
           transition: "all 0.2s",
+          letterSpacing: "-0.1px",
         }}>
           Translate
         </button>
       )}
 
-      <BottomNav active="home" navigate={navigate} theme={theme} />
+      <BottomNav active="home" navigate={navigate} theme={theme} user={user} />
     </div>
+  );
+}
+
+function userHasAccountLabel(isPremium, navigate, t) {
+  return (
+    <button onClick={() => navigate("upgrade")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+      ✦ Go Pro
+    </button>
   );
 }

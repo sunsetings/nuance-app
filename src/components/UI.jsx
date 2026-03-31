@@ -101,7 +101,7 @@ export function PhoneFrame({ children, theme }) {
 }
 
 // ─── BOTTOM NAV ──────────────────────────────────────────────
-export function BottomNav({ active, navigate, theme }) {
+export function BottomNav({ active, navigate, theme, user }) {
   const t = THEMES[theme] || THEMES.dark;
   return (
     <div style={{
@@ -112,7 +112,7 @@ export function BottomNav({ active, navigate, theme }) {
       {[
         { id: "home", icon: "⌂", label: "Home" },
         { id: "saved", icon: "♥", label: "Saved" },
-        { id: "account", icon: "◎", label: "Account" },
+        { id: "account", icon: "◎", label: user ? "Account" : "Sign in" },
       ].map(item => (
         <button key={item.id} onClick={() => navigate(item.id)} style={{
           background: "none", border: "none", cursor: "pointer",
@@ -130,7 +130,7 @@ export function BottomNav({ active, navigate, theme }) {
 }
 
 // ─── COPY BUTTON ─────────────────────────────────────────────
-export function CopyBtn({ text, theme }) {
+export function CopyBtn({ text, theme, variant = "default" }) {
   const t = THEMES[theme] || THEMES.dark;
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -138,6 +138,24 @@ export function CopyBtn({ text, theme }) {
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
+  if (variant === "inline") {
+    return (
+      <button onClick={handleCopy} style={{
+        background: "none",
+        border: "none",
+        padding: 0,
+        color: copied ? t.accent : t.textFaint,
+        fontSize: 10,
+        cursor: "pointer",
+        transition: "color 0.15s",
+        whiteSpace: "nowrap",
+        fontFamily: "'Lora',Georgia,serif",
+        letterSpacing: "0.04em",
+      }}>
+        {copied ? "✓ Copied" : "Copy"}
+      </button>
+    );
+  }
   return (
     <button onClick={handleCopy} style={{
       background: "none",

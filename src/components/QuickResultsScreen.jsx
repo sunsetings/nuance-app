@@ -16,6 +16,9 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
   const original = source.original || "";
   const translated = source.translated || "";
   const toLang = source.toLang || source.to_lang || source.lang || "Japanese";
+  const sourceLangCode = (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase();
+  const targetLangCode = toLang.slice(0, 2).toUpperCase();
+  const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
 
   // Check if already saved
   const existingSave = savedItems?.find(s =>
@@ -81,23 +84,47 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
         </div>
       )}
 
-      {/* 2 panels */}
       {[
-        { label: "ORIGINAL", content: original, lang: (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase(), muted: true, textToCopy: original },
-        { label: "TRANSLATION · " + toLang.toUpperCase(), content: translated, lang: toLang.slice(0, 2).toUpperCase(), textToCopy: translated },
-      ].map(({ label, content, lang, muted, textToCopy }, i) => (
-        <div key={i} style={{
-          background: t.surface, border: `1px solid ${t.border}`,
-          borderRadius: 12, padding: "12px 14px", marginBottom: 9,
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
-            <span style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.12em" }}>{label}</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 9, color: t.textDim }}>{lang}</span>
-              <CopyBtn text={textToCopy} theme={theme} />
+        {
+          label: "ORIGINAL",
+          content: original,
+          lang: sourceLangCode,
+          textToCopy: original,
+          labelColor: t.textFaint,
+          contentStyle: {
+            padding: "0 0 4px 12px",
+            borderLeft: `2px solid ${t.border}`,
+            color: t.textDim,
+            fontSize: 12,
+            lineHeight: 1.72,
+          },
+        },
+        {
+          label: "TRANSLATION",
+          content: translated,
+          lang: targetLangCode,
+          textToCopy: translated,
+          labelColor: theme === "light" ? "#2a6a2a" : "#78b86f",
+          contentStyle: {
+            padding: "16px 20px",
+            background: t.highlight,
+            borderRadius: 14,
+            border: `1px solid ${t.highlightBorder}`,
+            color: t.highlightText,
+            fontSize: 12,
+            lineHeight: 1.76,
+          },
+        },
+      ].map(({ label, content, lang, textToCopy, labelColor, contentStyle }, i) => (
+        <div key={i} style={{ marginBottom: 9 }}>
+          <div style={sectionMetaStyle}>
+            <span style={{ fontSize: 9, color: labelColor, letterSpacing: "0.12em", fontWeight: i === 1 ? "bold" : "normal" }}>{label}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>{lang}</span>
+              <CopyBtn text={textToCopy} theme={theme} variant="inline" />
             </div>
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.65, color: muted ? t.textDim : t.textMuted }}>
+          <div style={contentStyle}>
             {content || <span style={{ fontStyle: "italic", opacity: 0.5 }}>—</span>}
           </div>
         </div>
@@ -117,7 +144,7 @@ export function QuickResultsScreen({ navigate, isPremium, theme, initialData, sa
         </button>
       )}
 
-      <BottomNav active="quickresults" navigate={navigate} theme={theme} />
+      <BottomNav active="quickresults" navigate={navigate} theme={theme} user={user} />
     </div>
   );
 }
