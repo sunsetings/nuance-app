@@ -24,7 +24,7 @@ export function AccountScreen({ navigate, isPremium, setIsPremium, theme, setThe
 
       {[
         { label: "Daily refines", value: isPremium ? `${usageCount} / ${PRO_DAILY_CAP} today` : `${usageCount} / ${FREE_DAILY_CAP} today` },
-        { label: "Tones", value: isPremium ? "All 16" : "3 of 16" },
+        { label: "Tones", value: isPremium ? "All 20" : "4 of 20" },
         { label: "Dictation", value: isPremium ? "Enabled" : "Locked", locked: !isPremium },
         { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}` },
         { label: "Saved favourites", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : "Locked", locked: !isPremium, warn: isPremium && savedCount >= PRO_SAVE_WARN },
@@ -86,7 +86,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
 
       {[
         { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
-        { label: "Tones", guest: "2", free: "3", pro: "All 16" },
+        { label: "Tones", guest: "2", free: "4", pro: "All 20" },
         { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
         { label: "Saved", guest: "—", free: "Locked", pro: `${PRO_SAVE_LIMIT}` },
         { label: "Dictation", guest: "—", free: "—", pro: "✓" },

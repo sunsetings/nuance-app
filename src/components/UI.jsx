@@ -208,15 +208,20 @@ export function MicButton({ isPremium, onDictate, theme }) {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
       <button onClick={handleTap} style={{
         width: 38, height: 38, borderRadius: "50%",
-        background: listening ? t.accent : isPremium ? t.surface2 : t.surface,
+        background: "transparent",
         border: `1.5px solid ${listening ? t.accent : isPremium ? t.border2 : t.border}`,
-        color: listening ? t.accentText : isPremium ? t.textMuted : t.textFaint,
+        color: listening ? t.accent : isPremium ? t.textMuted : t.textFaint,
         fontSize: 16, cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center",
         transition: "all 0.2s", position: "relative",
         boxShadow: listening ? `0 0 0 4px ${t.highlight}` : "none",
       }}>
-        🎙
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="5.25" y="2.25" width="5.5" height="8" rx="2.75" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3.75 7.75C3.75 10.0972 5.65279 12 8 12C10.3472 12 12.25 10.0972 12.25 7.75" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M8 12V14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M5.75 14H10.25" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
         {!isPremium && (
           <span style={{
             position: "absolute", top: -5, right: -3,
@@ -292,7 +297,7 @@ export function RefineCounter({ isPremium, usageCount, navigate, theme }) {
         fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
         display: "flex", alignItems: "center", gap: 5,
       }}>
-        ✦ Pro · 300/day
+        ✦ Pro · 500/day
       </button>
     );
   }

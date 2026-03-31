@@ -1,10 +1,15 @@
 // ─── PLAN LIMITS ─────────────────────────────────────────────
-export const FREE_TONES = ["Casual", "Polite", "Gen A"];
-export const PRO_TONES = ["Formal", "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic", "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm", "19th Century"];
+export const FREE_TONES = ["Polite", "Casual", "Formal", "Gen A"];
+export const PRO_TONES = [
+  "Friendly", "Sincere", "Serious", "Succinct", "Assertive",
+  "Diplomatic", "Empathetic", "Apologetic", "Enthusiastic",
+  "Urgent", "Warm", "19th Century", "Playful", "Professional",
+  "Motivational", "Humble",
+];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
 export const MAX_SAME_TONE = 3;
 export const FREE_DAILY_CAP = 30;
-export const PRO_DAILY_CAP = 300;
+export const PRO_DAILY_CAP = 500;
 export const PRO_SAVE_LIMIT = 50;
 export const PRO_SAVE_WARN = 45;
 export const FREE_BOOKMARK_LIMIT = 2;
@@ -12,9 +17,15 @@ export const PRO_BOOKMARK_LIMIT = 6;
 export const CHAR_LIMIT = 500;
 
 export const ALL_LANGUAGES = [
-  "English","Spanish","French","Japanese","Mandarin","Arabic",
-  "German","Portuguese","Korean","Italian","Vietnamese","Russian",
-  "Dutch","Turkish","Polish"
+  "Arabic", "Bengali", "Bulgarian", "Catalan", "Croatian", "Czech",
+  "Danish", "Dutch", "English", "Estonian", "Finnish", "French",
+  "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Indonesian",
+  "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Malay",
+  "Mandarin", "Norwegian", "Persian", "Polish", "Portuguese", "Romanian",
+  "Russian", "Serbian", "Slovak", "Slovenian", "Spanish", "Swahili",
+  "Swedish", "Tagalog", "Tamil", "Telugu", "Thai", "Turkish",
+  "Ukrainian", "Urdu", "Vietnamese", "Welsh", "Afrikaans", "Albanian",
+  "Azerbaijani", "Georgian", "Icelandic", "Kazakh"
 ];
 
 export const APP_LANGUAGES = [...ALL_LANGUAGES];

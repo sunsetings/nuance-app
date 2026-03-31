@@ -200,7 +200,7 @@ export function HomeScreen({ navigate, isPremium, theme, usageCount, onTranslate
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          ✦ Daily limit reached (30) — Go Pro for 300/day
+          ✦ Daily limit reached (30) — Go Pro for 500/day
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
