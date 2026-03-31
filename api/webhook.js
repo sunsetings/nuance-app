@@ -47,7 +47,7 @@ export default async function handler(req, res) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
-      const userId = session.client_reference_id;
+      const userId = session.metadata?.user_id || session.client_reference_id;
 
       if (userId) {
         const { error } = await supabase

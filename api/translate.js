@@ -1,4 +1,11 @@
+const { createClient } = require("@supabase/supabase-js");
+
 const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://zehwsrjfwgdrmnnclezl.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_BMWfC_3FdJkW7RMqYW1tcQ_cj79O7Y1";
+const GUEST_RATE_WINDOW_MS = 60 * 1000;
+const GUEST_RATE_LIMIT = 12;
+const guestRateMap = new Map();
 
 function buildPrompt({ mode, text, tone, fromLang, toLang, toneCount }) {
   if (mode === "quick") {
@@ -33,6 +40,89 @@ Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
 {"refined":"...","translated":"..."}`;
+}
+
+function getBearerToken(req) {
+  const authHeader = req.headers.authorization || "";
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1] : null;
+}
+
+function getClientIdentifier(req) {
+  const forwardedFor = req.headers["x-forwarded-for"];
+  if (typeof forwardedFor === "string" && forwardedFor.trim()) {
+    return forwardedFor.split(",")[0].trim();
+  }
+  return req.socket?.remoteAddress || "anonymous";
+}
+
+function enforceGuestRateLimit(req) {
+  const key = getClientIdentifier(req);
+  const now = Date.now();
+  const current = guestRateMap.get(key);
+
+  if (!current || now - current.windowStart >= GUEST_RATE_WINDOW_MS) {
+    guestRateMap.set(key, { count: 1, windowStart: now });
+    return;
+  }
+
+  if (current.count >= GUEST_RATE_LIMIT) {
+    const retryAfter = Math.ceil((GUEST_RATE_WINDOW_MS - (now - current.windowStart)) / 1000);
+    const error = new Error(`Too many translation requests. Please wait ${retryAfter} seconds and try again.`);
+    error.statusCode = 429;
+    throw error;
+  }
+
+  current.count += 1;
+  guestRateMap.set(key, current);
+}
+
+async function getAuthenticatedUser(token) {
+  if (!token) return null;
+  const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return null;
+  return user;
+}
+
+function getRequestedLocalDate(req) {
+  const value = req.headers["x-tonara-local-date"];
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? value
+    : new Date().toISOString().split("T")[0];
+}
+
+async function getSignedInUsageContext(userId, req) {
+  const supabase = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const today = getRequestedLocalDate(req);
+
+  const [{ data: usage }, { data: profile }] = await Promise.all([
+    supabase.from("usage").select("count").eq("user_id", userId).eq("date", today).single(),
+    supabase.from("profiles").select("is_pro").eq("id", userId).single(),
+  ]);
+
+  const count = usage?.count || 0;
+  const cap = profile?.is_pro ? 500 : 30;
+  return { count, cap };
+}
+
+async function enforceRequestAccess(req) {
+  const token = getBearerToken(req);
+  const user = await getAuthenticatedUser(token);
+
+  if (!user) {
+    enforceGuestRateLimit(req);
+    return { user: null };
+  }
+
+  const usage = await getSignedInUsageContext(user.id, req);
+  if (usage.count >= usage.cap) {
+    const error = new Error(`Daily refine limit reached for this account (${usage.cap}/day).`);
+    error.statusCode = 429;
+    throw error;
+  }
+
+  return { user };
 }
 
 async function callOpenAI({ mode, prompt }) {
@@ -81,7 +171,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { mode, text, tone, fromLang, toLang, toneCount = 1 } = req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const { mode, text, tone, fromLang, toLang, toneCount = 1 } = body;
 
     if (!mode || !text || !fromLang || !toLang) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -95,11 +186,17 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Missing tone for refine mode" });
     }
 
+    if (typeof text !== "string" || text.length > 5000) {
+      return res.status(400).json({ error: "Text is too long." });
+    }
+
+    await enforceRequestAccess(req);
+
     const prompt = buildPrompt({ mode, text, tone, fromLang, toLang, toneCount });
     const result = await callOpenAI({ mode, prompt });
     return res.status(200).json(result);
   } catch (error) {
     console.error("Translate API error:", error.message);
-    return res.status(500).json({ error: error.message || "Translation failed" });
+    return res.status(error.statusCode || 500).json({ error: error.message || "Translation failed" });
   }
 };

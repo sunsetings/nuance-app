@@ -1,8 +1,16 @@
 import { supabase } from './supabase.js'
 
+function getLocalDateKey() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 // ─── USAGE ───────────────────────────────────────────────────
 export async function getUsageToday(userId) {
-  const today = new Date().toISOString().split('T')[0]
+  const today = getLocalDateKey()
   const { data, error } = await supabase
     .from('usage')
     .select('count')
@@ -14,7 +22,7 @@ export async function getUsageToday(userId) {
 }
 
 export async function incrementUsageDB(userId) {
-  const today = new Date().toISOString().split('T')[0]
+  const today = getLocalDateKey()
   const { data: existing } = await supabase
     .from('usage')
     .select('id, count')

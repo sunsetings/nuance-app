@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, PRO_SAVED_TONE_LIMIT, FREE_SAVE_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
+import { supabase } from "../lib/supabase.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems }) {
@@ -76,23 +77,24 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
       return;
     }
 
-    const priceId = plan === "yearly"
-      ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
-      : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
-
-    if (!priceId) {
-      setCheckoutError("Payment setup is missing. Please try again in a moment.");
-      return;
-    }
-
     setCheckoutError(null);
     setLoadingPlan(plan);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) {
+        navigate("signin_nav");
+        return;
+      }
+
       const res = await fetch("/api/create-checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ plan }),
       });
 
       const data = await res.json().catch(() => ({}));
