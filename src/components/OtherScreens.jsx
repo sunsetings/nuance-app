@@ -245,7 +245,7 @@ export function CapScreen({ navigate, userTier, theme }) {
         <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, marginBottom: 8, maxWidth: 270 }}>
           {isGuest ? "Sign up free — 30 seconds, 30 refines a day." : "Upgrade to Pro for 500 refines a day."}
         </div>
-        <div style={{ fontSize: 10, color: t.textFaint, marginBottom: 28, letterSpacing: "0.04em" }}>Resets in ~6 hours</div>
+        <div style={{ height: 20 }} />
 
         {isGuest && (
           <button onClick={() => navigate("signin_cap")} style={{ width: "100%", maxWidth: 270, padding: "13px", background: t.accent, color: t.accentText, border: "none", borderRadius: 11, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 8, fontFamily: "'Lora',Georgia,serif" }}>
