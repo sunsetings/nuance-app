@@ -15,11 +15,15 @@ export function ToneRow({
 }) {
   const t = THEMES[theme] || THEMES.dark;
   const isPro = userTier === "pro";
-  const visibleTones = isPro
+  const baseVisibleTones = isPro
     ? (favourites.length > 0 ? favourites.slice(0, 4) : DEFAULT_PRO_TONES.slice(0, 4))
     : userTier === "free"
       ? FREE_TONES.slice(0, 4)
       : ["Polite", "Casual", "Formal", "Gen A"];
+
+  const visibleTones = baseVisibleTones.includes(activeTone)
+    ? baseVisibleTones
+    : [activeTone, ...baseVisibleTones].slice(0, 5);
 
   const pills = [];
   if (isHomeScreen) {
