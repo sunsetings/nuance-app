@@ -2,9 +2,6 @@ import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, PRO_DAILY_CAP, PRO_SAVE_LIMIT, FREE_BOOKMARK_LIMIT, PRO_BOOKMARK_LIMIT, PRO_SAVED_TONE_LIMIT, FREE_SAVE_LIMIT } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 
-const STRIPE_MONTHLY_PRICE_ID = import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || "price_1TGhEp0aSG9hzXuCIriq7sHy";
-const STRIPE_YEARLY_PRICE_ID = import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID || "price_1TGhEq0aSG9hzXuCsyInAL8D";
-
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, onLogout, savedItems, setIsPremium }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -110,8 +107,8 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user }) {
     }
 
     const priceId = plan === "yearly"
-      ? STRIPE_YEARLY_PRICE_ID
-      : STRIPE_MONTHLY_PRICE_ID;
+      ? import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID
+      : import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID;
 
     if (!priceId) {
       setCheckoutError("Payment setup is missing. Please try again in a moment.");
