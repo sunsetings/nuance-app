@@ -36,14 +36,18 @@ export function LangSelector({
   const canBookmarkAny = userTier !== "guest";
   const visibleBookmarked = canBookmarkAny ? bookmarked : [];
   const canBookmark = visibleBookmarked.length < bookmarkLimit;
+  const allLanguages = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 
   const filterList = (list) => (
     search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
   );
 
   const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
-  const baseFiltered = filterList(BASE_LANGUAGES.filter((lang) => !visibleBookmarked.includes(lang)));
-  const proFiltered = filterList(PRO_LANGUAGES.filter((lang) => !visibleBookmarked.includes(lang)));
+  const availableFiltered = filterList(
+    allLanguages
+      .filter((lang) => !visibleBookmarked.includes(lang))
+      .sort((a, b) => a.localeCompare(b))
+  );
 
   const handleOpen = () => {
     if (open) {
@@ -80,7 +84,7 @@ export function LangSelector({
       >
         <span style={{ flex: 1, textAlign: label === "TO" ? "right" : "left" }}>{value}</span>
         {visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
-        {PRO_LANGUAGES.includes(value) && !isPro && (
+        {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
             PRO
           </span>
@@ -173,6 +177,11 @@ export function LangSelector({
                     >
                       <SmallHeart size={10} color={t.proTag} filled />
                       {lang}
+                      {PRO_LANGUAGES.includes(lang) && (
+                        <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
+                          PRO
+                        </span>
+                      )}
                     </button>
                     <button onClick={() => onToggleBookmark(lang)} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center" }}>
                       <SmallHeart size={13} color={t.proTag} filled />
@@ -182,60 +191,54 @@ export function LangSelector({
               </div>
             )}
 
-            {baseFiltered.length > 0 && (
+            {availableFiltered.length > 0 && (
               <div>
                 {bookmarkedFiltered.length > 0 && <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />}
                 <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Available</div>
-                {baseFiltered.map((lang) => (
+                {availableFiltered.map((lang) => {
+                  const isProLanguage = PRO_LANGUAGES.includes(lang);
+                  const canUseLanguage = !isProLanguage || isPro;
+                  const canBookmarkLanguage = canBookmarkAny && (!isProLanguage || isPro);
+                  return (
                   <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
                     <button
                       onClick={() => {
-                        onChange(lang);
-                        handleClose();
-                      }}
-                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      {lang}
-                    </button>
-                    {canBookmarkAny && (
-                      <button
-                        onClick={() => onToggleBookmark(lang)}
-                        style={{ background: "none", border: "none", cursor: canBookmark ? "pointer" : "default", padding: "2px", display: "flex", alignItems: "center", opacity: canBookmark ? 1 : 0.3 }}
-                      >
-                        <SmallHeart size={13} color={t.textFaint} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {proFiltered.length > 0 && (
-              <div>
-                <div style={{ height: 1, background: t.borderLight, margin: "4px 12px" }} />
-                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.proTag, letterSpacing: "0.1em", textTransform: "uppercase" }}>Pro languages</div>
-                {proFiltered.map((lang) => (
-                  <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", opacity: isPro ? 1 : 0.5 }}>
-                    <button
-                      onClick={() => {
-                        if (!isPro) {
+                        if (!canUseLanguage) {
                           navigate("upgrade");
                           return;
                         }
                         onChange(lang);
                         handleClose();
                       }}
-                      style={{ flex: 1, background: "none", border: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: isPro ? t.textMuted : t.textDim, fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
                     >
                       {lang}
-                      <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>PRO</span>
+                      {isProLanguage && (
+                        <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
+                          PRO
+                        </span>
+                      )}
                     </button>
+                    {canBookmarkAny && (
+                      <button
+                        onClick={() => {
+                          if (!canBookmarkLanguage) {
+                            navigate("upgrade");
+                            return;
+                          }
+                          onToggleBookmark(lang);
+                        }}
+                        style={{ background: "none", border: "none", cursor: canBookmark && canBookmarkLanguage ? "pointer" : "default", padding: "2px", display: "flex", alignItems: "center", opacity: canBookmark && canBookmarkLanguage ? 1 : 0.3 }}
+                      >
+                        <SmallHeart size={13} color={t.textFaint} />
+                      </button>
+                    )}
                   </div>
-                ))}
+                )})}
               </div>
             )}
 
-            {bookmarkedFiltered.length === 0 && baseFiltered.length === 0 && proFiltered.length === 0 && (
+            {bookmarkedFiltered.length === 0 && availableFiltered.length === 0 && (
               <div style={{ padding: "18px 14px", textAlign: "center", fontSize: 12, color: t.textDim }}>No languages found</div>
             )}
           </div>
