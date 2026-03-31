@@ -4,8 +4,9 @@ export const FREE_TONES = ["Polite", "Playful", "Casual", "Gen A"];
 export const PRO_TONES = [
   "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
-  "19th Century", "Professional", "Motivational", "Humble",
+  "Shakespearean", "Professional", "Motivational", "Humble",
   "Anger", "Charming", "Cheeky", "Royal", "Poetic", "Flirty",
+  "Dramatic", "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
 export const DEFAULT_PRO_TONES = ["Charming", "Poetic", "Diplomatic", "Empathetic"];
@@ -41,8 +42,8 @@ export const DEFAULT_TO_LANG = "Korean";
 export const TONE_CATEGORIES = [
   { label: "Everyday", tones: ["Polite", "Playful", "Casual", "Friendly", "Gen A", "Charming", "Cheeky", "Flirty"] },
   { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious", "Royal"] },
-  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger"] },
-  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "19th Century", "Poetic"] },
+  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger", "Dramatic"] },
+  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "Shakespearean", "Poetic", "Noir"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
@@ -61,7 +62,7 @@ export const TONE_DESCRIPTIONS = {
   Enthusiastic: "Energetic and excited",
   Urgent: "Pressing and time-sensitive",
   Warm: "Caring and personal",
-  "19th Century": "Formal Victorian prose",
+  Shakespearean: "Theatrical and Bard-like",
   Professional: "Clean and corporate-safe",
   Motivational: "Energising and encouraging",
   Humble: "Deferential and respectful",
@@ -71,6 +72,8 @@ export const TONE_DESCRIPTIONS = {
   Royal: "Regal and elevated",
   Poetic: "Lyrical and expressive",
   Flirty: "Playful and romantic",
+  Dramatic: "Heightened and emotionally intense",
+  Noir: "Moody and mysterious",
 };
 
 export function getUserTier(user, isPremium) {
