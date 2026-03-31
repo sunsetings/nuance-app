@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, getBookmarkLimitForTier, getCapForTier } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, getBookmarkLimitForTier, getCapForTier } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -8,6 +8,24 @@ import { ToneRow } from "./ToneRow.jsx";
 const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
+
+function buildHomeToneOrder(userTier, savedTones = []) {
+  const next = [];
+  const add = (tone) => {
+    if (!tone || next.includes(tone)) return;
+    next.push(tone);
+  };
+
+  if (userTier === "free") {
+    FREE_TONES.forEach(add);
+  } else {
+    savedTones.forEach(add);
+    ["Polite", "Casual", "Formal", "Gen A"].forEach(add);
+  }
+
+  ALL_TONES.forEach(add);
+  return next;
+}
 
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -25,6 +43,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const [mode, setMode] = useState("refine");
   const [tone, setTone] = useState("Polite");
+  const [homeToneOrder, setHomeToneOrder] = useState(() => buildHomeToneOrder(userTier, savedTones));
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
   const [swapping, setSwapping] = useState(false);
@@ -41,6 +60,20 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   useEffect(() => { localStorage.setItem(LS_FROM, fromLang); }, [fromLang]);
   useEffect(() => { localStorage.setItem(LS_TO, toLang); }, [toLang]);
   useEffect(() => { localStorage.setItem(LS_BOOKMARKS, JSON.stringify(bookmarked)); }, [bookmarked]);
+  useEffect(() => {
+    setHomeToneOrder((prev) => {
+      const rebuilt = buildHomeToneOrder(userTier, savedTones);
+      const next = [];
+      const add = (entry) => {
+        if (!entry || next.includes(entry)) return;
+        next.push(entry);
+      };
+
+      prev.forEach(add);
+      rebuilt.forEach(add);
+      return next;
+    });
+  }, [userTier, savedTones]);
 
   const toggleBM = lang => setBookmarked(prev =>
     userTier === "guest" ? prev : prev.includes(lang) ? prev.filter(l => l !== lang)
@@ -70,6 +103,15 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     onTranslate({ text, tone, fromLang, toLang, mode });
   };
 
+  const handleRowToneSelect = (selectedTone) => {
+    setTone(selectedTone);
+  };
+
+  const handleSheetToneSelect = (selectedTone) => {
+    setTone(selectedTone);
+    setHomeToneOrder((prev) => [selectedTone, ...prev.filter((entry) => entry !== selectedTone)]);
+  };
+
   const charsLeft = CHAR_LIMIT - text.length;
   const charsNearLimit = charsLeft <= 50;
 
@@ -86,7 +128,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         userTier={userTier}
         favourites={savedTones}
         onToggleFav={onToggleSavedTone}
-        onSelectTone={setTone}
+        onSelectTone={handleSheetToneSelect}
         navigate={navigate}
         theme={theme}
       />
@@ -159,10 +201,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 2 }}>Tone</div>
           <ToneRow
             activeTone={tone} toneCount={1}
-            onSelect={setTone} onSetLevel={() => {}}
+            onSelect={handleRowToneSelect} onSetLevel={() => {}}
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={savedTones}
+            priorityTonesOverride={homeToneOrder}
             disabled={false}
             isHomeScreen={true}
             navigate={navigate}

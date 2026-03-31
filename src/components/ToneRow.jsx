@@ -22,6 +22,7 @@ export function ToneRow({
   onOpenSheet,
   userTier,
   favourites = [],
+  priorityTonesOverride,
   disabled,
   isHomeScreen = false,
   navigate,
@@ -32,9 +33,11 @@ export function ToneRow({
     ? DEFAULT_PRO_TONES
     : ["Polite", "Casual", "Formal", "Gen A"];
 
-  const orderedCandidates = userTier === "free"
-    ? [activeTone, ...FREE_TONES, ...favourites, ...ALL_TONES]
-    : [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
+  const orderedCandidates = priorityTonesOverride?.length
+    ? [...priorityTonesOverride, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
+    : userTier === "free"
+      ? [activeTone, ...FREE_TONES, ...favourites, ...ALL_TONES]
+      : [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
   const visibleTones = [];
 
   orderedCandidates.forEach((tone) => {
