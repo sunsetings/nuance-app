@@ -127,7 +127,7 @@ export default function App() {
   const showToast = (message) => {
     setToastMessage(message);
     setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2200);
+    setTimeout(() => setToastVisible(false), 4200);
   };
 
   const toggleSavedTone = (tone) => {

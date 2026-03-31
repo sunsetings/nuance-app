@@ -11,11 +11,14 @@ export function Toast({ message, visible, theme }) {
       background: theme === "light" ? "#1a1a0a" : "#f5f1e8",
       color: theme === "light" ? "#f5f1e8" : "#1a1a0a",
       padding: "10px 20px", borderRadius: 24, fontSize: 12,
-      fontFamily: "'Lora',Georgia,serif", whiteSpace: "nowrap",
+      fontFamily: "'Lora',Georgia,serif",
       opacity: visible ? 1 : 0, transition: "all 0.3s ease",
       zIndex: 700, pointerEvents: "none",
       boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
-      display: "flex", alignItems: "center", gap: 8,
+      display: "flex", alignItems: "flex-start", gap: 8,
+      maxWidth: "calc(100% - 28px)",
+      boxSizing: "border-box",
+      lineHeight: 1.4,
     }}>
       <span style={{ color: t.accent }}>♥</span>{message}
     </div>
