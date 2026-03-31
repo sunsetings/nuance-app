@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
 
-export function AuthScreen({ theme, onAuth }) {
+export function AuthScreen({ theme, onAuth, navigate }) {
   const t = THEMES[theme] || THEMES.dark;
   const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
@@ -73,6 +73,23 @@ export function AuthScreen({ theme, onAuth }) {
       display: "flex", flexDirection: "column",
       minHeight: "100%", boxSizing: "border-box",
     }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
+        <button
+          onClick={() => navigate?.("home")}
+          style={{
+            background: "none",
+            border: "none",
+            color: t.textMuted,
+            fontSize: 18,
+            cursor: "pointer",
+            lineHeight: 1,
+            padding: 0,
+          }}
+        >
+          ←
+        </button>
+      </div>
+
       <div style={{ textAlign: "center", marginBottom: 22, marginTop: 10 }}>
         <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: "-0.5px", marginBottom: 6 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim }}>
