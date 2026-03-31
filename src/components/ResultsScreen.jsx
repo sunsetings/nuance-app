@@ -50,24 +50,152 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     setTimeout(() => setToastVisible(false), 2200);
   };
 
-  const handleShare = async () => {
-    const shareText = [
-      `Original: ${original}`,
-      `Refined (${activeTone}${toneCount > 1 ? ` x${toneCount}` : ""}): ${refined}`,
-      `Translated (${toLang}): ${translated}`,
-    ].filter(Boolean).join("\n\n");
+  const buildShareImageBlob = async () => {
+    const width = 1080;
+    const horizontal = 72;
+    const panelWidth = width - horizontal * 2;
+    const titleColor = t.textFaint;
+    const labelColor = theme === "light" ? "#2a6a2a" : "#78b86f";
+    const bubbleFill = t.highlight;
+    const bubbleStroke = t.highlightBorder;
+    const bubbleText = t.highlightText;
 
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const wrapText = (text, maxWidth, font) => {
+      ctx.font = font;
+      const words = String(text || "—").split(/\s+/);
+      const lines = [];
+      let line = "";
+      words.forEach((word) => {
+        const next = line ? `${line} ${word}` : word;
+        if (ctx.measureText(next).width <= maxWidth) {
+          line = next;
+        } else {
+          if (line) lines.push(line);
+          line = word;
+        }
+      });
+      if (line) lines.push(line);
+      return lines.length ? lines : ["—"];
+    };
+
+    const originalLines = wrapText(original, panelWidth - 36, "42px Georgia");
+    const refinedLines = wrapText(refined, panelWidth - 80, "44px Georgia");
+    const translatedLines = wrapText(translated, panelWidth - 80, "40px Georgia");
+
+    const originalHeight = Math.max(90, originalLines.length * 56);
+    const refinedHeight = Math.max(150, refinedLines.length * 62 + 44);
+    const translatedHeight = Math.max(150, translatedLines.length * 58 + 44);
+
+    const totalHeight = 220 + originalHeight + refinedHeight + translatedHeight + 250;
+    canvas.width = width;
+    canvas.height = totalHeight;
+
+    ctx.fillStyle = t.phoneBg;
+    ctx.fillRect(0, 0, width, totalHeight);
+
+    ctx.fillStyle = t.text;
+    ctx.font = "bold 56px Georgia";
+    ctx.fillText("tonara.", horizontal, 90);
+
+    let y = 170;
+
+    const drawSectionHeader = (label, lang, color, bold = false) => {
+      ctx.fillStyle = color;
+      ctx.font = `${bold ? "bold " : ""}24px Georgia`;
+      ctx.fillText(label, horizontal, y);
+      ctx.fillStyle = t.textFaint;
+      ctx.font = "24px Georgia";
+      const langText = String(lang || "").toUpperCase();
+      const langWidth = ctx.measureText(langText).width;
+      ctx.fillText(langText, width - horizontal - langWidth, y);
+      y += 22;
+    };
+
+    const drawOriginalBlock = () => {
+      drawSectionHeader("ORIGINAL", sourceLangCode, titleColor, false);
+      y += 18;
+      ctx.strokeStyle = t.border;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(horizontal + 10, y);
+      ctx.lineTo(horizontal + 10, y + originalHeight - 18);
+      ctx.stroke();
+      ctx.fillStyle = t.textDim;
+      ctx.font = "42px Georgia";
+      originalLines.forEach((line, index) => {
+        ctx.fillText(line, horizontal + 34, y + 10 + index * 56);
+      });
+      y += originalHeight + 34;
+    };
+
+    const roundedRect = (x, yPos, w, h, radius) => {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, yPos);
+      ctx.lineTo(x + w - radius, yPos);
+      ctx.quadraticCurveTo(x + w, yPos, x + w, yPos + radius);
+      ctx.lineTo(x + w, yPos + h - radius);
+      ctx.quadraticCurveTo(x + w, yPos + h, x + w - radius, yPos + h);
+      ctx.lineTo(x + radius, yPos + h);
+      ctx.quadraticCurveTo(x, yPos + h, x, yPos + h - radius);
+      ctx.lineTo(x, yPos + radius);
+      ctx.quadraticCurveTo(x, yPos, x + radius, yPos);
+      ctx.closePath();
+    };
+
+    const drawBubbleBlock = (label, lang, lines, height, textColor) => {
+      drawSectionHeader(label, lang, labelColor, true);
+      y += 18;
+      roundedRect(horizontal, y, panelWidth, height, 24);
+      ctx.fillStyle = bubbleFill;
+      ctx.fill();
+      ctx.strokeStyle = bubbleStroke;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = textColor;
+      ctx.font = label.includes("TRANSLATED") ? "40px Georgia" : "44px Georgia";
+      const lineHeight = label.includes("TRANSLATED") ? 58 : 62;
+      lines.forEach((line, index) => {
+        ctx.fillText(line, horizontal + 40, y + 66 + index * lineHeight);
+      });
+      y += height + 38;
+    };
+
+    drawOriginalBlock();
+    drawBubbleBlock(refinedLabel, sourceLangCode, refinedLines, refinedHeight, bubbleText);
+    drawBubbleBlock("REFINED AND TRANSLATED", targetLangCode, translatedLines, translatedHeight, bubbleText);
+
+    return await new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), "image/png");
+    });
+  };
+
+  const handleShare = async () => {
     try {
-      if (navigator.share) {
+      const blob = await buildShareImageBlob();
+      if (!blob) throw new Error("No image created");
+
+      const file = new File([blob], "tonara-share.png", { type: "image/png" });
+
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
         await navigator.share({
           title: "tonara.",
-          text: shareText,
+          files: [file],
         });
         return;
       }
 
-      await navigator.clipboard.writeText(shareText);
-      showToast("Copied to clipboard for sharing");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tonara-share.png";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Image downloaded for sharing");
     } catch (e) {
       if (e?.name !== "AbortError") {
         showToast("Couldn't open native share");
