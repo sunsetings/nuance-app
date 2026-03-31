@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus } from "../lib/constants.js";
-import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
+import { Toast, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
@@ -16,7 +16,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const [toneCount, setToneCount] = useState(source.toneCount || 1);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [shareVisible, setShareVisible] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -49,6 +48,31 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     setToastMessage(msg);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2200);
+  };
+
+  const handleShare = async () => {
+    const shareText = [
+      `Original: ${original}`,
+      `Refined (${activeTone}${toneCount > 1 ? ` x${toneCount}` : ""}): ${refined}`,
+      `Translated (${toLang}): ${translated}`,
+    ].filter(Boolean).join("\n\n");
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "tonara.",
+          text: shareText,
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareText);
+      showToast("Copied to clipboard for sharing");
+    } catch (e) {
+      if (e?.name !== "AbortError") {
+        showToast("Couldn't open native share");
+      }
+    }
   };
 
   const doRefine = async (tone, count) => {
@@ -217,7 +241,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       display: "flex", flexDirection: "column", minHeight: "100%",
     }}>
       <Toast message={toastMessage} visible={toastVisible} theme={theme} />
-      <ShareSheet visible={shareVisible} onClose={() => setShareVisible(false)} theme={theme} />
       <ToneSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
@@ -284,7 +307,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         </div>
       ))}
 
-      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
+      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
       <BottomNav active="results" navigate={navigate} theme={theme} userTier={userTier} />
     </div>
   );

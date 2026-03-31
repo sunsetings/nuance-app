@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { THEMES } from "../lib/constants.js";
-import { Toast, ShareSheet, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
+import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
 export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
@@ -9,7 +9,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   const source = savedItem || initialData || {};
 
   const [toastVisible, setToastVisible] = useState(false);
-  const [shareVisible, setShareVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("Translation saved to favourites");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,9 +27,34 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   );
   const saved = !!existingSave;
 
-  const showToast = () => {
+  const showToast = (message = "Translation saved to favourites") => {
+    setToastMessage(message);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2200);
+  };
+
+  const handleShare = async () => {
+    const shareText = [
+      `Original: ${original}`,
+      `Translation (${toLang}): ${translated}`,
+    ].filter(Boolean).join("\n\n");
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "tonara.",
+          text: shareText,
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareText);
+      showToast("Copied to clipboard for sharing");
+    } catch (e) {
+      if (e?.name !== "AbortError") {
+        setError("Couldn't open native share.");
+      }
+    }
   };
 
   const handleSave = async () => {
@@ -65,8 +90,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column", minHeight: "100%",
     }}>
-      <Toast message="Translation saved to favourites" visible={toastVisible} theme={theme} />
-      <ShareSheet visible={shareVisible} onClose={() => setShareVisible(false)} theme={theme} />
+      <Toast message={toastMessage} visible={toastVisible} theme={theme} />
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 6 }}>
@@ -129,7 +153,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
         </div>
       ))}
 
-      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={() => setShareVisible(true)} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
+      <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
 
       {!fromSaved && (
         <button onClick={() => navigate("home")} style={{
