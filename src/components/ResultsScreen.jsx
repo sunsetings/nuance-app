@@ -443,38 +443,40 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
           />
           {userTier === "pro" && (
             <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-              <div style={{ width: "100%", maxWidth: 236 }}>
-                <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
-                  Blend tone
+              <div style={{ width: "100%", maxWidth: 260 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
+                  <div style={{ flex: "0 0 auto", paddingLeft: 6 }}>
+                    {blendTone ? (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <button
+                          onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                          style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                        >
+                          {blendTone}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            setBlendTone(null);
+                            await doRefine(activeTone, toneCount, null);
+                          }}
+                          style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                        style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                      >
+                        + Add blend tone
+                      </button>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, textAlign: "right", fontSize: 9, color: t.textFaint, lineHeight: 1.4, letterSpacing: "0.02em" }}>
+                    Add one supporting tone
+                  </div>
                 </div>
-                {blendTone ? (
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <button
-                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                      style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      {blendTone}
-                    </button>
-                    <button
-                      onClick={async () => {
-                        setBlendTone(null);
-                        await doRefine(activeTone, toneCount, null);
-                      }}
-                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <button
-                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                      style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      + Add blend tone
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           )}
