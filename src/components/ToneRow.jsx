@@ -43,8 +43,8 @@ export function ToneRow({
     contextualTones.push(tone);
   };
 
-  favourites.forEach(addContextual);
   addContextual(activeTone);
+  favourites.forEach(addContextual);
   addContextual(lastUsedTone);
 
   const hasMeaningfulContext = favourites.length > 0 || !!lastUsedTone;
