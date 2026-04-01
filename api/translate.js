@@ -49,12 +49,16 @@ Output ONLY the refined text, nothing else. No labels, no explanations.
 Task 2 — TRANSLATE:
 Translate into ${toLang} using this priority order:
 1. Preserve the original message's core meaning, intent, and context.
-2. Make the selected "${tone}" feel natural, relevant, and strong in ${toLang}.
+2. Make the selected "${tone}" feel natural, relevant, and strong in ${toLang}, using the cultural and social norms of ${toLang}.
 3. Give very little weight to the exact wording of the refined text. Treat it only as a faint stylistic reference.
 
 Important translation rules:
 - Give MUCH MORE weight to the original meaning/intent and the selected tone than to the exact wording of the refined text.
 - The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
+- Account for cultural nuance, language-specific social norms, and what native speakers of ${toLang} would naturally say in this situation.
+- Adjust formality, softness, directness, humor, flirtiness, emotional phrasing, and implied subtext to match how that tone is actually expressed in ${toLang}, not how it is expressed in English.
+- Prefer culturally and socially appropriate phrasing over literal sentence structure whenever the two conflict.
+- Preserve the intended relationship dynamic between speaker and listener in a way that feels natural in ${toLang}.
 - Preserve the social feeling, nuance, subtext, and emotional intensity selected by the user.
 - Preserve the same intensity level in translation:
   - 1x = subtle, light-touch tone
@@ -63,10 +67,10 @@ Important translation rules:
 - The refined text is NOT the main source for translation. The original meaning and the selected tone are the main sources.
 - If the refined wording and the best target-language tone conflict, choose the phrasing that best preserves the original meaning while making the tone land correctly in ${toLang}.
 - Do not translate too literally if literal wording makes the message feel flatter, awkward, culturally off, or less on-tone.
-- Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
+- Let the target language adapt naturally so the result feels native, current, context-aware, and culturally appropriate for that tone.
 - If the source language is set to auto detect, infer the input language from the original message instead of assuming English.
 
-In short: preserve the original meaning first, make the final translation sound naturally "${tone}" in ${toLang} second, and give only minimal weight to the exact wording of the refined sentence.
+In short: preserve the original meaning first, make the final translation sound naturally and culturally right for a "${tone}" message in ${toLang} second, and give only minimal weight to the exact wording of the refined sentence.
 Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
