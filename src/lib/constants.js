@@ -5,7 +5,8 @@ export const PRO_TONES = [
   "Polite", "Casual", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
   "Shakespearean", "Professional", "Motivational", "Humble",
-  "Anger", "Charming", "Cheeky", "Royal",
+  "Anger", "Charming", "Cheeky", "Royal", "Luxury", "Chaotic", "Iconic",
+  "Teasing", "Overexplaining", "Dad Joke",
   "Dramatic", "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
@@ -41,10 +42,10 @@ export const DEFAULT_FROM_LANG = AUTO_DETECT_LANGUAGE;
 export const DEFAULT_TO_LANG = "Korean";
 
 export const TONE_CATEGORIES = [
-  { label: "Everyday", tones: ["Polite", "Playful", "Casual", "Friendly", "Gen A", "Charming", "Cheeky", "Flirty"] },
-  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious", "Royal"] },
-  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger", "Dramatic"] },
-  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "Shakespearean", "Poetic", "Noir"] },
+  { label: "Everyday", tones: ["Polite", "Playful", "Casual", "Friendly", "Gen A", "Charming", "Cheeky", "Flirty", "Teasing", "Dad Joke"] },
+  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious", "Royal", "Luxury", "Iconic"] },
+  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger", "Dramatic", "Chaotic"] },
+  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "Shakespearean", "Poetic", "Noir", "Overexplaining"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
@@ -71,6 +72,12 @@ export const TONE_DESCRIPTIONS = {
   Charming: "Smooth and winsome",
   Cheeky: "Bold and mischievous",
   Royal: "Regal and elevated",
+  Luxury: "Elevated and high-end",
+  Chaotic: "Unhinged and energetic",
+  Iconic: "Confident and unforgettable",
+  Teasing: "Playful and provocative",
+  Overexplaining: "Needlessly detailed",
+  "Dad Joke": "Corny and harmless",
   Poetic: "Lyrical and expressive",
   Flirty: "Playful and romantic",
   Dramatic: "Heightened and emotionally intense",
