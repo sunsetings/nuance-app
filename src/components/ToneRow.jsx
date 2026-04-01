@@ -60,6 +60,7 @@ export function ToneRow({
   });
 
   const rowTones = hasMeaningfulContext ? contextualTones : defaultRowTones.slice(0, 5);
+  const useWrappedContextRow = hasMeaningfulContext;
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
@@ -71,9 +72,19 @@ export function ToneRow({
 
   return (
     <div style={{ marginBottom: 4 }}>
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 6, alignItems: useWrappedContextRow ? "flex-start" : "center" }}>
         <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
-          <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", opacity: disabled ? 0.2 : 1, paddingBottom: 2, paddingTop: 10, paddingRight: 2 }}>
+          <div style={{
+            display: "flex",
+            flexWrap: useWrappedContextRow ? "wrap" : "nowrap",
+            gap: 6,
+            overflowX: useWrappedContextRow ? "visible" : "auto",
+            scrollbarWidth: "none",
+            opacity: disabled ? 0.2 : 1,
+            paddingBottom: 2,
+            paddingTop: 10,
+            paddingRight: 2,
+          }}>
             {pills.map((pill, index) => {
               const status = getToneStatus(pill.tone, userTier);
               const isFavourite = favourites.includes(pill.tone);
@@ -132,7 +143,9 @@ export function ToneRow({
               );
             })}
           </div>
-          <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 36, background: `linear-gradient(to right, transparent, ${t.phoneBg})`, pointerEvents: "none" }} />
+          {!useWrappedContextRow && (
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 36, background: `linear-gradient(to right, transparent, ${t.phoneBg})`, pointerEvents: "none" }} />
+          )}
         </div>
 
         <button
