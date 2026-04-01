@@ -447,6 +447,15 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
                 {blendTone ? (
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <button
+                      onClick={async () => {
+                        setBlendTone(null);
+                        await doRefine(activeTone, toneCount, null);
+                      }}
+                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 8px 0 0", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      ×
+                    </button>
+                    <button
                       onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
                       style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
                     >
@@ -457,15 +466,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
                       style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 12px", fontSize: 11, cursor: "pointer", marginLeft: 8, fontFamily: "'Lora',Georgia,serif" }}
                     >
                       Change blend tone
-                    </button>
-                    <button
-                      onClick={async () => {
-                        setBlendTone(null);
-                        await doRefine(activeTone, toneCount, null);
-                      }}
-                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      ×
                     </button>
                   </div>
                 ) : (
