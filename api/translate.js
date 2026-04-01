@@ -8,7 +8,7 @@ const GUEST_RATE_LIMIT = 12;
 const guestRateMap = new Map();
 
 function buildPrompt({ mode, text, tone, fromLang, toLang, toneCount }) {
-  const isAutoDetected = fromLang === "Auto detected";
+  const isAutoDetected = fromLang === "Detect language";
   const sourceInstruction = isAutoDetected
     ? `Detect the source language of the input text automatically, then translate it into ${toLang}.`
     : `Translate the following text from ${fromLang} into ${toLang}.`;

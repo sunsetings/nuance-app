@@ -36,7 +36,7 @@ export const PRO_LANGUAGES = [
 ];
 export const ALL_LANGUAGES = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 
-export const AUTO_DETECT_LANGUAGE = "Auto detected";
+export const AUTO_DETECT_LANGUAGE = "Detect language";
 export const DEFAULT_FROM_LANG = AUTO_DETECT_LANGUAGE;
 export const DEFAULT_TO_LANG = "Korean";
 
