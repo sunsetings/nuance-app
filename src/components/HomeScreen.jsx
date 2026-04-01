@@ -152,7 +152,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const handleSheetToneSelect = (selectedTone) => {
     if (sheetMode === "blend") {
       if (selectedTone === tone) {
-        showToast("Blend tone has to be different from the main tone.");
+        showToast("Supporting tone has to be different from the main tone.");
         return;
       }
       const blendState = getBlendToneState(tone, selectedTone);
@@ -193,7 +193,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         onSelectTone={handleSheetToneSelect}
         navigate={navigate}
         theme={theme}
-        title={sheetMode === "blend" ? "Blend tone" : "Tones"}
+        title={sheetMode === "blend" ? "Supporting tone" : "Tones"}
       />
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>

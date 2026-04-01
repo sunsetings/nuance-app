@@ -266,7 +266,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     if (!ensureWithinCap()) return;
     if (sheetMode === "blend") {
       if (tone === activeTone) {
-        showToast("Blend tone has to be different from the main tone.");
+        showToast("Supporting tone has to be different from the main tone.");
         return;
       }
       const blendState = getBlendToneState(activeTone, tone);
@@ -409,7 +409,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         onSelectTone={handleSheetSelect}
         navigate={navigate}
         theme={theme}
-        title={sheetMode === "blend" ? "Blend tone" : "Tones"}
+        title={sheetMode === "blend" ? "Supporting tone" : "Tones"}
       />
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
