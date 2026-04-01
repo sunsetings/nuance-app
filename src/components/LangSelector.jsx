@@ -45,10 +45,16 @@ export function LangSelector({
   );
 
   const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
+  const availableLanguages = allLanguages.filter((lang) => !visibleBookmarked.includes(lang));
   const availableFiltered = filterList(
-    allLanguages
-      .filter((lang) => !visibleBookmarked.includes(lang))
-      .sort((a, b) => a.localeCompare(b))
+    label === "FROM"
+      ? [
+          ...(availableLanguages.includes(AUTO_DETECT_LANGUAGE) ? [AUTO_DETECT_LANGUAGE] : []),
+          ...availableLanguages
+            .filter((lang) => lang !== AUTO_DETECT_LANGUAGE)
+            .sort((a, b) => a.localeCompare(b)),
+        ]
+      : availableLanguages.sort((a, b) => a.localeCompare(b))
   );
 
   const handleOpen = () => {
