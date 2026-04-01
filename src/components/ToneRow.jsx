@@ -68,13 +68,14 @@ export function ToneRow({
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   useEffect(() => {
+    if (isHomeScreen) return;
     if (!scrollerRef.current || !activePillRef.current) return;
     activePillRef.current.scrollIntoView({
       behavior: "auto",
       block: "nearest",
       inline: "center",
     });
-  }, [activeTone, rowTones.join("|")]);
+  }, [activeTone, rowTones.join("|"), isHomeScreen]);
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
   const levelOptions = [
