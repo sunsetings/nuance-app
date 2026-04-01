@@ -62,12 +62,6 @@ export function ToneRow({
 
   return (
     <div style={{ marginBottom: 4 }}>
-      {!disabled && (
-        <div style={{ display: "flex", justifyContent: "flex-end", paddingRight: 68, marginBottom: 2 }}>
-          <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>Scroll for more tones</span>
-        </div>
-      )}
-
       <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
         <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
           <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", opacity: disabled ? 0.2 : 1, paddingBottom: 2, paddingTop: 10, paddingRight: 2 }}>

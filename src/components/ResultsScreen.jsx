@@ -390,7 +390,10 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
         {/* Tone row */}
         <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 10, color: t.textMuted, letterSpacing: "0.1em", marginBottom: 4 }}>REFINE FURTHER</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 2 }}>
+            <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>Refine further</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Scroll for more tones</div>
+          </div>
           <ToneRow
             activeTone={activeTone} toneCount={toneCount}
             onSelect={handleSelect} onSetLevel={handleSetLevel}
