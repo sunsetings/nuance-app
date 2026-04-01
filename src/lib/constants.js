@@ -28,11 +28,11 @@ export const BASE_LANGUAGES = [
 ];
 export const PRO_LANGUAGES = [
   "Amharic", "Azerbaijani", "Bengali", "Burmese", "Catalan", "Croatian",
-  "Czech", "Danish", "Finnish", "Greek", "Gujarati", "Haitian Creole",
+  "Czech", "Danish", "Finnish", "Georgian", "Greek", "Gujarati", "Haitian Creole",
   "Hausa", "Hebrew", "Hindi", "Hungarian", "Indonesian", "Kazakh", "Khmer",
-  "Kurdish", "Malay", "Marathi", "Norwegian", "Persian", "Polish",
-  "Romanian", "Serbian", "Sinhala", "Swahili", "Swedish", "Tagalog",
-  "Tamil", "Telugu", "Thai", "Turkish", "Ukrainian", "Urdu", "Yoruba", "Zulu",
+  "Kurdish", "Malay", "Marathi", "Mongolian", "Nepali", "Norwegian", "Persian", "Polish",
+  "Punjabi", "Romanian", "Serbian", "Sinhala", "Slovak", "Swahili", "Swedish", "Tagalog",
+  "Tamil", "Telugu", "Thai", "Turkish", "Ukrainian", "Urdu", "Uzbek", "Yoruba", "Zulu", "Bulgarian",
 ];
 export const ALL_LANGUAGES = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 
