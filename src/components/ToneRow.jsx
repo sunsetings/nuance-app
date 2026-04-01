@@ -134,6 +134,12 @@ export function ToneRow({
         </button>
       </div>
 
+      {!disabled && (
+        <div style={{ display: "flex", justifyContent: "flex-end", paddingRight: 68, marginTop: 3 }}>
+          <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>Scroll for more tones</span>
+        </div>
+      )}
+
       {!isHomeScreen && !disabled && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <div style={{ width: "100%", maxWidth: 236 }}>
@@ -175,12 +181,6 @@ export function ToneRow({
               })}
             </div>
           </div>
-        </div>
-      )}
-
-      {!disabled && (
-        <div style={{ display: "flex", justifyContent: "flex-end", paddingRight: 68, marginTop: 3 }}>
-          <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>Scroll for more tones</span>
         </div>
       )}
     </div>
