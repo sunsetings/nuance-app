@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, GUEST_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
 
 function SmallHeart({ size = 10, color, filled = false }) {
@@ -30,6 +31,8 @@ export function ToneRow({
   navigate,
   theme,
 }) {
+  const scrollerRef = useRef(null);
+  const activePillRef = useRef(null);
   const t = THEMES[theme] || THEMES.dark;
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
@@ -64,6 +67,15 @@ export function ToneRow({
   const rowTones = hasMeaningfulContext ? contextualTones : defaultRowTones.slice(0, 5);
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
+  useEffect(() => {
+    if (!scrollerRef.current || !activePillRef.current) return;
+    activePillRef.current.scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [activeTone, rowTones.join("|")]);
+
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
   const levelOptions = [
     { level: 1, label: "Light" },
@@ -85,7 +97,7 @@ export function ToneRow({
             paddingBottom: 2,
             paddingTop: 10,
             paddingRight: 2,
-          }}>
+          }} ref={scrollerRef}>
             {pills.map((pill, index) => {
               const status = getToneStatus(pill.tone, userTier);
               const isFavourite = favourites.includes(pill.tone);
@@ -108,6 +120,7 @@ export function ToneRow({
               return (
                 <button
                   key={`${pill.tone}-${pill.level}-${index}`}
+                  ref={isActive ? activePillRef : null}
                   onClick={handleClick}
                   style={{
                     flexShrink: 0,
