@@ -224,6 +224,11 @@ async function callOpenAI({ mode, prompt }) {
   }
 
   const data = await response.json();
+  console.log("OpenAI usage:", {
+    model: data.model,
+    usage: data.usage,
+    id: data.id,
+  });
   const raw = data.choices?.[0]?.message?.content?.trim();
   if (!raw) {
     throw new Error("Empty AI response");
