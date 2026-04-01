@@ -208,6 +208,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={savedTones}
+            recentTones={[]}
             priorityTonesOverride={homeToneOrder}
             disabled={false}
             isHomeScreen={true}

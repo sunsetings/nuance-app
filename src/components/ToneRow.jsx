@@ -22,6 +22,7 @@ export function ToneRow({
   onOpenSheet,
   userTier,
   favourites = [],
+  recentTones = [],
   priorityTonesOverride,
   disabled,
   isHomeScreen = false,
@@ -33,12 +34,13 @@ export function ToneRow({
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
     : ["Polite", "Playful", "Casual", "Gen A"];
+  const lastUsedTone = recentTones.find((tone) => tone && tone !== activeTone);
 
   const orderedCandidates = priorityTonesOverride?.length
-    ? [...priorityTonesOverride, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
+    ? [activeTone, lastUsedTone, ...priorityTonesOverride, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
     : userTier === "free"
-      ? [activeTone, ...FREE_TONES, ...favourites, ...ALL_TONES]
-      : [activeTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
+      ? [activeTone, lastUsedTone, ...favourites, ...FREE_TONES, ...ALL_TONES]
+      : [activeTone, lastUsedTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
   const visibleTones = [];
 
   orderedCandidates.forEach((tone) => {
@@ -52,7 +54,7 @@ export function ToneRow({
     visibleTones.push(nextTone);
   }
 
-  const rowTones = visibleTones.slice(0, 5);
+  const rowTones = visibleTones;
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));

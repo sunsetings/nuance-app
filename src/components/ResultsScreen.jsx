@@ -360,8 +360,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       labelWeight: "bold",
     },
   ];
-  const prioritizedTones = [...savedTones, ...recentTones];
-
   return (
     <div style={{
       padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif",
@@ -404,7 +402,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
             onSelect={handleSelect} onSetLevel={handleSetLevel}
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
-            favourites={prioritizedTones}
+            favourites={savedTones}
+            recentTones={recentTones}
             disabled={loading}
             isHomeScreen={false}
             navigate={navigate}
