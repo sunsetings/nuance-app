@@ -34,23 +34,44 @@
     .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
     .hero-note { margin-top: 16px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; opacity: 0; animation: fadeUp 0.7s ease forwards 0.8s; }
     .mockup-section { padding: 0 24px 100px; display: flex; justify-content: center; opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s; }
-    .phone-shell { width: 280px; background: #0f0f0f; border-radius: 36px; border: 8px solid #1c1c1c; box-shadow: 0 0 0 1px #333, 0 48px 80px rgba(0,0,0,0.8), 0 0 60px rgba(200,240,160,0.04); overflow: hidden; padding: 28px 18px 22px; position: relative; }
+    .phone-shell { width: 296px; background: #0f0f0f; border-radius: 36px; border: 8px solid #1c1c1c; box-shadow: 0 0 0 1px #333, 0 48px 80px rgba(0,0,0,0.8), 0 0 60px rgba(200,240,160,0.04); overflow: hidden; padding: 28px 18px 16px; position: relative; }
     .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 24px; background: #1c1c1c; border-radius: 0 0 16px 16px; }
-    .phone-screen { font-size: 11px; line-height: 1.5; }
-    .ps-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .phone-screen { font-size: 11px; line-height: 1.5; min-height: 560px; display: flex; flex-direction: column; }
+    .ps-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .ps-logo { font-size: 15px; font-weight: 700; color: var(--text); }
-    .ps-pro { font-size: 9px; color: var(--accent); border: 1px solid var(--highlight-border); padding: 3px 9px; border-radius: 10px; }
-    .ps-lang-bar { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 11px; color: var(--muted); }
-    .ps-swap { color: var(--accent); font-size: 13px; }
-    .ps-tones { display: flex; gap: 6px; margin-bottom: 10px; overflow: hidden; }
-    .ps-tone { padding: 5px 11px; border-radius: 16px; font-size: 10px; border: 1.5px solid #333; color: var(--muted); white-space: nowrap; }
+    .ps-action { font-size: 10px; font-weight: 700; color: var(--accent-dark); background: var(--accent); border: none; padding: 6px 11px; border-radius: 10px; }
+    .ps-counter { display: flex; justify-content: flex-end; margin-bottom: 10px; font-size: 10px; color: var(--faint); }
+    .ps-lang-bar { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 11px; color: var(--muted); }
+    .ps-lang-chip { display: inline-flex; align-items: center; gap: 4px; }
+    .ps-swap { color: var(--faint); font-size: 13px; }
+    .ps-mode { display: flex; gap: 2px; padding: 2px; background: #171717; border-radius: 10px; margin-bottom: 10px; }
+    .ps-mode-pill { flex: 1; text-align: center; font-size: 10px; padding: 7px 4px; color: var(--faint); border-radius: 8px; }
+    .ps-mode-pill.active { background: #222; color: var(--text); font-weight: 700; }
+    .ps-section-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .ps-section-label { font-size: 8px; color: var(--dim); letter-spacing: 0.14em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+    .ps-scroll { font-size: 8px; color: var(--faint); }
+    .ps-tones { display: flex; gap: 6px; margin-bottom: 6px; overflow: hidden; }
+    .ps-tone { padding: 5px 11px; border-radius: 16px; font-size: 10px; border: 1.5px solid #333; color: var(--muted); white-space: nowrap; position: relative; }
     .ps-tone.active { background: var(--accent); color: var(--accent-dark); border-color: var(--accent); }
-    .ps-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 10px; padding: 10px 11px; margin-bottom: 8px; }
-    .ps-box-label { font-size: 8px; color: var(--dim); letter-spacing: 0.1em; margin-bottom: 5px; font-family: 'DM Mono', monospace; }
-    .ps-box-label.refined { color: #6aaa6a; }
-    .ps-box-text { font-size: 10px; color: var(--muted); line-height: 1.6; }
-    .ps-box-text.highlight { color: #c8e0a0; }
-    .ps-cta { width: 100%; background: var(--accent); color: var(--accent-dark); border: none; border-radius: 10px; padding: 11px; font-size: 12px; font-family: 'Lora', serif; font-weight: 700; text-align: center; margin-top: 4px; }
+    .ps-badge { position: absolute; top: -5px; right: 8px; background: #d4b040; color: #1a1607; border-radius: 999px; padding: 1px 3px; font-size: 6px; font-family: 'DM Mono', monospace; }
+    .ps-strength-wrap { margin-bottom: 10px; }
+    .ps-strength-label { font-size: 8px; color: var(--dim); letter-spacing: 0.14em; text-transform: uppercase; font-family: 'DM Mono', monospace; text-align: center; margin-bottom: 4px; }
+    .ps-strength { display: flex; gap: 2px; padding: 2px; background: #171717; border: 1px solid #292929; border-radius: 10px; }
+    .ps-strength-item { flex: 1; text-align: center; padding: 7px 0; font-size: 10px; color: var(--faint); border-radius: 8px; }
+    .ps-strength-item.active { background: #2a2a2a; color: var(--text); font-weight: 700; }
+    .ps-compose { background: #151515; border-radius: 14px; box-shadow: 0 0 0 1px #1f1f1f; overflow: hidden; margin-bottom: 10px; }
+    .ps-compose-top { padding: 13px 14px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232323; }
+    .ps-compose-hint { font-size: 9px; color: var(--faint); font-style: italic; }
+    .ps-compose-limit { font-size: 9px; color: var(--faint); }
+    .ps-compose-body { min-height: 154px; padding: 16px 14px; color: var(--faint); font-size: 10px; line-height: 1.7; }
+    .ps-compose-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 10px 14px; border-top: 1px solid #232323; }
+    .ps-paste { font-size: 10px; color: var(--dim); }
+    .ps-mic { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #313131; display: flex; align-items: center; justify-content: center; color: var(--faint); margin: 0 auto; font-size: 12px; }
+    .ps-cta { width: 100%; background: #171717; color: var(--dim); border: none; border-radius: 12px; padding: 12px; font-size: 13px; font-family: 'Lora', serif; font-weight: 700; text-align: center; margin-top: 2px; }
+    .ps-bottom { margin-top: auto; padding-top: 14px; border-top: 1px solid #202020; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 8px; }
+    .ps-nav-item { font-size: 8px; color: var(--faint); letter-spacing: 0.08em; text-transform: uppercase; }
+    .ps-nav-icon { display: block; font-size: 12px; margin-bottom: 4px; color: var(--faint); }
+    .ps-nav-item.active, .ps-nav-item.active .ps-nav-icon { color: var(--accent); }
     section { position: relative; z-index: 1; }
     .section-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
     .section-tag { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
@@ -130,32 +151,55 @@
       <div class="phone-screen">
         <div class="ps-topbar">
           <span class="ps-logo">tonara.</span>
-          <span class="ps-pro">✦ Pro</span>
+          <span class="ps-action">Sign up free</span>
         </div>
+        <div class="ps-counter">10 of 10 refines</div>
         <div class="ps-lang-bar">
-          <span>English</span>
+          <span class="ps-lang-chip">English</span>
           <span class="ps-swap">⇄</span>
-          <span>Korean</span>
+          <span class="ps-lang-chip">Korean <span style="font-size:8px;color:var(--faint)">▼</span></span>
+        </div>
+        <div class="ps-mode">
+          <div class="ps-mode-pill active">Refine &amp; Translate</div>
+          <div class="ps-mode-pill">Standard Translate</div>
+        </div>
+        <div class="ps-section-row">
+          <div class="ps-section-label">Tone</div>
+          <div class="ps-scroll">Scroll for more tones</div>
         </div>
         <div class="ps-tones">
           <div class="ps-tone active">Polite</div>
           <div class="ps-tone">Playful</div>
-          <div class="ps-tone">Charming</div>
-          <div class="ps-tone">Poetic</div>
+          <div class="ps-tone">Casual</div>
+          <div class="ps-tone">Gen A <span class="ps-badge">FREE</span></div>
+          <div class="ps-tone">+ More</div>
         </div>
-        <div class="ps-box">
-          <div class="ps-box-label">ORIGINAL</div>
-          <div class="ps-box-text">I need this report done by Friday.</div>
+        <div class="ps-strength-wrap">
+          <div class="ps-strength-label">Tone strength</div>
+          <div class="ps-strength">
+            <div class="ps-strength-item">Light</div>
+            <div class="ps-strength-item active">Medium</div>
+            <div class="ps-strength-item">Strong</div>
+          </div>
         </div>
-        <div class="ps-box" style="border-color: #2a4a2a; background: #0e1e0e;">
-          <div class="ps-box-label refined">REFINED · POLITE</div>
-          <div class="ps-box-text highlight">Could you please have the report ready by Friday?</div>
+        <div class="ps-compose">
+          <div class="ps-compose-top">
+            <span class="ps-compose-hint">Say what you really mean</span>
+            <span class="ps-compose-limit">500 left</span>
+          </div>
+          <div class="ps-compose-body">Type your message — we'll refine and translate it...</div>
+          <div class="ps-compose-footer">
+            <span class="ps-paste">Paste</span>
+            <span class="ps-mic">◌</span>
+            <span></span>
+          </div>
         </div>
-        <div class="ps-box">
-          <div class="ps-box-label">TRANSLATED · KO</div>
-          <div class="ps-box-text">금요일까지 보고서를 준비해 주실 수 있을까요?</div>
+        <div class="ps-cta">Translate</div>
+        <div class="ps-bottom">
+          <div class="ps-nav-item active"><span class="ps-nav-icon">⌂</span>Home</div>
+          <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
+          <div class="ps-nav-item"><span class="ps-nav-icon">◎</span>Sign in</div>
         </div>
-        <div class="ps-cta">✦ Save</div>
       </div>
     </div>
   </div>
@@ -198,7 +242,7 @@
           <div class="step-num">2</div>
           <div>
             <div class="step-title">Pick your tone</div>
-            <div class="step-body">Choose from 27 tones — Polite, Playful, Casual, Gen A, Charming, Noir, Shakespearean, and more. Stack them for more intensity.</div>
+            <div class="step-body">Choose from 28 tones — Polite, Playful, Casual, Gen A, Charming, Noir, Shakespearean, and more. Then set the tone strength to Light, Medium, or Strong.</div>
           </div>
         </div>
         <div class="step">
@@ -235,7 +279,7 @@
           <div class="compare-card-title">tonara. ✦</div>
           <ul class="feature-list">
             <li><span class="icon" style="color:var(--accent)">✓</span> Everything in free</li>
-            <li><span class="icon" style="color:var(--accent)">✓</span> All 27 tones unlocked</li>
+            <li><span class="icon" style="color:var(--accent)">✓</span> All 28 tones unlocked</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> 500 daily refines</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> 52 languages + 6 bookmarks</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> Audio dictation 🎙</li>
