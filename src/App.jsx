@@ -30,7 +30,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [screen, setScreen] = useState("home");
   const [isPremium, setIsPremium] = useState(false);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(() => getRefinesToday());
@@ -210,8 +210,8 @@ export default function App() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: "100vh", background: "#050505", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "#c8f0a0", fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
+      <div style={{ minHeight: "100vh", background: THEMES.light.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ color: THEMES.light.accent, fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
       </div>
     );
   }
