@@ -124,7 +124,7 @@ export const THEMES = {
     accent:"#2a7020", accentText:"#f0ece0", accentDim:"#3a8a30",
     highlight:"#daeeda", highlightBorder:"#7ab87a", highlightText:"#1a401a",
     highlight2:"#e4f0e0", highlightBorder2:"#90c890", highlightText2:"#204020",
-    notch:"#d8d4c8", proTag:"#906010", freeTag:"#1a5890",
+    notch:"#d8d4c8", proTag:"#d4b040", freeTag:"#1a5890",
     cOk:"#7a7868", cWarn:"#906010", cCrit:"#a83030",
     inputBg:"#f2ede4",
   },
