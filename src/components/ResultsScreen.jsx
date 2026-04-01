@@ -181,7 +181,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
         await navigator.share({
-          title: "tonara.",
           files: [file],
         });
         return;
