@@ -64,7 +64,16 @@ export function ToneRow({
     defaultRowTones.push(tone);
   });
 
-  const rowTones = hasMeaningfulContext ? contextualTones : defaultRowTones.slice(0, 5);
+  const contextualToneSet = new Set(contextualTones);
+  const orderedContextualTones = priorityTonesOverride?.length
+    ? [
+        ...priorityTonesOverride.filter((tone) => contextualToneSet.has(tone)),
+        ...contextualTones.filter((tone) => !priorityTonesOverride.includes(tone)),
+      ]
+    : contextualTones;
+  const rowTones = hasMeaningfulContext
+    ? (isHomeScreen ? orderedContextualTones : contextualTones)
+    : defaultRowTones.slice(0, 5);
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   useEffect(() => {
