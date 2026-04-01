@@ -58,7 +58,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const [mode, setMode] = useState("refine");
   const [tone, setTone] = useState(() => getDefaultHomeTone(userTier));
-  const [toneCount, setToneCount] = useState(1);
+  const [toneCount, setToneCount] = useState(2);
   const [homeToneOrder, setHomeToneOrder] = useState(() => buildHomeToneOrder(userTier, savedTones));
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
