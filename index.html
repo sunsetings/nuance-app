@@ -132,6 +132,8 @@
     .compare-card.pro .price { border-color: var(--highlight-border); color: var(--muted); }
     .price-amount { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
     .compare-card.pro .price-amount { color: var(--accent); }
+    .mic-inline { display: inline-flex; width: 14px; height: 14px; vertical-align: -2px; margin-left: 4px; }
+    .mic-inline svg { display: block; }
     .final-cta { padding: 120px 24px; border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
     .final-cta::before { content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 400px; background: radial-gradient(ellipse, rgba(200,240,160,0.05) 0%, transparent 70%); pointer-events: none; }
     .final-cta-headline { font-size: clamp(32px, 5vw, 58px); font-weight: 700; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; color: var(--text); }
@@ -168,69 +170,6 @@
   </section>
   <div class="mockup-section">
     <div class="mockup-grid">
-      <div class="phone-shell">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="ps-topbar">
-            <span class="ps-logo">tonara.</span>
-            <span class="ps-action">Sign up free</span>
-          </div>
-          <div class="ps-counter">10 of 10 refines</div>
-          <div class="ps-lang-bar">
-            <span class="ps-lang-chip">English</span>
-            <span class="ps-swap">⇄</span>
-            <span class="ps-lang-chip">Korean <span style="font-size:8px;color:var(--faint)">▼</span></span>
-          </div>
-          <div class="ps-mode">
-            <div class="ps-mode-pill active">Refine &amp; Translate</div>
-            <div class="ps-mode-pill">Standard Translate</div>
-          </div>
-          <div class="ps-section-row">
-            <div class="ps-section-label">Tone</div>
-            <div class="ps-scroll">Scroll for more tones</div>
-          </div>
-          <div class="ps-tones">
-            <div class="ps-tone active">Polite</div>
-            <div class="ps-tone">Playful</div>
-            <div class="ps-tone">Casual</div>
-            <div class="ps-tone">Gen A <span class="ps-badge">FREE</span></div>
-            <div class="ps-tone">+ More</div>
-          </div>
-          <div class="ps-strength-wrap">
-            <div class="ps-strength-label">Tone strength</div>
-            <div class="ps-strength">
-              <div class="ps-strength-item">Light</div>
-              <div class="ps-strength-item active">Medium</div>
-              <div class="ps-strength-item">Strong</div>
-            </div>
-          </div>
-          <div class="ps-compose">
-            <div class="ps-compose-top">
-              <span class="ps-compose-hint">Say what you really mean</span>
-              <span class="ps-compose-limit">500 left</span>
-            </div>
-            <div class="ps-compose-body">I need this report done by Friday or we'll have a problem.</div>
-            <div class="ps-compose-footer">
-              <span class="ps-paste">Paste</span>
-              <span class="ps-mic" aria-hidden="true">
-                <svg width="15" height="16" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="5.5" y="1.5" width="5" height="8" rx="2.5" stroke="#a7a39d" stroke-width="1.35"/>
-                  <path d="M3 9C3 11.761 5.239 14 8 14C10.761 14 13 11.761 13 9" stroke="#a7a39d" stroke-width="1.35" stroke-linecap="round"/>
-                  <line x1="8" y1="14" x2="8" y2="15.5" stroke="#a7a39d" stroke-width="1.35" stroke-linecap="round"/>
-                </svg>
-              </span>
-              <span></span>
-            </div>
-          </div>
-          <div class="ps-cta">Translate</div>
-          <div class="ps-bottom">
-            <div class="ps-nav-item active"><span class="ps-nav-icon">⌂</span>Home</div>
-            <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
-            <div class="ps-nav-item"><span class="ps-nav-icon">◎</span>Sign in</div>
-          </div>
-        </div>
-      </div>
-
       <div class="phone-shell">
         <div class="phone-notch"></div>
         <div class="phone-screen">
@@ -359,7 +298,7 @@
             <li><span class="icon" style="color:var(--accent)">✓</span> 30 refines per day</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> 13 base languages + 1 bookmark</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> Save up to 3 messages</li>
-            <li><span class="icon" style="color:var(--accent)">✓</span> Audio dictation 🎙</li>
+            <li><span class="icon" style="color:var(--accent)">✓</span> Audio dictation <span class="mic-inline" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5" stroke="currentColor" stroke-width="1.35"/><path d="M3 9C3 11.761 5.239 14 8 14C10.761 14 13 11.761 13 9" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><line x1="8" y1="14" x2="8" y2="15.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></span></li>
             <li><span class="icon" style="color:var(--faint)">✗</span> <span style="color:var(--faint)">Saved tones</span></li>
           </ul>
           <div class="price"><span class="price-amount">Free</span><br/>forever</div>
@@ -372,7 +311,7 @@
             <li><span class="icon" style="color:var(--accent)">✓</span> All 28 tones unlocked</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> 500 daily refines</li>
             <li><span class="icon" style="color:var(--accent)">✓</span> 52 languages + 6 bookmarks</li>
-            <li><span class="icon" style="color:var(--accent)">✓</span> Audio dictation 🎙</li>
+            <li><span class="icon" style="color:var(--accent)">✓</span> Audio dictation <span class="mic-inline" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5" stroke="currentColor" stroke-width="1.35"/><path d="M3 9C3 11.761 5.239 14 8 14C10.761 14 13 11.761 13 9" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><line x1="8" y1="14" x2="8" y2="15.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></span></li>
             <li><span class="icon" style="color:var(--accent)">✓</span> Save 50 messages + 5 saved tones</li>
           </ul>
           <div class="price"><span class="price-amount">$7.99</span> / month<br/>or $59.99 / year — save 37%</div>
