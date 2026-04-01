@@ -13,7 +13,6 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
   const planRows = [
     { label: "Daily refines", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
     { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
-    { label: "Dictation", value: "On", accent: true },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
     { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
     { label: "Saved tones", value: isPremium ? `Up to ${PRO_SAVED_TONE_LIMIT}` : "Pro only", accent: false },
