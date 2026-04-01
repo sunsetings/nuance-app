@@ -281,62 +281,48 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           />
           {userTier === "pro" && (
             <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-              <div style={{ width: "100%", maxWidth: 260 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
-                  <div style={{ flex: "0 0 auto", marginLeft: 18 }}>
-                    {blendTone ? (
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <button
-                          onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                          style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                        >
-                          {blendTone}
-                        </button>
-                        <button
-                          onClick={() => setBlendTone(null)}
-                          style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                        style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                      >
-                        + Add blend tone
-                        <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                          PRO
-                        </span>
-                      </button>
-                    )}
+              <div style={{ width: "100%", maxWidth: 260, display: "flex", justifyContent: "center" }}>
+                {blendTone ? (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <button
+                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                      style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      {blendTone}
+                    </button>
+                    <button
+                      onClick={() => setBlendTone(null)}
+                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <div style={{ flex: "0 1 112px", textAlign: "left", fontSize: 9, color: t.textFaint, lineHeight: 1.4, letterSpacing: "0.02em" }}>
-                    Add one supporting tone
-                  </div>
-                </div>
+                ) : (
+                  <button
+                    onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                    style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                  >
+                    + Optional supporting tone
+                    <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
+                      PRO
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           )}
           {userTier !== "pro" && (
             <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-              <div style={{ width: "100%", maxWidth: 260 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
-                  <div style={{ flex: "0 0 auto", marginLeft: 18 }}>
-                    <button
-                      onClick={() => navigate("upgrade")}
-                      style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      + Add blend tone
-                      <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                        PRO
-                      </span>
-                    </button>
-                  </div>
-                  <div style={{ flex: "0 1 112px", textAlign: "left", fontSize: 9, color: t.textFaint, lineHeight: 1.4, letterSpacing: "0.02em" }}>
-                    Pro can blend two tones
-                  </div>
-                </div>
+              <div style={{ width: "100%", maxWidth: 260, display: "flex", justifyContent: "center" }}>
+                <button
+                  onClick={() => navigate("upgrade")}
+                  style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                >
+                  + Optional supporting tone
+                  <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
+                    PRO
+                  </span>
+                </button>
               </div>
             </div>
           )}
