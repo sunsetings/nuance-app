@@ -8,6 +8,8 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
   const dailyRefineCap = isPremium ? PRO_DAILY_CAP : FREE_DAILY_CAP;
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState(null);
   const planRows = [
     { label: "Daily refines", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
     { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
@@ -21,6 +23,39 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
     { id: "dark", label: "Dark", icon: "☾" },
     { id: "light", label: "Light", icon: "☀" },
   ];
+
+  const handleManagePlan = async () => {
+    if (!user?.id || portalLoading) return;
+    setPortalError(null);
+    setPortalLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) {
+        navigate("signin_nav");
+        return;
+      }
+
+      const res = await fetch("/api/create-portal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Couldn't open subscription settings.");
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      setPortalError(error.message || "Couldn't open subscription settings.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column" }}>
@@ -36,6 +71,39 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
           <button onClick={() => navigate("upgrade")} style={{ marginTop: 12, padding: "8px 20px", background: t.accent, color: t.accentText, border: "none", borderRadius: 8, fontSize: 12, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro →</button>
         )}
       </div>
+
+      {isPremium && (
+        <div style={{ background: t.surface, borderRadius: 14, padding: "16px 16px 14px", marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>Subscription</div>
+          <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65, marginBottom: 10 }}>
+            Change between monthly and annual billing, or cancel your Pro plan.
+          </div>
+          <button
+            onClick={handleManagePlan}
+            disabled={portalLoading}
+            style={{
+              width: "100%",
+              padding: "11px 14px",
+              background: t.accent,
+              color: t.accentText,
+              border: "none",
+              borderRadius: 10,
+              fontSize: 12,
+              fontWeight: "bold",
+              cursor: portalLoading ? "default" : "pointer",
+              fontFamily: "'Lora',Georgia,serif",
+              opacity: portalLoading ? 0.7 : 1,
+            }}
+          >
+            {portalLoading ? "Opening subscription settings…" : "Manage subscription"}
+          </button>
+          {portalError && (
+            <div style={{ marginTop: 8, fontSize: 11, color: "#e88", lineHeight: 1.5 }}>
+              {portalError}
+            </div>
+          )}
+        </div>
+      )}
 
       {planRows.map((item, i) => (
         <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
