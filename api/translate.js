@@ -55,7 +55,7 @@ Translate into ${toLang} using this priority order:
 Important translation rules:
 - Give MUCH MORE weight to the original meaning/intent and the selected tone than to the exact wording of the refined text.
 - The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
-- Account for cultural nuance, language-specific social norms, and what native speakers of ${toLang} would naturally say in this situation.
+- Account for cultural nuance, language-specific social norms, and how native speakers of ${toLang} would naturally express both this message and this tone in this situation.
 - Adjust formality, softness, directness, humor, flirtiness, emotional phrasing, and implied subtext to match how that tone is actually expressed in ${toLang}, not how it is expressed in English.
 - Prefer culturally and socially appropriate phrasing over literal sentence structure whenever the two conflict.
 - Preserve the intended relationship dynamic between speaker and listener in a way that feels natural in ${toLang}.
