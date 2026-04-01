@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BASE_LANGUAGES, PRO_LANGUAGES, THEMES } from "../lib/constants.js";
+import { AUTO_DETECT_LANGUAGE, BASE_LANGUAGES, PRO_LANGUAGES, THEMES } from "../lib/constants.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -36,7 +36,9 @@ export function LangSelector({
   const canBookmarkAny = userTier !== "guest";
   const visibleBookmarked = canBookmarkAny ? bookmarked : [];
   const canBookmark = visibleBookmarked.length < bookmarkLimit;
-  const allLanguages = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
+  const allLanguages = label === "FROM"
+    ? [AUTO_DETECT_LANGUAGE, ...BASE_LANGUAGES, ...PRO_LANGUAGES]
+    : [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 
   const filterList = (list) => (
     search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
@@ -83,7 +85,7 @@ export function LangSelector({
         }}
       >
         <span style={{ flex: 1, textAlign: label === "TO" ? "right" : "left" }}>{value}</span>
-        {visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
+        {value !== AUTO_DETECT_LANGUAGE && visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
             PRO
@@ -198,7 +200,7 @@ export function LangSelector({
                 {availableFiltered.map((lang) => {
                   const isProLanguage = PRO_LANGUAGES.includes(lang);
                   const canUseLanguage = !isProLanguage || isPro;
-                  const canBookmarkLanguage = canBookmarkAny && (!isProLanguage || isPro);
+                  const canBookmarkLanguage = lang !== AUTO_DETECT_LANGUAGE && canBookmarkAny && (!isProLanguage || isPro);
                   return (
                   <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
                     <button

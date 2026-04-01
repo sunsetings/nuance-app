@@ -8,8 +8,13 @@ const GUEST_RATE_LIMIT = 12;
 const guestRateMap = new Map();
 
 function buildPrompt({ mode, text, tone, fromLang, toLang, toneCount }) {
+  const isAutoDetected = fromLang === "Auto detected";
+  const sourceInstruction = isAutoDetected
+    ? `Detect the source language of the input text automatically, then translate it into ${toLang}.`
+    : `Translate the following text from ${fromLang} into ${toLang}.`;
+
   if (mode === "quick") {
-    return `Translate the following text from ${fromLang} into ${toLang}.
+    return `${sourceInstruction}
 Output ONLY the translated text, no labels, no explanations.
 Text: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
@@ -56,6 +61,7 @@ Important translation rules:
 - If the refined wording and the best target-language tone conflict, choose the phrasing that best preserves the original meaning while making the tone land correctly in ${toLang}.
 - Do not translate too literally if literal wording makes the message feel flatter, awkward, culturally off, or less on-tone.
 - Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
+- If the source language is set to auto detect, infer the input language from the original message instead of assuming English.
 
 In short: preserve the original meaning first, make the final translation sound naturally "${tone}" in ${toLang} second, and give only minimal weight to the exact wording of the refined sentence.
 Output ONLY the translated text, nothing else.

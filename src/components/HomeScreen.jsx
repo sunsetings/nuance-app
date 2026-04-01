@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, getBookmarkLimitForTier, getCapForTier } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -8,6 +8,7 @@ import { ToneRow } from "./ToneRow.jsx";
 const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
+const LS_FROM_TOUCHED = "tonara_fromLang_touched";
 
 function buildHomeToneOrder(userTier, savedTones = []) {
   const next = [];
@@ -32,13 +33,19 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
   // Load last-used languages from localStorage, fall back to defaults
-  const [fromLang, setFromLang] = useState(() => localStorage.getItem(LS_FROM) || DEFAULT_FROM_LANG);
+  const [fromLang, setFromLang] = useState(() => {
+    const stored = localStorage.getItem(LS_FROM);
+    const touched = localStorage.getItem(LS_FROM_TOUCHED) === "true";
+    if (!stored) return DEFAULT_FROM_LANG;
+    if (!touched && stored === "English") return DEFAULT_FROM_LANG;
+    return stored;
+  });
   const [toLang, setToLang] = useState(() => localStorage.getItem(LS_TO) || DEFAULT_TO_LANG);
   const [bookmarked, setBookmarked] = useState(() => {
     try {
       const stored = localStorage.getItem(LS_BOOKMARKS);
-      return stored ? JSON.parse(stored) : [DEFAULT_FROM_LANG, DEFAULT_TO_LANG];
-    } catch { return [DEFAULT_FROM_LANG, DEFAULT_TO_LANG]; }
+      return stored ? JSON.parse(stored) : [DEFAULT_TO_LANG];
+    } catch { return [DEFAULT_TO_LANG]; }
   });
 
   const [mode, setMode] = useState("refine");
@@ -77,6 +84,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   }, [userTier, savedTones]);
 
   const toggleBM = lang => setBookmarked(prev =>
+    lang === AUTO_DETECT_LANGUAGE ? prev :
     userTier === "guest" ? prev : prev.includes(lang) ? prev.filter(l => l !== lang)
     : prev.length < bookmarkLimit ? [...prev, lang] : prev
   );
@@ -84,13 +92,19 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const swapLanguages = () => {
     setSwapping(true);
     setFromLang(toLang);
-    setToLang(fromLang);
+    localStorage.setItem(LS_FROM_TOUCHED, "true");
+    setToLang(fromLang === AUTO_DETECT_LANGUAGE ? "English" : fromLang);
     setTimeout(() => setSwapping(false), 300);
   };
 
   const handlePaste = async () => {
     try { const tx = await navigator.clipboard.readText(); setText(tx.slice(0, CHAR_LIMIT)); } catch {}
     textareaRef.current?.focus();
+  };
+
+  const handleFromLangChange = (nextLang) => {
+    localStorage.setItem(LS_FROM_TOUCHED, "true");
+    setFromLang(nextLang);
   };
 
   const handleDictate = val => {
@@ -156,7 +170,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       {/* Language bar */}
       <div style={{ marginBottom: 11, position: "relative", zIndex: 300 }}>
         <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, background: t.surface, borderRadius: 12 }}>
-          <LangSelector label="FROM" value={fromLang} onChange={setFromLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="from" navigate={navigate} theme={theme} />
+          <LangSelector label="FROM" value={fromLang} onChange={handleFromLangChange} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="from" navigate={navigate} theme={theme} />
           <button onClick={swapLanguages} style={{
             background: "transparent", border: "none",
             width: 28, height: 28,
