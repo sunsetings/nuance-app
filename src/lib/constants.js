@@ -42,10 +42,12 @@ export const DEFAULT_FROM_LANG = AUTO_DETECT_LANGUAGE;
 export const DEFAULT_TO_LANG = "Korean";
 
 export const TONE_CATEGORIES = [
-  { label: "Everyday", tones: ["Polite", "Playful", "Casual", "Friendly", "Gen A", "Charming", "Cheeky", "Flirty", "Teasing", "Dad Joke"] },
-  { label: "Professional", tones: ["Assertive", "Professional", "Diplomatic", "Succinct", "Serious", "Royal", "Luxury", "Iconic"] },
-  { label: "Emotional", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational", "Anger", "Dramatic", "Chaotic"] },
-  { label: "Expressive", tones: ["Enthusiastic", "Urgent", "Shakespearean", "Poetic", "Noir", "Overexplaining"] },
+  { label: "Everyday", tones: ["Friendly", "Playful", "Casual", "Gen A", "Flirty", "Teasing"] },
+  { label: "Polished", tones: ["Polite", "Professional", "Diplomatic", "Succinct", "Assertive", "Luxury"] },
+  { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
+  { label: "Intense", tones: ["Serious", "Urgent", "Anger", "Dramatic", "Noir"] },
+  { label: "Stylized", tones: ["Poetic", "Shakespearean", "Royal", "Iconic"] },
+  { label: "Character", tones: ["Charming", "Cheeky", "Chaotic", "Overexplaining", "Dad Joke", "Enthusiastic"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
