@@ -241,6 +241,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
           { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
           { label: "Dictation", guest: "✓", free: "✓", pro: "✓" },
+          { label: "Blend tones", guest: "—", free: "—", pro: "✓" },
           { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
         ].map((row, i) => (
           <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
