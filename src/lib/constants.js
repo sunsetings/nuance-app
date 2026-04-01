@@ -1,11 +1,11 @@
 // ─── PLAN LIMITS ─────────────────────────────────────────────
-export const GUEST_TONES = ["Polite", "Playful"];
-export const FREE_TONES = ["Polite", "Playful", "Casual", "Gen A"];
+export const GUEST_TONES = ["Friendly", "Playful"];
+export const FREE_TONES = ["Friendly", "Playful", "Poetic", "Gen A", "Flirty"];
 export const PRO_TONES = [
-  "Friendly", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
+  "Polite", "Casual", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
   "Shakespearean", "Professional", "Motivational", "Humble",
-  "Anger", "Charming", "Cheeky", "Royal", "Poetic", "Flirty",
+  "Anger", "Charming", "Cheeky", "Royal",
   "Dramatic", "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];

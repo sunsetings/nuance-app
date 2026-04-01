@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -19,13 +19,21 @@ function buildHomeToneOrder(userTier, savedTones = []) {
 
   if (userTier === "free") {
     FREE_TONES.forEach(add);
+  } else if (userTier === "guest") {
+    GUEST_TONES.forEach(add);
   } else {
     savedTones.forEach(add);
-    ["Polite", "Playful", "Casual", "Gen A"].forEach(add);
+    ["Friendly", "Playful", "Poetic", "Gen A", "Flirty"].forEach(add);
   }
 
   ALL_TONES.forEach(add);
   return next;
+}
+
+function getDefaultHomeTone(userTier) {
+  if (userTier === "free") return FREE_TONES[0];
+  if (userTier === "guest") return GUEST_TONES[0];
+  return "Friendly";
 }
 
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone }) {
@@ -49,7 +57,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   });
 
   const [mode, setMode] = useState("refine");
-  const [tone, setTone] = useState("Polite");
+  const [tone, setTone] = useState(() => getDefaultHomeTone(userTier));
   const [toneCount, setToneCount] = useState(1);
   const [homeToneOrder, setHomeToneOrder] = useState(() => buildHomeToneOrder(userTier, savedTones));
   const [text, setText] = useState("");
@@ -82,6 +90,10 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       return next;
     });
   }, [userTier, savedTones]);
+  useEffect(() => {
+    const unlocked = userTier === "free" ? FREE_TONES : userTier === "guest" ? GUEST_TONES : ALL_TONES;
+    if (!unlocked.includes(tone)) setTone(getDefaultHomeTone(userTier));
+  }, [userTier, tone]);
 
   const toggleBM = lang => setBookmarked(prev =>
     lang === AUTO_DETECT_LANGUAGE ? prev :

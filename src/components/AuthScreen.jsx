@@ -6,7 +6,7 @@ const SIGNIN_CONTEXT = {
   nav: { title: "Welcome back", sub: "Sign in to access your account." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
-  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Casual and Gen A." },
+  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Poetic, Gen A, and Flirty." },
   cap: { title: "You've used today's refines", sub: "Sign up free for 30 refines a day." },
   default: { title: "Welcome to tonara.", sub: "" },
 };
@@ -123,7 +123,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
           <div style={{ marginBottom: 22, padding: "15px 16px", background: t.surface, borderRadius: 12 }}>
             {[
               { icon: "◈", text: "30 refines a day — enough for everyday chats, messages, and quick fixes." },
-              { icon: "◐", text: "Unlock Casual and Gen A — get more natural options for everyday and internet-native conversations." },
+              { icon: "◐", text: "Unlock Poetic, Gen A, and Flirty — get more expressive options for creative, internet-native, and playful conversations." },
             ].map((item, index, arr) => (
               <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
                 <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>

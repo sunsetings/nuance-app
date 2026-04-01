@@ -1,4 +1,4 @@
-import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
+import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, GUEST_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
 
 function SmallHeart({ size = 10, color, filled = false }) {
   return (
@@ -33,7 +33,9 @@ export function ToneRow({
   const t = THEMES[theme] || THEMES.dark;
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
-    : ["Polite", "Playful", "Casual", "Gen A"];
+    : userTier === "free"
+      ? FREE_TONES
+      : GUEST_TONES;
   const lastUsedTone = recentTones.find((tone) => tone && tone !== activeTone);
   const contextualTones = [];
   const addContextual = (tone) => {
@@ -52,7 +54,7 @@ export function ToneRow({
       ? [activeTone, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
       : userTier === "free"
         ? [activeTone, ...FREE_TONES, ...ALL_TONES]
-        : [activeTone, "Playful", ...FREE_TONES, ...ALL_TONES];
+        : [activeTone, ...GUEST_TONES, ...FREE_TONES, ...ALL_TONES];
   const defaultRowTones = [];
   defaultRowSource.forEach((tone) => {
     if (!tone || defaultRowTones.includes(tone)) return;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES } from "../lib/constants.js";
+import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, FREE_TONES, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
@@ -12,7 +12,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
   const [portalError, setPortalError] = useState(null);
   const planRows = [
     { label: "Daily refines", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
-    { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `4 of ${ALL_TONES.length}`, accent: true },
+    { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `${FREE_TONES.length} of ${ALL_TONES.length}`, accent: true },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
     { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
     { label: "Saved tones", value: isPremium ? `Up to ${PRO_SAVED_TONE_LIMIT}` : "Pro only", accent: false },
@@ -236,7 +236,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
 
         {[
           { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
-          { label: "Tones", guest: `${GUEST_TONES.length}`, free: "4", pro: `All ${ALL_TONES.length}` },
+          { label: "Tones", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
           { label: "Languages", guest: "14", free: "14", pro: "60" },
           { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
           { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
