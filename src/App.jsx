@@ -24,13 +24,26 @@ const SCREEN_LABELS = {
 };
 
 const LS_SAVED_TONES = "tonara_saved_tones";
+const LS_THEME_PREFERENCE = "tonara_theme_preference";
+
+function getSystemTheme() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return "light";
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function resolveTheme(preference) {
+  return preference === "system" ? getSystemTheme() : preference;
+}
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [screen, setScreen] = useState("home");
   const [isPremium, setIsPremium] = useState(false);
-  const [theme, setTheme] = useState("light");
+  const [themePreference, setThemePreference] = useState(() => localStorage.getItem(LS_THEME_PREFERENCE) || "system");
+  const [theme, setTheme] = useState(() => resolveTheme(localStorage.getItem(LS_THEME_PREFERENCE) || "system"));
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(() => getRefinesToday());
@@ -67,6 +80,20 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(LS_SAVED_TONES, JSON.stringify(savedTones));
   }, [savedTones]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_THEME_PREFERENCE, themePreference);
+    setTheme(resolveTheme(themePreference));
+  }, [themePreference]);
+
+  useEffect(() => {
+    if (themePreference !== "system" || typeof window.matchMedia !== "function") return;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => setTheme(mediaQuery.matches ? "dark" : "light");
+    handleChange();
+    mediaQuery.addEventListener?.("change", handleChange);
+    return () => mediaQuery.removeEventListener?.("change", handleChange);
+  }, [themePreference]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -200,7 +227,7 @@ export default function App() {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "account": return user ? <AccountScreen {...props} setTheme={setTheme} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
+      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "cap": return <CapScreen {...props} />;
@@ -210,8 +237,8 @@ export default function App() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: "100vh", background: THEMES.light.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: THEMES.light.accent, fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
+      <div style={{ minHeight: "100vh", background: THEMES[theme]?.bg || THEMES.light.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ color: THEMES[theme]?.accent || THEMES.light.accent, fontSize: 24, fontFamily: "'Lora',Georgia,serif" }}>tonara.</div>
       </div>
     );
   }

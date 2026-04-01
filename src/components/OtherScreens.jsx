@@ -4,7 +4,7 @@ import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems, usageCount = 0, onLogout }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, themePreference = "system", setTheme, user, savedItems, usageCount = 0, onLogout }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
   const dailyRefineCap = isPremium ? PRO_DAILY_CAP : FREE_DAILY_CAP;
@@ -120,7 +120,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
           <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>Display</div>
           <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 8 }}>
             {displayOptions.map(opt => (
-              <button key={opt.id} onClick={() => opt.id !== "system" && setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: (opt.id === "system" ? false : theme === opt.id) ? t.surface2 : "transparent", color: (opt.id === "system" ? t.textFaint : theme === opt.id) ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: (opt.id === "system" ? false : theme === opt.id) ? "bold" : "normal", transition: "all 0.15s" }}>
+              <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: themePreference === opt.id ? t.surface2 : "transparent", color: themePreference === opt.id ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: themePreference === opt.id ? "bold" : "normal", transition: "all 0.15s" }}>
                 {opt.icon} {opt.label}
               </button>
             ))}
