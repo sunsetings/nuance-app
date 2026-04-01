@@ -90,6 +90,7 @@ export function ToneRow({
               const isActive = pill.tone === activeTone;
               const label = pill.tone;
               const showProBadge = PRO_TONES.includes(pill.tone);
+              const heartRight = showProBadge ? 18 : 6;
               const borderColor = isActive ? t.accent : status !== "unlocked" ? t.border : t.border2;
               const textColor = isActive ? t.accentText : status !== "unlocked" ? t.textFaint : t.textMuted;
 
@@ -134,7 +135,7 @@ export function ToneRow({
                     </span>
                   )}
                   {isFavourite && status === "unlocked" && (
-                    <span style={{ position: "absolute", top: -3, right: 6, zIndex: 11, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                    <span style={{ position: "absolute", top: -3, right: heartRight, zIndex: 11, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
                       <SmallHeart size={10} color={t.proTag} filled />
                     </span>
                   )}
