@@ -39,11 +39,20 @@ Task 1 — REFINE:
 Rewrite the following message in a "${tone}" tone. Keep the core meaning identical. Only change the tone and phrasing.${toneInstruction}${levelDesc}
 Output ONLY the refined text, nothing else. No labels, no explanations.
 Task 2 — TRANSLATE:
-Translate the refined text from ${fromLang} into ${toLang}. When translating, prioritize the "${tone}" tone and how that tone should sound naturally in ${toLang} over the exact wording of the refined text.
-The translation must preserve:
-1. the core meaning of the message
-2. the social intent, nuance, and emotional tone selected by the user
-If a literal translation would weaken, flatten, or distort the intended tone, adapt the phrasing so the translated message lands with the right tone in ${toLang}. The target-language tone matters more than mirroring the exact wording of the refined sentence.
+Translate into ${toLang} using this priority order:
+1. Preserve the original message's core meaning, intent, and context.
+2. Make the selected "${tone}" feel natural, relevant, and strong in ${toLang}.
+3. Use the refined text only as a reference, not as wording that must be translated literally.
+
+Important translation rules:
+- Give MORE weight to the selected tone than to the exact wording of the refined text.
+- The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
+- Preserve the social feeling, nuance, subtext, and emotional intensity selected by the user.
+- If the refined wording and the best target-language tone conflict, choose the phrasing that makes the tone land correctly in ${toLang}.
+- Do not translate too literally if literal wording makes the message feel flatter, awkward, culturally off, or less on-tone.
+- Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
+
+In short: preserve the original meaning, but make the final translation sound naturally "${tone}" in ${toLang}, even if that means departing from the exact wording of the refined sentence.
 Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
