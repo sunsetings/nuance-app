@@ -308,7 +308,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Go Pro for 300/day`}
+          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Go Pro for 500/day`}
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{

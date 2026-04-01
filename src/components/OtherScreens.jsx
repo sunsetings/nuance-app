@@ -298,8 +298,8 @@ export function CapScreen({ navigate, userTier, theme }) {
   const variant = isGuest
     ? {
         title: "You've used today's 10 refines",
-        subtitle: "Sign up free — 30 seconds, 20 refines a day.",
-        primaryLabel: "Sign up free — 20 refines/day",
+        subtitle: "Sign up free — 30 seconds, 30 refines a day.",
+        primaryLabel: "Sign up free — 30 refines/day",
         primaryAction: () => navigate("signin_cap"),
         secondaryLabel: "View Pro plan →",
         secondaryAction: () => navigate("upgrade"),
@@ -307,8 +307,8 @@ export function CapScreen({ navigate, userTier, theme }) {
       }
     : isPro
       ? {
-          title: "You've used today's 300 refines",
-          subtitle: "Come back tomorrow for another 300 refines.",
+          title: "You've used today's 500 refines",
+          subtitle: "Come back tomorrow for another 500 refines.",
           primaryLabel: null,
           primaryAction: null,
           secondaryLabel: null,
@@ -316,11 +316,11 @@ export function CapScreen({ navigate, userTier, theme }) {
           secondaryAccent: false,
         }
       : {
-          title: "You've used today's 20 refines",
-          subtitle: "Upgrade to Pro for 300 refines a day.",
+          title: "You've used today's 30 refines",
+          subtitle: "Upgrade to Pro for 500 refines a day.",
           primaryLabel: null,
           primaryAction: null,
-          secondaryLabel: "✦ Upgrade to Pro — 300/day",
+          secondaryLabel: "✦ Upgrade to Pro — 500/day",
           secondaryAction: () => navigate("upgrade"),
           secondaryAccent: true,
         };

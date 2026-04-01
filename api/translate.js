@@ -143,7 +143,7 @@ async function getSignedInUsageContext(userId, req) {
     supabase.from("profiles").select("is_pro").eq("id", userId).single(),
   ]);
 
-  const cap = profile?.is_pro ? 300 : 20;
+  const cap = profile?.is_pro ? 500 : 30;
   return {
     cap,
     refineCount: refineUsage?.count || 0,
@@ -211,7 +211,7 @@ async function callOpenAI({ mode, prompt }) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-4.1-mini",
+      model: "gpt-4o-mini",
       max_tokens: mode === "quick" ? 500 : 1000,
       temperature: mode === "quick" ? 0.3 : 0.7,
       messages: [{ role: "user", content: prompt }],
