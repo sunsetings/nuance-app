@@ -29,10 +29,10 @@ Respond in this exact JSON format (no markdown, no backticks):
   const toneInstruction = toneGuide[tone] ? ` Tone guide: ${toneGuide[tone]}` : "";
   const levelDesc =
     toneCount === 1
-      ? ""
+      ? ` Intensity level: 1x. Apply the tone lightly. Keep the rewrite relatively close to the original message, with only a subtle tone shift. Preserve most of the original directness, structure, and communicative feel.`
       : toneCount === 2
-        ? ` Make it noticeably more ${tone.toLowerCase()} than the previous version.`
-        : ` Push the ${tone.toLowerCase()} tone to its maximum — this is the most intensified version.`;
+        ? ` Intensity level: 2x. Make the tone clearly noticeable and natural. Rewrite more freely than 1x so the tone comes through in an obvious way, but keep the same meaning, intent, and overall message goal.`
+        : ` Intensity level: 3x. This is the boldest, most fully committed version of the tone. Lean into the selected tone strongly and stylistically, but do not change the core meaning, factual content, or communicative goal of the message.`;
 
   return `You are a communication refinement and translation assistant.
 Task 1 — REFINE:
@@ -48,6 +48,10 @@ Important translation rules:
 - Give MORE weight to the selected tone than to the exact wording of the refined text.
 - The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
 - Preserve the social feeling, nuance, subtext, and emotional intensity selected by the user.
+- Preserve the same intensity level in translation:
+  - 1x = subtle, light-touch tone
+  - 2x = clearly noticeable, balanced tone
+  - 3x = strongest, boldest version of the tone
 - If the refined wording and the best target-language tone conflict, choose the phrasing that makes the tone land correctly in ${toLang}.
 - Do not translate too literally if literal wording makes the message feel flatter, awkward, culturally off, or less on-tone.
 - Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
