@@ -7,6 +7,8 @@ import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
+const SHARE_CAPTION = "Try tonara.- it helps with tone, not just translation";
+
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
@@ -182,6 +184,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
         await navigator.share({
           title: "tonara.",
+          text: SHARE_CAPTION,
           files: [file],
         });
         return;

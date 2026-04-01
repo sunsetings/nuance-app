@@ -3,6 +3,8 @@ import { THEMES } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
+const SHARE_CAPTION = "Try tonara.- it helps with tone, not just translation";
+
 export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
@@ -35,6 +37,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
 
   const handleShare = async () => {
     const shareText = [
+      SHARE_CAPTION,
       `Original: ${original}`,
       `Translation (${toLang}): ${translated}`,
     ].filter(Boolean).join("\n\n");
