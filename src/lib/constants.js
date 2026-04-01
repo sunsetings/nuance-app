@@ -24,7 +24,7 @@ export const CHAR_LIMIT = 2000;
 
 export const BASE_LANGUAGES = [
   "Arabic", "Dutch", "English", "French", "German", "Italian", "Japanese",
-  "Korean", "Mandarin", "Portuguese", "Russian", "Spanish", "Vietnamese",
+  "Korean", "Chinese (Simplified)", "Chinese (Traditional)", "Portuguese", "Russian", "Spanish", "Vietnamese",
 ];
 export const PRO_LANGUAGES = [
   "Amharic", "Azerbaijani", "Bengali", "Burmese", "Catalan", "Croatian",
