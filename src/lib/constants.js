@@ -20,7 +20,7 @@ export const FREE_SAVE_LIMIT = 3;
 export const FREE_BOOKMARK_LIMIT = 1;
 export const PRO_BOOKMARK_LIMIT = 6;
 export const PRO_SAVED_TONE_LIMIT = 5;
-export const CHAR_LIMIT = 500;
+export const CHAR_LIMIT = 2000;
 
 export const BASE_LANGUAGES = [
   "Arabic", "Dutch", "English", "French", "German", "Italian", "Japanese",
