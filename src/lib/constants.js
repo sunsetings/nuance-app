@@ -3,14 +3,14 @@ export const GUEST_TONES = ["Friendly", "Playful"];
 export const FREE_TONES = ["Friendly", "Playful", "Poetic", "Gen A", "Flirty"];
 export const PRO_TONES = [
   "Polite", "Casual", "Sincere", "Serious", "Succinct", "Assertive", "Diplomatic",
-  "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
+  "Empathetic", "Apologetic", "Enthusiastic", "Urgent",
   "Shakespearean", "Professional", "Motivational", "Humble",
-  "Anger", "Charming", "Cheeky", "Royal", "Luxury", "Chaotic", "Iconic",
+  "Anger", "Royal", "Luxury", "Chaotic", "Iconic",
   "Overexplaining", "Dad Joke",
-  "Dramatic", "Noir",
+  "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
-export const DEFAULT_PRO_TONES = ["Charming", "Poetic", "Diplomatic", "Empathetic"];
+export const DEFAULT_PRO_TONES = ["Luxury", "Poetic", "Diplomatic", "Empathetic"];
 export const MAX_SAME_TONE = 3;
 export const GUEST_DAILY_CAP = 10;
 export const FREE_DAILY_CAP = 30;
@@ -44,10 +44,10 @@ export const DEFAULT_TO_LANG = "Korean";
 export const TONE_CATEGORIES = [
   { label: "Everyday", tones: ["Friendly", "Playful", "Casual", "Gen A", "Flirty"] },
   { label: "Polished", tones: ["Polite", "Professional", "Diplomatic", "Succinct", "Assertive", "Luxury"] },
-  { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
-  { label: "Intense", tones: ["Serious", "Urgent", "Anger", "Dramatic", "Noir"] },
+  { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Apologetic", "Humble", "Motivational"] },
+  { label: "Intense", tones: ["Serious", "Urgent", "Anger", "Noir"] },
   { label: "Stylized", tones: ["Poetic", "Shakespearean", "Royal", "Iconic"] },
-  { label: "Character", tones: ["Charming", "Cheeky", "Chaotic", "Overexplaining", "Dad Joke", "Enthusiastic"] },
+  { label: "Character", tones: ["Chaotic", "Overexplaining", "Dad Joke", "Enthusiastic"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
@@ -65,14 +65,11 @@ export const TONE_DESCRIPTIONS = {
   Apologetic: "Remorseful and soft",
   Enthusiastic: "Energetic and excited",
   Urgent: "Pressing and time-sensitive",
-  Warm: "Caring and personal",
   Shakespearean: "Theatrical and Bard-like",
   Professional: "Clean and corporate-safe",
   Motivational: "Energising and encouraging",
   Humble: "Deferential and respectful",
   Anger: "Sharp and openly frustrated",
-  Charming: "Smooth and winsome",
-  Cheeky: "Bold and mischievous",
   Royal: "Regal and elevated",
   Luxury: "Elevated and high-end",
   Chaotic: "Unhinged and energetic",
@@ -81,7 +78,6 @@ export const TONE_DESCRIPTIONS = {
   "Dad Joke": "Corny and harmless",
   Poetic: "Lyrical and expressive",
   Flirty: "Playful and romantic",
-  Dramatic: "Heightened and emotionally intense",
   Noir: "Moody and mysterious",
 };
 
