@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE } from "../lib/constants.js";
-import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getBlendToneState } from "../lib/constants.js";
+import { BottomNav, MicButton, RefineCounter, Toast } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
@@ -58,6 +58,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const [mode, setMode] = useState("refine");
   const [tone, setTone] = useState(() => getDefaultHomeTone(userTier));
+  const [blendTone, setBlendTone] = useState(null);
   const [toneCount, setToneCount] = useState(1);
   const [homeToneOrder, setHomeToneOrder] = useState(() => buildHomeToneOrder(userTier, savedTones));
   const [text, setText] = useState("");
@@ -65,6 +66,9 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const [swapping, setSwapping] = useState(false);
   const [openLang, setOpenLang] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetMode, setSheetMode] = useState("main");
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const textareaRef = useRef(null);
 
   const isRefine = mode === "refine";
@@ -94,6 +98,15 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     const unlocked = userTier === "free" ? FREE_TONES : userTier === "guest" ? GUEST_TONES : ALL_TONES;
     if (!unlocked.includes(tone)) setTone(getDefaultHomeTone(userTier));
   }, [userTier, tone]);
+  useEffect(() => {
+    if (userTier !== "pro" && blendTone) setBlendTone(null);
+  }, [userTier, blendTone]);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2600);
+  };
 
   const toggleBM = lang => setBookmarked(prev =>
     lang === AUTO_DETECT_LANGUAGE ? prev :
@@ -126,14 +139,36 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleTranslate = () => {
     if (!hasText) return;
-    onTranslate({ text, tone, toneCount, fromLang, toLang, mode });
+    onTranslate({ text, tone, blendTone, toneCount, fromLang, toLang, mode });
   };
 
   const handleRowToneSelect = (selectedTone) => {
+    if (blendTone === selectedTone) {
+      setBlendTone(null);
+    }
     setTone(selectedTone);
   };
 
   const handleSheetToneSelect = (selectedTone) => {
+    if (sheetMode === "blend") {
+      if (selectedTone === tone) {
+        showToast("Blend tone has to be different from the main tone.");
+        return;
+      }
+      const blendState = getBlendToneState(tone, selectedTone);
+      if (blendState === "blocked") {
+        showToast("That blend conflicts too much to work well.");
+        return;
+      }
+      if (blendState === "warn") {
+        showToast("This blend may be a little less predictable.");
+      }
+      setBlendTone(selectedTone);
+      return;
+    }
+    if (blendTone === selectedTone) {
+      setBlendTone(null);
+    }
     setTone(selectedTone);
     setHomeToneOrder((prev) => [selectedTone, ...prev.filter((entry) => entry !== selectedTone)]);
   };
@@ -147,16 +182,18 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       color: t.text, display: "flex", flexDirection: "column",
       height: "100%", boxSizing: "border-box", background: t.phoneBg,
     }}>
+      <Toast message={toastMessage} visible={toastVisible} theme={theme} />
       <ToneSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        activeTone={tone}
+        activeTone={sheetMode === "blend" ? blendTone : tone}
         userTier={userTier}
         favourites={savedTones}
         onToggleFav={onToggleSavedTone}
         onSelectTone={handleSheetToneSelect}
         navigate={navigate}
         theme={theme}
+        title={sheetMode === "blend" ? "Blend tone" : "Tones"}
       />
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
@@ -231,7 +268,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           <ToneRow
             activeTone={tone} toneCount={toneCount}
             onSelect={handleRowToneSelect} onSetLevel={setToneCount}
-            onOpenSheet={() => setSheetOpen(true)}
+            onOpenSheet={() => { setSheetMode("main"); setSheetOpen(true); }}
             userTier={userTier}
             favourites={savedTones}
             recentTones={[]}
@@ -242,6 +279,40 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             navigate={navigate}
             theme={theme}
           />
+          {userTier === "pro" && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
+              <div style={{ width: "100%", maxWidth: 236 }}>
+                <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
+                  Blend tone
+                </div>
+                {blendTone ? (
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                      style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      {blendTone}
+                    </button>
+                    <button
+                      onClick={() => setBlendTone(null)}
+                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 0 0 8px", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                      style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      + Add blend tone
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

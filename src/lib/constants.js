@@ -22,6 +22,7 @@ export const FREE_BOOKMARK_LIMIT = 1;
 export const PRO_BOOKMARK_LIMIT = 6;
 export const PRO_SAVED_TONE_LIMIT = 5;
 export const CHAR_LIMIT = 2000;
+export const TONE_BLEND_DELIMITER = ":::blend:::";
 
 export const BASE_LANGUAGES = [
   "Arabic", "Dutch", "English", "French", "German", "Italian", "Japanese",
@@ -80,6 +81,49 @@ export const TONE_DESCRIPTIONS = {
   Flirty: "Playful and romantic",
   Noir: "Moody and mysterious",
 };
+
+function getBlendPairKey(a, b) {
+  return [a, b].filter(Boolean).sort().join("||");
+}
+
+const WARN_BLEND_PAIRS = new Set([
+  getBlendPairKey("Professional", "Chaotic"),
+  getBlendPairKey("Diplomatic", "Chaotic"),
+  getBlendPairKey("Luxury", "Chaotic"),
+  getBlendPairKey("Royal", "Gen A"),
+  getBlendPairKey("Shakespearean", "Gen A"),
+  getBlendPairKey("Serious", "Dad Joke"),
+  getBlendPairKey("Apologetic", "Dad Joke"),
+  getBlendPairKey("Noir", "Dad Joke"),
+  getBlendPairKey("Iconic", "Humble"),
+  getBlendPairKey("Urgent", "Dad Joke"),
+]);
+
+const BLOCK_BLEND_PAIRS = new Set([
+  getBlendPairKey("Succinct", "Overexplaining"),
+  getBlendPairKey("Professional", "Chaotic"),
+]);
+
+export function getBlendToneState(mainTone, blendTone) {
+  if (!mainTone || !blendTone || mainTone === blendTone) return "allowed";
+  const key = getBlendPairKey(mainTone, blendTone);
+  if (BLOCK_BLEND_PAIRS.has(key)) return "blocked";
+  if (WARN_BLEND_PAIRS.has(key)) return "warn";
+  return "allowed";
+}
+
+export function serializeToneSelection(mainTone, blendTone = null) {
+  if (!blendTone) return mainTone || null;
+  return `${mainTone}${TONE_BLEND_DELIMITER}${blendTone}`;
+}
+
+export function parseToneSelection(value) {
+  if (!value || typeof value !== "string" || !value.includes(TONE_BLEND_DELIMITER)) {
+    return { tone: value || null, blendTone: null };
+  }
+  const [tone, blendTone] = value.split(TONE_BLEND_DELIMITER);
+  return { tone: tone || null, blendTone: blendTone || null };
+}
 
 export function getUserTier(user, isPremium) {
   if (!user) return "guest";

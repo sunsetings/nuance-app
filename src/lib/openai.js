@@ -39,11 +39,12 @@ async function callTranslateAPI(payload) {
   return response.json();
 }
 
-export async function refineAndTranslate({ text, tone, fromLang, toLang, toneCount }) {
+export async function refineAndTranslate({ text, tone, blendTone = null, fromLang, toLang, toneCount }) {
   return callTranslateAPI({
     mode: "refine",
     text,
     tone,
+    blendTone,
     fromLang,
     toLang,
     toneCount,

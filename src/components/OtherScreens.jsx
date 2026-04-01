@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, FREE_TONES, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES } from "../lib/constants.js";
+import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, FREE_TONES, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES, parseToneSelection } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
@@ -416,19 +416,30 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
         <>
           <div style={{ fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.04em" }}>Tap any item to reopen and refine.</div>
           {items.map(item => (
-            <button key={item.id} onClick={() => onOpenSaved({
-              ...item,
-              tone: item.tone,
-              toneCount: item.tone_count,
-              fromLang: item.from_lang,
-              toLang: item.to_lang,
-            })} style={{ width: "100%", background: t.surface, border: "none", borderRadius: 10, padding: "11px 14px", marginBottom: 6, textAlign: "left", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+            <button key={item.id} onClick={() => {
+              const parsedTone = parseToneSelection(item.tone);
+              onOpenSaved({
+                ...item,
+                tone: parsedTone.tone || item.tone,
+                blendTone: parsedTone.blendTone,
+                toneCount: item.tone_count,
+                fromLang: item.from_lang,
+                toLang: item.to_lang,
+              });
+            }} style={{ width: "100%", background: t.surface, border: "none", borderRadius: 10, padding: "11px 14px", marginBottom: 6, textAlign: "left", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                  {item.mode === "refine"
-                    ? <span style={{ padding: "2px 8px", borderRadius: 8, background: t.highlight, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.04em" }}>{item.tone}{item.tone_count > 1 ? ` ×${item.tone_count}` : ""}</span>
-                    : <span style={{ padding: "2px 8px", borderRadius: 8, background: t.surface2, fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>Quick</span>
-                  }
+                  {item.mode === "refine" ? (
+                    <span style={{ padding: "2px 8px", borderRadius: 8, background: t.highlight, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.04em" }}>
+                      {(() => {
+                        const parsedTone = parseToneSelection(item.tone);
+                        const baseLabel = parsedTone.blendTone
+                          ? `${parsedTone.tone} + ${parsedTone.blendTone}`
+                          : parsedTone.tone || item.tone;
+                        return `${baseLabel}${item.tone_count > 1 ? ` ×${item.tone_count}` : ""}`;
+                      })()}
+                    </span>
+                  ) : <span style={{ padding: "2px 8px", borderRadius: 8, background: t.surface2, fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>Quick</span>}
                   <span style={{ fontSize: 10, color: t.textFaint }}>→ {item.to_lang}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

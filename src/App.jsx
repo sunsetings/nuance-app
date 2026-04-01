@@ -180,7 +180,7 @@ export default function App() {
     });
   };
 
-  const handleTranslate = async ({ text, tone, toneCount = 1, fromLang, toLang, mode }) => {
+  const handleTranslate = async ({ text, tone, blendTone = null, toneCount = 1, fromLang, toLang, mode }) => {
     const cap = userTier === "pro" ? 500 : userTier === "free" ? 30 : 10;
     if (mode === "quick" && quickUsageCount >= cap) {
       showToast(`You've used today's ${cap} standard translations. Come back tomorrow.`);
@@ -200,17 +200,17 @@ export default function App() {
         setTranslationData({ original: text, translated: result.translated, fromLang, toLang, tone, mode: "quick" });
         setScreen("quickresults");
       } else {
-        const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount });
+        const result = await refineAndTranslate({ text, tone, blendTone, fromLang, toLang, toneCount });
         if (user) {
           setUsageCount((prev) => prev + 1);
         }
         addRecentTone(tone);
-        setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang, toLang, tone, toneCount, mode: "refine" });
+        setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang, toLang, tone, blendTone, toneCount, mode: "refine" });
         setScreen("results");
       }
     } catch (e) {
       console.error("Translation failed:", e);
-      setTranslationData({ original: text, refined: "Translation failed — check your API key.", translated: "", fromLang, toLang, tone, toneCount, mode });
+      setTranslationData({ original: text, refined: "Translation failed — check your API key.", translated: "", fromLang, toLang, tone, blendTone, toneCount, mode });
       setScreen(mode === "quick" ? "quickresults" : "results");
     } finally {
       setIsTranslating(false);

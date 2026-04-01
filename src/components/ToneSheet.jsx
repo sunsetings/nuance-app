@@ -15,7 +15,7 @@ function SmallHeart({ size = 14, color, filled = false }) {
   );
 }
 
-export function ToneSheet({ visible, onClose, activeTone, userTier, favourites = [], onToggleFav, onSelectTone, navigate, theme }) {
+export function ToneSheet({ visible, onClose, activeTone, userTier, favourites = [], onToggleFav, onSelectTone, navigate, theme, title = "Tones" }) {
   const t = THEMES[theme] || THEMES.dark;
   const [search, setSearch] = useState("");
 
@@ -50,7 +50,7 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
               <span style={{ fontSize: 16, lineHeight: 1 }}>←</span>
               <span style={{ fontSize: 12, letterSpacing: "0.02em" }}>Back</span>
             </button>
-            <span style={{ fontSize: 15, fontWeight: "bold", color: t.text, letterSpacing: "-0.2px" }}>Tones</span>
+            <span style={{ fontSize: 15, fontWeight: "bold", color: t.text, letterSpacing: "-0.2px" }}>{title}</span>
             {userTier === "pro" ? (
               <span style={{ fontSize: 10, color: t.textDim, letterSpacing: "0.04em" }}>{favourites.length}/{PRO_SAVED_TONE_LIMIT} saved</span>
             ) : (
