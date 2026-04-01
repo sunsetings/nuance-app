@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getToneStatus, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, TONE_DESCRIPTIONS } from "../lib/constants.js";
+import { FREE_TONES, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, TONE_DESCRIPTIONS, getToneStatus } from "../lib/constants.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -90,13 +90,14 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
                   const isFav = favourites.includes(tone);
                   const isActive = tone === activeTone;
                   const locked = status !== "unlocked";
+                  const isProTone = !FREE_TONES.includes(tone);
                   return (
                     <div key={tone} onClick={() => handleTap(tone)} style={{ display: "flex", alignItems: "center", padding: "10px 12px", borderRadius: 11, background: isActive ? t.highlight : "transparent", cursor: "pointer", marginBottom: 2, transition: "background 0.15s" }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 2 }}>
                           <span style={{ fontSize: 13, color: isActive ? t.highlightText : locked ? t.textDim : t.text }}>{tone}</span>
                           {status === "free_locked" && <span style={{ background: t.freeTag, color: "#fff", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>FREE</span>}
-                          {status === "pro_locked" && <span style={{ background: t.proTag, color: "#000", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>PRO</span>}
+                          {(status === "pro_locked" || (userTier === "pro" && isProTone)) && <span style={{ background: t.proTag, color: "#000", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>PRO</span>}
                           {isActive && <span style={{ fontSize: 10, color: t.accent }}>✓</span>}
                         </div>
                         <div style={{ fontSize: 11, color: t.textDim }}>{TONE_DESCRIPTIONS[tone]}</div>

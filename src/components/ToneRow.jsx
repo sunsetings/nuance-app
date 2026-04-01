@@ -1,4 +1,4 @@
-import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
+import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
 
 function SmallHeart({ size = 10, color, filled = false }) {
   return (
@@ -25,6 +25,7 @@ export function ToneRow({
   priorityTonesOverride,
   disabled,
   isHomeScreen = false,
+  showStrengthControl,
   navigate,
   theme,
 }) {
@@ -52,6 +53,7 @@ export function ToneRow({
   }
 
   const rowTones = visibleTones.slice(0, 5);
+  const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
   const levelOptions = [
@@ -70,6 +72,7 @@ export function ToneRow({
               const isFavourite = favourites.includes(pill.tone);
               const isActive = pill.tone === activeTone;
               const label = pill.tone;
+              const showProBadge = PRO_TONES.includes(pill.tone);
               const borderColor = isActive ? t.accent : status !== "unlocked" ? t.border : t.border2;
               const textColor = isActive ? t.accentText : status !== "unlocked" ? t.textFaint : t.textMuted;
 
@@ -108,7 +111,7 @@ export function ToneRow({
                       FREE
                     </span>
                   )}
-                  {status === "pro_locked" && (
+                  {(status === "pro_locked" || (userTier === "pro" && showProBadge)) && (
                     <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
                       PRO
                     </span>
@@ -134,7 +137,7 @@ export function ToneRow({
         </button>
       </div>
 
-      {!isHomeScreen && !disabled && (
+      {shouldShowStrengthControl && !disabled && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <div style={{ width: "100%", maxWidth: 236 }}>
             <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>

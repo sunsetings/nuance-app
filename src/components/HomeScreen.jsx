@@ -43,6 +43,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const [mode, setMode] = useState("refine");
   const [tone, setTone] = useState("Polite");
+  const [toneCount, setToneCount] = useState(2);
   const [homeToneOrder, setHomeToneOrder] = useState(() => buildHomeToneOrder(userTier, savedTones));
   const [text, setText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -99,7 +100,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleTranslate = () => {
     if (!hasText) return;
-    onTranslate({ text, tone, fromLang, toLang, mode });
+    onTranslate({ text, tone, toneCount, fromLang, toLang, mode });
   };
 
   const handleRowToneSelect = (selectedTone) => {
@@ -197,16 +198,20 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       {/* Tone row */}
       {isRefine && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 2 }}>Tone</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
+            <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>Tone</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Scroll for more tones</div>
+          </div>
           <ToneRow
-            activeTone={tone} toneCount={1}
-            onSelect={handleRowToneSelect} onSetLevel={() => {}}
+            activeTone={tone} toneCount={toneCount}
+            onSelect={handleRowToneSelect} onSetLevel={setToneCount}
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={savedTones}
             priorityTonesOverride={homeToneOrder}
             disabled={false}
             isHomeScreen={true}
+            showStrengthControl={true}
             navigate={navigate}
             theme={theme}
           />
