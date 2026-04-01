@@ -297,7 +297,12 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     }
   };
 
-  const refinedLabel = `REFINED · ${activeTone.toUpperCase()}${toneCount > 1 ? ` ×${toneCount}` : ""}`;
+  const strengthLabelMap = {
+    1: "LIGHT",
+    2: "MEDIUM",
+    3: "STRONG",
+  };
+  const refinedLabel = `REFINED · ${activeTone.toUpperCase()} (${strengthLabelMap[toneCount] || "LIGHT"})`;
   const sourceLangCode = (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase();
   const targetLangCode = toLang.slice(0, 2).toUpperCase();
   const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
