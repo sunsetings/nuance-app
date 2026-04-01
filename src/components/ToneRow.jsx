@@ -53,21 +53,12 @@ export function ToneRow({
 
   const rowTones = visibleTones.slice(0, 5);
 
-  const pills = [];
-  if (isHomeScreen) {
-    rowTones.forEach((tone) => pills.push({ tone, level: 1, type: "tone" }));
-  } else {
-    rowTones.forEach((tone) => {
-      if (tone === activeTone) {
-        const stackMax = Math.min(toneCount + 1, MAX_SAME_TONE);
-        for (let level = 1; level <= stackMax; level += 1) {
-          pills.push({ tone, level, type: "stack" });
-        }
-      } else {
-        pills.push({ tone, level: 1, type: "tone" });
-      }
-    });
-  }
+  const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
+  const levelOptions = [
+    { level: 1, label: "Light" },
+    { level: 2, label: "Medium" },
+    { level: 3, label: "Strong" },
+  ];
 
   return (
     <div style={{ marginBottom: 4 }}>
@@ -77,28 +68,16 @@ export function ToneRow({
             {pills.map((pill, index) => {
               const status = getToneStatus(pill.tone, userTier);
               const isFavourite = favourites.includes(pill.tone);
-              const isActive = pill.tone === activeTone && (isHomeScreen || pill.level === toneCount);
-              const isPast = !isHomeScreen && pill.tone === activeTone && pill.level < toneCount;
-              const isNext = !isHomeScreen && pill.tone === activeTone && pill.level === toneCount + 1 && toneCount < MAX_SAME_TONE;
-              const label = pill.level > 1 ? `${pill.tone} ×${pill.level}` : pill.tone;
-              const borderColor = isActive ? t.accent : isNext ? t.highlightBorder : isPast ? t.border2 : status !== "unlocked" ? t.border : t.border2;
-              const textColor = isActive ? t.accentText : isNext ? (theme === "light" ? "#2a5a20" : "#7acd7a") : isPast ? t.textMuted : status !== "unlocked" ? t.textFaint : t.textMuted;
+              const isActive = pill.tone === activeTone;
+              const label = pill.tone;
+              const borderColor = isActive ? t.accent : status !== "unlocked" ? t.border : t.border2;
+              const textColor = isActive ? t.accentText : status !== "unlocked" ? t.textFaint : t.textMuted;
 
               const handleClick = () => {
                 if (disabled) return;
                 if (status !== "unlocked") {
                   navigate(status === "free_locked" ? "signin_tone" : "upgrade");
                   return;
-                }
-                if (pill.type === "stack") {
-                  if (isPast) {
-                    onSetLevel(pill.level);
-                    return;
-                  }
-                  if (isNext) {
-                    onSelect(pill.tone);
-                    return;
-                  }
                 }
                 onSelect(pill.tone);
               };
@@ -154,6 +133,50 @@ export function ToneRow({
           + More
         </button>
       </div>
+
+      {!isHomeScreen && !disabled && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
+          <div style={{ width: "100%", maxWidth: 236 }}>
+            <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
+              Tone strength
+            </div>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 2,
+              padding: 2,
+              background: t.surface,
+              border: `1px solid ${t.border}`,
+              borderRadius: 11,
+              width: "100%",
+            }}>
+              {levelOptions.map((option) => {
+                const isActive = toneCount === option.level;
+                return (
+                  <button
+                    key={option.level}
+                    onClick={() => onSetLevel(option.level)}
+                    style={{
+                      border: "none",
+                      borderRadius: 9,
+                      background: isActive ? t.surface2 : "transparent",
+                      color: isActive ? t.text : t.textFaint,
+                      padding: "7px 4px",
+                      fontSize: 10,
+                      cursor: "pointer",
+                      fontFamily: "'Lora',Georgia,serif",
+                      fontWeight: isActive ? "bold" : "normal",
+                      transition: "all 0.18s",
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {!disabled && (
         <div style={{ display: "flex", justifyContent: "flex-end", paddingRight: 68, marginTop: 3 }}>

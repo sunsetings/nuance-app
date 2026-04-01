@@ -238,21 +238,15 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       navigate(status === "free_locked" ? "account" : "upgrade");
       return;
     }
-    if (tone === activeTone) {
-      if (toneCount >= MAX_SAME_TONE) return;
-      const newCount = toneCount + 1;
-      setToneCount(newCount);
-      setActiveTone(tone);
-      await doRefine(tone, newCount);
-    } else {
-      setActiveTone(tone);
-      setToneCount(1);
-      await doRefine(tone, 1);
-    }
+    if (tone === activeTone) return;
+    setActiveTone(tone);
+    setToneCount(1);
+    await doRefine(tone, 1);
   };
 
   const handleSetLevel = async lvl => {
     if (!ensureWithinCap()) return;
+    if (lvl < 1 || lvl > MAX_SAME_TONE || lvl === toneCount) return;
     setToneCount(lvl);
     await doRefine(activeTone, lvl);
   };
