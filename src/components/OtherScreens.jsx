@@ -240,7 +240,6 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           { label: "Languages", guest: "14", free: "14", pro: "60" },
           { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
           { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
-          { label: "Blend tones", guest: "—", free: "—", pro: "✓" },
           { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
         ].map((row, i) => (
           <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
@@ -421,7 +420,6 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
               onOpenSaved({
                 ...item,
                 tone: parsedTone.tone || item.tone,
-                blendTone: parsedTone.blendTone,
                 toneCount: item.tone_count,
                 fromLang: item.from_lang,
                 toLang: item.to_lang,
@@ -433,9 +431,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
                     <span style={{ padding: "2px 8px", borderRadius: 8, background: t.highlight, fontSize: 10, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.04em" }}>
                       {(() => {
                         const parsedTone = parseToneSelection(item.tone);
-                        const baseLabel = parsedTone.blendTone
-                          ? `${parsedTone.tone} + ${parsedTone.blendTone}`
-                          : parsedTone.tone || item.tone;
+                        const baseLabel = parsedTone.tone || item.tone;
                         return `${baseLabel}${item.tone_count > 1 ? ` ×${item.tone_count}` : ""}`;
                       })()}
                     </span>

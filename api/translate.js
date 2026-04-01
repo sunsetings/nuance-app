@@ -7,7 +7,7 @@ const GUEST_RATE_WINDOW_MS = 60 * 1000;
 const GUEST_RATE_LIMIT = 12;
 const guestRateMap = new Map();
 
-function buildPrompt({ mode, text, tone, blendTone, fromLang, toLang, toneCount }) {
+function buildPrompt({ mode, text, tone, fromLang, toLang, toneCount }) {
   const isAutoDetected = fromLang === "Detect language";
   const sourceInstruction = isAutoDetected
     ? `Detect the source language of the input text automatically, then translate it into ${toLang}.`
@@ -35,11 +35,6 @@ Respond in this exact JSON format (no markdown, no backticks):
   };
 
   const toneInstruction = toneGuide[tone] ? ` Main tone guide: ${toneGuide[tone]}` : "";
-  const blendInstruction = blendTone
-    ? toneGuide[blendTone]
-      ? ` Supporting blend tone: "${blendTone}". Blend it in as a secondary influence only. Keep "${tone}" as the clear lead tone. Supporting tone guide: ${toneGuide[blendTone]}`
-      : ` Supporting blend tone: "${blendTone}". Blend it in as a secondary influence only. Keep "${tone}" as the clear lead tone.`
-    : "";
   const levelDesc =
     toneCount === 1
       ? ` Intensity level: 1x. Apply the tone lightly. Keep the rewrite relatively close to the original message, with only a subtle tone shift. Preserve most of the original directness, structure, and communicative feel.`
@@ -50,19 +45,16 @@ Respond in this exact JSON format (no markdown, no backticks):
   return `You are a communication refinement and translation assistant.
 Task 1 — REFINE:
 Rewrite the following message in a "${tone}" tone. Keep the core meaning identical. Only change the tone and phrasing.${toneInstruction}${levelDesc}
-${blendInstruction}
 Output ONLY the refined text, nothing else. No labels, no explanations.
 Task 2 — TRANSLATE:
 Translate into ${toLang} using this priority order:
 1. Preserve the original message's core meaning, intent, and context.
 2. Make the selected "${tone}" feel natural, relevant, and strong in ${toLang}.
-3. If a supporting blend tone is provided, let it gently shape the message as a secondary layer without overpowering the main tone.
-4. Give very little weight to the exact wording of the refined text. Treat it only as a faint stylistic reference.
+3. Give very little weight to the exact wording of the refined text. Treat it only as a faint stylistic reference.
 
 Important translation rules:
 - Give MUCH MORE weight to the original meaning/intent and the selected tone than to the exact wording of the refined text.
 - The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
-- If a blend tone is provided, treat it as a subtle supporting influence. The final result should still read primarily as "${tone}", not as a 50/50 split.
 - Preserve the social feeling, nuance, subtext, and emotional intensity selected by the user.
 - Preserve the same intensity level in translation:
   - 1x = subtle, light-touch tone
@@ -74,7 +66,7 @@ Important translation rules:
 - Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
 - If the source language is set to auto detect, infer the input language from the original message instead of assuming English.
 
-In short: preserve the original meaning first, make the final translation sound naturally "${tone}" in ${toLang} second, let the blend tone lightly shape the result if present, and give only minimal weight to the exact wording of the refined sentence.
+In short: preserve the original meaning first, make the final translation sound naturally "${tone}" in ${toLang} second, and give only minimal weight to the exact wording of the refined sentence.
 Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
@@ -249,7 +241,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-    const { mode, text, tone, blendTone = null, fromLang, toLang, toneCount = 1 } = body;
+    const { mode, text, tone, fromLang, toLang, toneCount = 1 } = body;
 
     if (!mode || !text || !fromLang || !toLang) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -269,7 +261,7 @@ module.exports = async function handler(req, res) {
 
     const access = await enforceRequestAccess(req, mode);
 
-    const prompt = buildPrompt({ mode, text, tone, blendTone, fromLang, toLang, toneCount });
+    const prompt = buildPrompt({ mode, text, tone, fromLang, toLang, toneCount });
     const result = await callOpenAI({ mode, prompt });
     if (access.user?.id) {
       await incrementSignedInUsage(access.user.id, req, mode);

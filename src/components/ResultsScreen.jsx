@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection, serializeToneSelection, getBlendToneState } from "../lib/constants.js";
+import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
@@ -14,12 +14,10 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const sourceToneSelection = parseToneSelection(source.tone);
 
   const [activeTone, setActiveTone] = useState(sourceToneSelection.tone || source.tone || "Polite");
-  const [blendTone, setBlendTone] = useState(source.blendTone || sourceToneSelection.blendTone || null);
   const [toneCount, setToneCount] = useState(source.toneCount || 1);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [sheetMode, setSheetMode] = useState("main");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -41,7 +39,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   // Check if this translation is already saved
   const existingSave = savedItems?.find(s =>
     s.original === original &&
-    s.tone === serializeToneSelection(activeTone, blendTone) &&
+    (parseToneSelection(s.tone).tone || s.tone) === activeTone &&
     s.tone_count === toneCount &&
     s.mode === "refine"
   );
@@ -52,12 +50,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2200);
   };
-
-  useEffect(() => {
-    if (userTier !== "pro" && blendTone) {
-      setBlendTone(null);
-    }
-  }, [userTier, blendTone]);
 
   const buildShareImageBlob = async () => {
     const width = 1080;
@@ -211,14 +203,13 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     }
   };
 
-  const doRefine = async (tone, count, nextBlendTone = blendTone) => {
+  const doRefine = async (tone, count) => {
     setLoading(true);
     setError(null);
     try {
       const result = await refineAndTranslate({
         text: original,
         tone,
-        blendTone: nextBlendTone,
         fromLang: source.fromLang || source.from_lang || "English",
         toLang,
         toneCount: count,
@@ -248,51 +239,28 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       return;
     }
     if (tone === activeTone) return;
-    if (blendTone === tone) {
-      setBlendTone(null);
-    }
     setActiveTone(tone);
-    await doRefine(tone, toneCount, blendTone === tone ? null : blendTone);
+    await doRefine(tone, toneCount);
   };
 
   const handleSetLevel = async lvl => {
     if (!ensureWithinCap()) return;
     if (lvl < 1 || lvl > MAX_SAME_TONE || lvl === toneCount) return;
     setToneCount(lvl);
-    await doRefine(activeTone, lvl, blendTone);
+    await doRefine(activeTone, lvl);
   };
 
   const handleSheetSelect = async (tone) => {
     if (!ensureWithinCap()) return;
-    if (sheetMode === "blend") {
-      if (tone === activeTone) {
-        showToast("Supporting tone has to be different from the main tone.");
-        return;
-      }
-      const blendState = getBlendToneState(activeTone, tone);
-      if (blendState === "blocked") {
-        showToast("That blend conflicts too much to work well.");
-        return;
-      }
-      if (blendState === "warn") {
-        showToast("This blend may be a little less predictable.");
-      }
-      setBlendTone(tone);
-      await doRefine(activeTone, toneCount, tone);
-      return;
-    }
     if (tone === activeTone) {
       if (toneCount !== 1) {
         setToneCount(1);
-        await doRefine(tone, 1, blendTone);
+        await doRefine(tone, 1);
       }
       return;
     }
-    if (blendTone === tone) {
-      setBlendTone(null);
-    }
     setActiveTone(tone);
-    await doRefine(tone, toneCount, blendTone === tone ? null : blendTone);
+    await doRefine(tone, toneCount);
   };
 
   const handleSave = async () => {
@@ -311,7 +279,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
           original,
           refined,
           translated,
-          tone: serializeToneSelection(activeTone, blendTone),
+          tone: activeTone,
           toneCount,
           fromLang: source.fromLang || source.from_lang || "English",
           toLang,
@@ -332,7 +300,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     2: "MEDIUM",
     3: "STRONG",
   };
-  const toneLabel = blendTone ? `${activeTone.toUpperCase()} + ${blendTone.toUpperCase()}` : activeTone.toUpperCase();
+  const toneLabel = activeTone.toUpperCase();
   const refinedLabel = `REFINED · ${toneLabel} (${strengthLabelMap[toneCount] || "LIGHT"})`;
   const sourceLangCode = (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase();
   const targetLangCode = toLang.slice(0, 2).toUpperCase();
@@ -402,14 +370,14 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       <ToneSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        activeTone={sheetMode === "blend" ? blendTone : activeTone}
+        activeTone={activeTone}
         userTier={userTier}
         favourites={savedTones}
         onToggleFav={onToggleSavedTone}
         onSelectTone={handleSheetSelect}
         navigate={navigate}
         theme={theme}
-        title={sheetMode === "blend" ? "Supporting tone" : "Tones"}
+        title="Tones"
       />
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
@@ -432,7 +400,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
           <ToneRow
             activeTone={activeTone} toneCount={toneCount}
             onSelect={handleSelect} onSetLevel={handleSetLevel}
-            onOpenSheet={() => { setSheetMode("main"); setSheetOpen(true); }}
+            onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={savedTones}
             recentTones={recentTones}
@@ -441,62 +409,6 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
             navigate={navigate}
             theme={theme}
           />
-          {userTier === "pro" && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-              <div style={{ width: "100%", maxWidth: 260, display: "flex", justifyContent: "center" }}>
-                {blendTone ? (
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <button
-                      onClick={async () => {
-                        setBlendTone(null);
-                        await doRefine(activeTone, toneCount, null);
-                      }}
-                      style={{ background: "none", border: "none", color: t.textFaint, fontSize: 12, cursor: "pointer", padding: "0 8px 0 0", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      ×
-                    </button>
-                    <button
-                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                      style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 11, color: t.text, padding: "8px 12px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      {blendTone}
-                    </button>
-                    <button
-                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                      style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 12px", fontSize: 11, cursor: "pointer", marginLeft: 8, fontFamily: "'Lora',Georgia,serif" }}
-                    >
-                      Change supporting tone
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
-                    style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                  >
-                    + Optional supporting tone
-                    <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                      PRO
-                    </span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          {userTier !== "pro" && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-              <div style={{ width: "100%", maxWidth: 260, display: "flex", justifyContent: "center" }}>
-                <button
-                  onClick={() => navigate("upgrade")}
-                  style={{ position: "relative", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 14px", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}
-                >
-                  + Optional supporting tone
-                  <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                    PRO
-                  </span>
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {loading && (
