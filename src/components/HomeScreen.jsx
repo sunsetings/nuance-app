@@ -283,7 +283,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
               <div style={{ width: "100%", maxWidth: 260 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
-                  <div style={{ flex: "0 0 auto", paddingLeft: 6 }}>
+                  <div style={{ flex: "0 0 auto", marginLeft: 18 }}>
                     {blendTone ? (
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <button
@@ -308,7 +308,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
                       </button>
                     )}
                   </div>
-                  <div style={{ flex: 1, textAlign: "right", fontSize: 9, color: t.textFaint, lineHeight: 1.4, letterSpacing: "0.02em" }}>
+                  <div style={{ flex: "0 1 112px", textAlign: "left", fontSize: 9, color: t.textFaint, lineHeight: 1.4, letterSpacing: "0.02em" }}>
                     Add one supporting tone
                   </div>
                 </div>
