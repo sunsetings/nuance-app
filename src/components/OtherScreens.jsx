@@ -4,7 +4,7 @@ import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems, usageCount = 0 }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, user, savedItems, usageCount = 0, onLogout }) {
   const t = THEMES[theme] || THEMES.dark;
   const savedCount = savedItems?.length || 0;
   const dailyRefineCap = isPremium ? PRO_DAILY_CAP : FREE_DAILY_CAP;
@@ -126,6 +126,24 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, setTheme, 
           ))}
         </div>
       </div>
+
+      <button
+        onClick={onLogout}
+        style={{
+          width: "100%",
+          padding: "11px 14px",
+          background: "transparent",
+          border: `1px solid ${t.border}`,
+          borderRadius: 10,
+          color: t.textDim,
+          fontSize: 12,
+          cursor: "pointer",
+          fontFamily: "'Lora',Georgia,serif",
+          marginBottom: 12,
+        }}
+      >
+        Sign out
+      </button>
 
       <div style={{ marginTop: "auto" }}>
         <BottomNav active="account" navigate={navigate} theme={theme} userTier={userTier} />

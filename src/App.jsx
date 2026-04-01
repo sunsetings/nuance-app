@@ -200,7 +200,7 @@ export default function App() {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "account": return user ? <AccountScreen {...props} setTheme={setTheme} savedItems={savedItems} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
+      case "account": return user ? <AccountScreen {...props} setTheme={setTheme} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "cap": return <CapScreen {...props} />;
