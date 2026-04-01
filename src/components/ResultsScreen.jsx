@@ -7,6 +7,13 @@ import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 
+function getLanguageCode(label) {
+  const value = String(label || "").trim();
+  if (!value) return "";
+  if (/english/i.test(value)) return "EN";
+  return value.slice(0, 2).toUpperCase();
+}
+
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const fromSaved = !!savedItem;
@@ -302,8 +309,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
   const toneLabel = activeTone.toUpperCase();
   const refinedLabel = `REFINED · ${toneLabel} (${strengthLabelMap[toneCount] || "LIGHT"})`;
-  const sourceLangCode = (source.fromLang || source.from_lang || "EN").slice(0, 2).toUpperCase();
-  const targetLangCode = toLang.slice(0, 2).toUpperCase();
+  const sourceLangCode = getLanguageCode(source.fromLang || source.from_lang || "EN");
+  const targetLangCode = getLanguageCode(toLang);
   const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
   const sectionLabelStyle = { fontSize: 9, letterSpacing: "0.12em" };
   const inlineCopyWrapStyle = { display: "flex", alignItems: "center", gap: 8 };
