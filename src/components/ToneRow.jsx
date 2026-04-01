@@ -35,26 +35,31 @@ export function ToneRow({
     ? DEFAULT_PRO_TONES
     : ["Polite", "Playful", "Casual", "Gen A"];
   const lastUsedTone = recentTones.find((tone) => tone && tone !== activeTone);
+  const contextualTones = [];
+  const addContextual = (tone) => {
+    if (!tone || contextualTones.includes(tone)) return;
+    contextualTones.push(tone);
+  };
 
-  const orderedCandidates = priorityTonesOverride?.length
-    ? [activeTone, lastUsedTone, ...priorityTonesOverride, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
-    : userTier === "free"
-      ? [activeTone, lastUsedTone, ...favourites, ...FREE_TONES, ...ALL_TONES]
-      : [activeTone, lastUsedTone, ...favourites, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES];
-  const visibleTones = [];
+  favourites.forEach(addContextual);
+  addContextual(activeTone);
+  addContextual(lastUsedTone);
 
-  orderedCandidates.forEach((tone) => {
-    if (!tone || visibleTones.includes(tone)) return;
-    visibleTones.push(tone);
+  const hasMeaningfulContext = favourites.length > 0 || !!lastUsedTone;
+  const defaultRowSource = priorityTonesOverride?.length
+    ? priorityTonesOverride
+    : userTier === "pro"
+      ? [activeTone, ...defaultPriorityTones, ...FREE_TONES, ...ALL_TONES]
+      : userTier === "free"
+        ? [activeTone, ...FREE_TONES, ...ALL_TONES]
+        : [activeTone, "Playful", ...FREE_TONES, ...ALL_TONES];
+  const defaultRowTones = [];
+  defaultRowSource.forEach((tone) => {
+    if (!tone || defaultRowTones.includes(tone)) return;
+    defaultRowTones.push(tone);
   });
 
-  while (visibleTones.length < 5) {
-    const nextTone = ALL_TONES.find((tone) => !visibleTones.includes(tone));
-    if (!nextTone) break;
-    visibleTones.push(nextTone);
-  }
-
-  const rowTones = visibleTones;
+  const rowTones = hasMeaningfulContext ? contextualTones : defaultRowTones.slice(0, 5);
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
