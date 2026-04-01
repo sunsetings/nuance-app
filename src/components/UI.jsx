@@ -342,7 +342,7 @@ export function RefineCounter({ usageCount, userTier, theme }) {
       </span>
       {remaining <= 3 && (
         <span style={{ fontSize: 9, color: t.proTag }}>
-          {userTier === "guest" ? "· sign up for more" : "· upgrade for 500"}
+          {userTier === "guest" ? "· sign up for more" : "· upgrade for 300"}
         </span>
       )}
     </div>

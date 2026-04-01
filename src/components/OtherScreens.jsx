@@ -307,8 +307,8 @@ export function CapScreen({ navigate, userTier, theme }) {
       }
     : isPro
       ? {
-          title: "You've used today's 500 refines",
-          subtitle: "Come back tomorrow for another 500 refines.",
+          title: "You've used today's 300 refines",
+          subtitle: "Come back tomorrow for another 300 refines.",
           primaryLabel: null,
           primaryAction: null,
           secondaryLabel: null,
@@ -317,10 +317,10 @@ export function CapScreen({ navigate, userTier, theme }) {
         }
       : {
           title: "You've used today's 30 refines",
-          subtitle: "Upgrade to Pro for 500 refines a day.",
+          subtitle: "Upgrade to Pro for 300 refines a day.",
           primaryLabel: null,
           primaryAction: null,
-          secondaryLabel: "✦ Upgrade to Pro — 500/day",
+          secondaryLabel: "✦ Upgrade to Pro — 300/day",
           secondaryAction: () => navigate("upgrade"),
           secondaryAccent: true,
         };
