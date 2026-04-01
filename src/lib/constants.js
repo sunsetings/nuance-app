@@ -6,7 +6,7 @@ export const PRO_TONES = [
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent", "Warm",
   "Shakespearean", "Professional", "Motivational", "Humble",
   "Anger", "Charming", "Cheeky", "Royal", "Luxury", "Chaotic", "Iconic",
-  "Teasing", "Overexplaining", "Dad Joke",
+  "Overexplaining", "Dad Joke",
   "Dramatic", "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
@@ -42,7 +42,7 @@ export const DEFAULT_FROM_LANG = AUTO_DETECT_LANGUAGE;
 export const DEFAULT_TO_LANG = "Korean";
 
 export const TONE_CATEGORIES = [
-  { label: "Everyday", tones: ["Friendly", "Playful", "Casual", "Gen A", "Flirty", "Teasing"] },
+  { label: "Everyday", tones: ["Friendly", "Playful", "Casual", "Gen A", "Flirty"] },
   { label: "Polished", tones: ["Polite", "Professional", "Diplomatic", "Succinct", "Assertive", "Luxury"] },
   { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
   { label: "Intense", tones: ["Serious", "Urgent", "Anger", "Dramatic", "Noir"] },
@@ -77,7 +77,6 @@ export const TONE_DESCRIPTIONS = {
   Luxury: "Elevated and high-end",
   Chaotic: "Unhinged and energetic",
   Iconic: "Confident and unforgettable",
-  Teasing: "Playful and provocative",
   Overexplaining: "Needlessly detailed",
   "Dad Joke": "Corny and harmless",
   Poetic: "Lyrical and expressive",

@@ -29,7 +29,6 @@ Respond in this exact JSON format (no markdown, no backticks):
     Luxury: "Elevated and high-end. Sound polished, premium, and refined, like upscale hospitality or luxury branding, without becoming robotic or pretentious.",
     Chaotic: "Unhinged and energetic. Fast-moving, impulsive, expressive, and a little wild, but still understandable and intentional rather than random nonsense.",
     Iconic: "Confident and unforgettable. Bold, self-assured, memorable, and polished, with main-character energy but not arrogance for its own sake.",
-    Teasing: "Playful and provocative. Lightly taunting, cheeky, and suggestive in a fun way, without becoming mean, aggressive, or overly explicit.",
     Overexplaining: "Needlessly detailed. Over-clarify obvious things, add extra explanation and qualifiers, and make the message comically more elaborate while keeping the same meaning.",
     "Dad Joke": "Corny and harmless. Use light groan-worthy humor, puns, or wholesome joke energy without becoming too silly or derailing the message.",
     Shakespearean: "Theatrical, elevated, and Bard-like — use expressive, dramatic phrasing inspired by Shakespearean English without becoming unreadable. Favor lyrical turns of phrase, grand feeling, and stage-like rhythm, adapted naturally to the target language.",
