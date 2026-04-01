@@ -240,7 +240,6 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           { label: "Languages", guest: "14", free: "14", pro: "60" },
           { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
           { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
-          { label: "Dictation", guest: "✓", free: "✓", pro: "✓" },
           { label: "Blend tones", guest: "—", free: "—", pro: "✓" },
           { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
         ].map((row, i) => (
