@@ -161,7 +161,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
             transition: "all 0.2s",
           }}>
             <span style={{ fontSize: 14, fontWeight: "bold", fontFamily: "sans-serif", color: t.textDim }}>G</span>
-            Continue with Google
+            Continue with Google for free
           </button>
 
           {/* Divider */}
