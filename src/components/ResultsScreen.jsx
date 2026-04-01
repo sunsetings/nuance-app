@@ -240,8 +240,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     }
     if (tone === activeTone) return;
     setActiveTone(tone);
-    setToneCount(1);
-    await doRefine(tone, 1);
+    await doRefine(tone, toneCount);
   };
 
   const handleSetLevel = async lvl => {
@@ -261,8 +260,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       return;
     }
     setActiveTone(tone);
-    setToneCount(1);
-    await doRefine(tone, 1);
+    await doRefine(tone, toneCount);
   };
 
   const handleSave = async () => {
