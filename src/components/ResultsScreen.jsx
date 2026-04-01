@@ -453,6 +453,12 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
                       {blendTone}
                     </button>
                     <button
+                      onClick={() => { setSheetMode("blend"); setSheetOpen(true); }}
+                      style={{ background: "transparent", border: `1px solid ${t.border}`, borderRadius: 11, color: t.textDim, padding: "8px 12px", fontSize: 11, cursor: "pointer", marginLeft: 8, fontFamily: "'Lora',Georgia,serif" }}
+                    >
+                      Change blend tone
+                    </button>
+                    <button
                       onClick={async () => {
                         setBlendTone(null);
                         await doRefine(activeTone, toneCount, null);
