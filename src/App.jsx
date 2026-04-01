@@ -9,7 +9,7 @@ import { QuickResultsScreen } from "./components/QuickResultsScreen.jsx";
 import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./components/OtherScreens.jsx";
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
-import { getQuickTranslationsToday, incrementUsage } from "./lib/usage.js";
+import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
 
 const SCREEN_LABELS = {
   home: "Home", results: "Results — Refine",
@@ -33,7 +33,7 @@ export default function App() {
   const [theme, setTheme] = useState("dark");
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
-  const [usageCount, setUsageCount] = useState(0);
+  const [usageCount, setUsageCount] = useState(() => getRefinesToday());
   const [quickUsageCount, setQuickUsageCount] = useState(() => getQuickTranslationsToday());
   const [recentTones, setRecentTones] = useState([]);
   const [savedTones, setSavedTones] = useState(() => {
@@ -83,7 +83,7 @@ export default function App() {
         loadUserData(session.user.id);
       } else {
         setUser(null);
-        setUsageCount(0);
+        setUsageCount(getRefinesToday());
         setQuickUsageCount(getQuickTranslationsToday());
         setSavedItems([]);
       }
