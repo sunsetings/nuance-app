@@ -264,8 +264,8 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
 
         <div>
           {[
-            { label: "Annual", plan: "yearly", price: "$59.99 / year", sub: "$5.00 / mo — save 37%", highlight: true },
-            { label: "Monthly", plan: "monthly", price: "$7.99 / month", sub: null },
+            { label: "Annual", plan: "yearly", price: "$29.99 / year", sub: "About $2.50 / mo — save 37%", highlight: true },
+            { label: "Monthly", plan: "monthly", price: "$3.99 / month", sub: null },
           ].map(opt => (
             <button key={opt.label} onClick={() => handleCheckout(opt.plan)} disabled={loadingPlan !== null} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: loadingPlan ? "default" : "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted, opacity: loadingPlan && loadingPlan !== opt.plan ? 0.55 : 1 }}>
               <div style={{ textAlign: "left" }}>
