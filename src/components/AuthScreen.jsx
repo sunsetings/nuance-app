@@ -121,9 +121,10 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
       {showBenefits && mode !== "forgot" && (
         <div style={{ marginBottom: 22, padding: "15px 16px", background: t.surface, borderRadius: 12 }}>
           {[
-            { icon: "◈", text: "Save up to 3 translations" },
-            { icon: "◉", text: "Bookmark 1 language" },
-            { icon: "◐", text: "Unlock more tones" },
+            { icon: "◈", text: "30 refines a day — enough for everyday chats, messages, and quick fixes." },
+            { icon: "◉", text: "Save up to 3 translations — reopen your best messages instead of starting over." },
+            { icon: "◎", text: "Bookmark 1 language — keep your most-used language ready for faster access." },
+            { icon: "◐", text: "Unlock Casual and Gen A — get more natural options for everyday and internet-native conversations." },
           ].map((item, index, arr) => (
             <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
               <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
