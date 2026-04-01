@@ -42,21 +42,22 @@ Task 2 — TRANSLATE:
 Translate into ${toLang} using this priority order:
 1. Preserve the original message's core meaning, intent, and context.
 2. Make the selected "${tone}" feel natural, relevant, and strong in ${toLang}.
-3. Use the refined text only as a reference, not as wording that must be translated literally.
+3. Give very little weight to the exact wording of the refined text. Treat it only as a faint stylistic reference.
 
 Important translation rules:
-- Give MORE weight to the selected tone than to the exact wording of the refined text.
+- Give MUCH MORE weight to the original meaning/intent and the selected tone than to the exact wording of the refined text.
 - The translated message should sound like a native speaker in ${toLang} trying to express the message in a "${tone}" way.
 - Preserve the social feeling, nuance, subtext, and emotional intensity selected by the user.
 - Preserve the same intensity level in translation:
   - 1x = subtle, light-touch tone
   - 2x = clearly noticeable, balanced tone
   - 3x = strongest, boldest version of the tone
-- If the refined wording and the best target-language tone conflict, choose the phrasing that makes the tone land correctly in ${toLang}.
+- The refined text is NOT the main source for translation. The original meaning and the selected tone are the main sources.
+- If the refined wording and the best target-language tone conflict, choose the phrasing that best preserves the original meaning while making the tone land correctly in ${toLang}.
 - Do not translate too literally if literal wording makes the message feel flatter, awkward, culturally off, or less on-tone.
 - Let the target language adapt naturally so the result feels native, current, and context-appropriate for that tone.
 
-In short: preserve the original meaning, but make the final translation sound naturally "${tone}" in ${toLang}, even if that means departing from the exact wording of the refined sentence.
+In short: preserve the original meaning first, make the final translation sound naturally "${tone}" in ${toLang} second, and give only minimal weight to the exact wording of the refined sentence.
 Output ONLY the translated text, nothing else.
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
