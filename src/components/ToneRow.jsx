@@ -71,9 +71,9 @@ export function ToneRow({
         ...contextualTones.filter((tone) => !priorityTonesOverride.includes(tone)),
       ]
     : contextualTones;
-  const rowTones = hasMeaningfulContext
-    ? (isHomeScreen ? orderedContextualTones : contextualTones)
-    : defaultRowTones.slice(0, 5);
+  const rowTones = isHomeScreen
+    ? (hasMeaningfulContext ? orderedContextualTones : defaultRowTones.slice(0, 5))
+    : defaultRowTones;
   const shouldShowStrengthControl = typeof showStrengthControl === "boolean" ? showStrengthControl : !isHomeScreen;
 
   useEffect(() => {
