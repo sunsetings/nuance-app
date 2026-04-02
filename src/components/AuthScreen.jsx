@@ -6,7 +6,7 @@ const SIGNIN_CONTEXT = {
   nav: { title: "Create your free account", sub: "Save messages, bookmark languages, and get 20 refines a day." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
-  tone: { title: "Unlock more tones", sub: "Sign up free — unlock Poetic, Gen A, and Flirty." },
+  tone: { title: "Create your free account", sub: "Quick sign up to unlock all 5 Free tones, save messages, and get 20 refines a day." },
   cap: { title: "You've used today's refines", sub: "Sign up free for 20 refines a day." },
   default: { title: "Welcome to tonara.", sub: "" },
 };
@@ -30,14 +30,23 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const ctx = SIGNIN_CONTEXT[context] || SIGNIN_CONTEXT.default;
-  const showBenefits = context === "nav";
+  const showBenefits = context === "nav" || context === "tone";
   const isSignup = mode === "signup";
   const displayTitle = mode === "forgot" ? "Reset your password" : isSignup ? "Create your free account" : "Welcome back";
   const displaySubtitle = mode === "forgot"
     ? "Enter your email and we'll send you a reset link."
     : isSignup
-      ? "Save messages, bookmark languages, and get 20 refines a day."
+      ? (ctx.sub || "Save messages, bookmark languages, and get 20 refines a day.")
       : "Sign in to your saved messages, tones, and account.";
+  const benefitItems = context === "tone"
+    ? [
+        { icon: "◈", text: "Quick sign up for access to all 5 Free tones, including Poetic, Gen A, and Flirty." },
+        { icon: "◐", text: "Keep refining with 20 refines a day, saved messages, and one bookmarked language." },
+      ]
+    : [
+        { icon: "◈", text: "20 refines a day for everyday chats, requests, and quick fixes." },
+        { icon: "◐", text: "5 tones to help your message sound more natural, warm, playful, or direct." },
+      ];
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -111,7 +120,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
     }}>
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, marginTop: 6, height: 36 }}>
-          <button onClick={() => navigate?.("home")} style={{ position: "absolute", left: 0, background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>←</button>
+          <button onClick={() => navigate?.("__back")} style={{ position: "absolute", left: 0, background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>←</button>
           <span style={{ fontSize: 24, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
         </div>
 
@@ -126,10 +135,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
 
         {showBenefits && mode !== "forgot" && (
           <div style={{ marginBottom: 22, padding: "15px 16px", background: t.surface, borderRadius: 12 }}>
-            {[
-              { icon: "◈", text: "20 refines a day for everyday chats, requests, and quick fixes." },
-              { icon: "◐", text: "5 tones to help your message sound more natural, warm, playful, or direct." },
-            ].map((item, index, arr) => (
+            {benefitItems.map((item, index, arr) => (
               <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
                 <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
                 <span style={{ fontSize: 12, color: t.textMuted }}>{item.text}</span>

@@ -41,6 +41,8 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [screen, setScreen] = useState("home");
+  const [previousScreen, setPreviousScreen] = useState("home");
+  const [screenContext, setScreenContext] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
   const [themePreference, setThemePreference] = useState(() => localStorage.getItem(LS_THEME_PREFERENCE) || "system");
   const [theme, setTheme] = useState(() => resolveTheme(localStorage.getItem(LS_THEME_PREFERENCE) || "system"));
@@ -147,9 +149,20 @@ export default function App() {
     setScreen("home");
   };
 
-  const navigate = s => {
-    if (s !== "results" && s !== "quickresults") setOpenedSavedItem(null);
-    setScreen(s);
+  const navigate = (target) => {
+    if (target === "__back") {
+      setScreen(previousScreen || "home");
+      return;
+    }
+
+    const nextScreen = typeof target === "string" ? target : target?.screen;
+    const nextContext = typeof target === "object" ? target?.context ?? null : null;
+    if (!nextScreen) return;
+
+    if (nextScreen !== "results" && nextScreen !== "quickresults") setOpenedSavedItem(null);
+    if (nextScreen !== screen) setPreviousScreen(screen);
+    setScreenContext(nextContext);
+    setScreen(nextScreen);
   };
 
   const handleOpenSaved = item => {
@@ -191,21 +204,23 @@ export default function App() {
     try {
       if (mode === "quick") {
         const result = await quickTranslate({ text, fromLang, toLang });
+        const resolvedFromLang = result.sourceLanguage || fromLang;
         if (user) {
           setQuickUsageCount((prev) => prev + 1);
         } else {
           const updated = incrementUsage("quick");
           setQuickUsageCount(updated.count);
         }
-        setTranslationData({ original: text, translated: result.translated, fromLang, toLang, tone, mode: "quick" });
+        setTranslationData({ original: text, translated: result.translated, fromLang: resolvedFromLang, toLang, tone, mode: "quick" });
         setScreen("quickresults");
       } else {
         const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount });
+        const resolvedFromLang = result.sourceLanguage || fromLang;
         if (user) {
           setUsageCount((prev) => prev + 1);
         }
         addRecentTone(tone);
-        setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang, toLang, tone, toneCount, mode: "refine" });
+        setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang: resolvedFromLang, toLang, tone, toneCount, mode: "refine" });
         setScreen("results");
       }
     } catch (e) {
@@ -221,14 +236,14 @@ export default function App() {
 
   const renderScreen = () => {
     if (screen.startsWith("signin_")) {
-      return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} />;
+      return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} navContext={screenContext} />;
     }
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} />;
-      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} />;
+      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={screenContext} />;
+      case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} context={screenContext} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "cap": return <CapScreen {...props} />;
       default: return <HomeScreen {...props} onTranslate={handleTranslate} />;

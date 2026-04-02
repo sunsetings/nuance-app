@@ -155,7 +155,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
 }
 
 // ─── UPGRADE ─────────────────────────────────────────────────
-export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier }) {
+export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, context = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const [checkoutError, setCheckoutError] = useState(null);
   const [loadingPlan, setLoadingPlan] = useState(null);
@@ -213,13 +213,18 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
         <div style={{ marginBottom: isCurrentPro ? 22 : 18, paddingBottom: 16, borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           {(isCurrentPro
             ? [
-                "All 30 tones are already unlocked on this account",
+                `All ${ALL_TONES.length} tones are already unlocked on this account`,
                 "More room to refine, save, and switch tones freely",
               ]
-            : [
-                "Default translation apps give one version. tonara gives you options.",
-                "Choose the right tone for everyday chats and important conversations.",
-              ]).map((line, i) => (
+            : context === "tone"
+              ? [
+                  `Unlock all ${ALL_TONES.length} tones for more ways to say it right.`,
+                  "Upgrade for more room to refine, save, and switch languages freely.",
+                ]
+              : [
+                  "Default translation apps give one version. tonara gives you options.",
+                  "Choose the right tone for everyday chats and important conversations.",
+                ]).map((line, i) => (
             <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i === 0 ? 7 : 0 }}>
               <span style={{ color: theme === "light" ? "#2a6a2a" : "#78b86f", fontSize: 12, marginTop: 1, flexShrink: 0 }}>·</span>
               <span style={{ fontSize: 12, color: i === 0 ? t.textMuted : t.textDim, lineHeight: 1.6 }}>{line}</span>
@@ -361,7 +366,7 @@ export function CapScreen({ navigate, userTier, theme }) {
         }
       : {
           title: "You’ve used today’s 20 free refines",
-          subtitle: "Upgrade to Pro for 300 refines a day and all 30 tones.",
+          subtitle: `Upgrade to Pro for 300 refines a day and all ${ALL_TONES.length} tones.`,
           primaryLabel: null,
           primaryAction: null,
           secondaryLabel: "Upgrade to Pro",

@@ -3,7 +3,7 @@ export const GUEST_TONES = ["Friendly", "Playful"];
 export const FREE_TONES = ["Friendly", "Playful", "Poetic", "Gen A", "Flirty"];
 export const PRO_TONES = [
   "Polite", "Casual", "Sincere", "Succinct", "Assertive", "Diplomatic",
-  "Empathetic", "Apologetic", "Enthusiastic", "Urgent",
+  "Empathetic", "Apologetic", "Warm", "Enthusiastic", "Urgent",
   "Shakespearean", "Professional", "Motivational", "Humble",
   "Anger", "Royal", "Luxury", "Chaotic", "Sarcastic", "Savage",
   "Overexplaining", "Dad Joke", "Rapper", "Tea",
@@ -50,7 +50,7 @@ export const DEFAULT_TO_LANG = "Korean";
 export const TONE_CATEGORIES = [
   { label: "Everyday", tones: ["Friendly", "Playful", "Casual", "Gen A", "Flirty"] },
   { label: "Polished", tones: ["Polite", "Professional", "Diplomatic", "Succinct", "Assertive", "Luxury"] },
-  { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Apologetic", "Humble", "Motivational"] },
+  { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Warm", "Apologetic", "Humble", "Motivational"] },
   { label: "Intense", tones: ["Urgent", "Anger", "Savage", "Noir"] },
   { label: "Stylized", tones: ["Poetic", "Rapper", "Shakespearean", "Royal", "Sarcastic"] },
   { label: "Character", tones: ["Chaotic", "Tea", "Overexplaining", "Dad Joke", "Enthusiastic"] },
@@ -63,6 +63,7 @@ export const TONE_DESCRIPTIONS = {
   Playful: "Light and witty",
   Friendly: "Warm and approachable",
   Sincere: "Genuine and heartfelt",
+  Warm: "Gentle, reassuring, and emotionally soft",
   Succinct: "Extremely brief and stripped down",
   Assertive: "Blunt, firm, and unmistakably direct",
   Diplomatic: "Tactful and balanced",

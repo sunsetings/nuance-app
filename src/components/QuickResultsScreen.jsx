@@ -6,7 +6,28 @@ import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 function getLanguageCode(label) {
   const value = String(label || "").trim();
   if (!value) return "";
-  if (/english/i.test(value)) return "EN";
+  const map = {
+    english: "EN",
+    korean: "KO",
+    japanese: "JA",
+    vietnamese: "VI",
+    spanish: "ES",
+    french: "FR",
+    german: "DE",
+    italian: "IT",
+    portuguese: "PT",
+    russian: "RU",
+    arabic: "AR",
+    dutch: "NL",
+    thai: "TH",
+    turkish: "TR",
+    indonesian: "ID",
+    hindi: "HI",
+    chinese: "ZH",
+  };
+  const matched = Object.entries(map).find(([key]) => value.toLowerCase().includes(key));
+  if (matched) return matched[1];
+  if (/detect|auto/i.test(value)) return "";
   return value.slice(0, 2).toUpperCase();
 }
 

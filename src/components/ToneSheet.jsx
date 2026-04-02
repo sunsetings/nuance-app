@@ -36,7 +36,7 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
       return;
     }
     closeAll();
-    navigate(status === "free_locked" ? "account" : "upgrade");
+    navigate(status === "free_locked" ? "signin_tone" : { screen: "upgrade", context: "tone" });
   };
 
   return (

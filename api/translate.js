@@ -10,15 +10,18 @@ const guestRateMap = new Map();
 function buildPrompt({ mode, text, tone, fromLang, toLang, toneCount }) {
   const isAutoDetected = fromLang === "Detect language";
   const sourceInstruction = isAutoDetected
-    ? `Detect the source language of the input text automatically, then translate it into ${toLang}.`
-    : `Translate the following text from ${fromLang} into ${toLang}.`;
+    ? `Detect the source language of the input text automatically.`
+    : `The source language is ${fromLang}.`;
+  const sourceLanguageRule = `Always return "sourceLanguage" as a standard English language name such as English, Korean, Japanese, Chinese (Simplified), Chinese (Traditional), Vietnamese, Spanish, or Arabic.`;
 
   if (mode === "quick") {
     return `${sourceInstruction}
-Output ONLY the translated text, no labels, no explanations.
+Translate the message into ${toLang}.
+Make the translation sound like something a native speaker would actually say in real conversation, not a stiff, textbook, or overly literal rendering.
+Output ONLY the translation, no labels, no explanations.
 Text: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
-{"translated":"..."}`;
+{"translated":"...","sourceLanguage":"..."}`;
   }
 
   const toneGuide = {
@@ -27,6 +30,7 @@ Respond in this exact JSON format (no markdown, no backticks):
     Casual: "Relaxed, everyday language — like texting a close friend. Short sentences, natural contractions, no formality.",
     "Gen A": "Gen Alpha and Gen Z internet-native language — use a broad rotating mix of current expressions, playful phrasing, meme-adjacent wording, and casually online rhythm. Pull from a wider pool than the same few catchphrases, and vary the wording naturally between responses. Can include things like 'lowkey', 'highkey', 'fr', 'fr fr', 'no cap', 'it's giving', 'ate', 'core', 'vibes', 'delulu', 'iconic', 'wild', 'mid', 'bet', 'say less', or emojis when natural, but avoid sounding repetitive, forced, or copy-pasted. Should sound distinctly different from just being casual.",
     Flirty: "Much more flirty. Make it playfully seductive, teasing, confident, and clearly romantic with stronger chemistry and tension. It should feel boldly flirtatious and current, like real modern texting or banter, without turning stiff, old-fashioned, theatrical, or poetic.",
+    Warm: "Gently warm, reassuring, and emotionally generous. Make it feel softer, kinder, and more comforting than neutral wording, without becoming flirty, overly sentimental, or poetic.",
     Luxury: "Elevated and high-end. Sound polished, premium, and refined, like upscale hospitality or luxury branding, without becoming robotic or pretentious.",
     Motivational: "Far more motivational. Make it uplifting, energizing, and momentum-building, like a real pep talk. Use strong encouragement, belief, and forward-drive rather than mild positivity.",
     Urgent: "Much more urgent. Make it feel immediate, pressing, and hard to ignore, with stronger time pressure and a clearer need for action right now. It should feel genuinely urgent rather than merely important.",
@@ -52,8 +56,12 @@ Respond in this exact JSON format (no markdown, no backticks):
         : ` Intensity level: 3x. This is the boldest, most fully committed version of the tone. Lean into the selected tone strongly and stylistically, but do not change the core meaning, factual content, or communicative goal of the message.`;
 
   return `You are a communication refinement and translation assistant.
+${sourceInstruction}
+
 Task 1 — REFINE:
-Rewrite the message in a "${tone}" tone. Keep the meaning, intent, and context identical; change only tone and phrasing.${toneInstruction}${levelDesc}
+Rewrite the message in a "${tone}" tone.
+Keep the refined version in the same language as the original message.
+Keep the meaning, intent, and context identical; change only tone and phrasing.${toneInstruction}${levelDesc}
 Return only the refined text.
 
 Task 2 — TRANSLATE:
@@ -68,16 +76,18 @@ Rules:
 - Adapt formality, softness, directness, humor, flirtiness, emotion, and subtext to how that tone is naturally expressed in ${toLang}.
 - Do not explicitly mention, label, or name the selected tone in the refined or translated output unless the original message itself calls for that wording.
 - Prefer natural, culturally appropriate phrasing over literal wording whenever they conflict.
+- Prefer the way people naturally speak in real conversation over textbook, robotic, or overly literal phrasing.
 - Preserve intensity in both steps:
   - 1x = subtle
   - 2x = clear and balanced
   - 3x = boldest version of the tone
 - If refined wording conflicts with what sounds right in ${toLang}, choose the phrasing that best preserves meaning while making the tone land correctly.
-- If source language is auto detect, infer it from the original message.
+- If source language is auto detect, infer it from the original message and keep the refined version in that detected source language.
+${sourceLanguageRule}
 
 Original message: "${text}"
 Respond in this exact JSON format (no markdown, no backticks):
-{"refined":"...","translated":"..."}`;
+{"refined":"...","translated":"...","sourceLanguage":"..."}`;
 }
 
 function getBearerToken(req) {
