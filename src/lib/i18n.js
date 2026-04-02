@@ -1,5 +1,5 @@
 export const UI_LOCALE_STORAGE_KEY = "tonara_ui_locale";
-export const UI_LOCALE_OPTIONS = ["device", "en", "ko", "ja", "es"];
+export const UI_LOCALE_OPTIONS = ["device", "en", "ko", "ja", "es", "ar", "fr", "de", "vi", "zh-cn", "zh-tw"];
 
 const dictionaries = {
   en: {
@@ -203,6 +203,12 @@ const dictionaries = {
       korean: "Korean",
       japanese: "Japanese",
       spanish: "Spanish",
+      arabic: "Arabic",
+      french: "French",
+      german: "German",
+      vietnamese: "Vietnamese",
+      chineseSimplified: "Chinese (Simplified)",
+      chineseTraditional: "Chinese (Traditional)",
       signOut: "Sign out",
     },
     upgrade: {
@@ -472,6 +478,12 @@ const dictionaries = {
       korean: "한국어",
       japanese: "일본어",
       spanish: "스페인어",
+      arabic: "아랍어",
+      french: "프랑스어",
+      german: "독일어",
+      vietnamese: "베트남어",
+      chineseSimplified: "중국어(간체)",
+      chineseTraditional: "중국어(번체)",
       signOut: "로그아웃",
     },
     upgrade: {
@@ -741,6 +753,12 @@ const dictionaries = {
       korean: "韓国語",
       japanese: "日本語",
       spanish: "スペイン語",
+      arabic: "アラビア語",
+      french: "フランス語",
+      german: "ドイツ語",
+      vietnamese: "ベトナム語",
+      chineseSimplified: "中国語（簡体字）",
+      chineseTraditional: "中国語（繁体字）",
       signOut: "ログアウト",
     },
     upgrade: {
@@ -1010,6 +1028,12 @@ const dictionaries = {
       korean: "Coreano",
       japanese: "Japonés",
       spanish: "Español",
+      arabic: "Árabe",
+      french: "Francés",
+      german: "Alemán",
+      vietnamese: "Vietnamita",
+      chineseSimplified: "Chino (simplificado)",
+      chineseTraditional: "Chino (tradicional)",
       signOut: "Cerrar sesión",
     },
     upgrade: {
@@ -1090,9 +1114,15 @@ function getValue(locale, key) {
 
 export function resolveLocale(input) {
   const raw = String(input || "").toLowerCase();
+  if (raw.startsWith("zh-tw") || raw.startsWith("zh-hant")) return "zh-tw";
+  if (raw.startsWith("zh")) return "zh-cn";
   if (raw.startsWith("ko")) return "ko";
   if (raw.startsWith("ja")) return "ja";
   if (raw.startsWith("es")) return "es";
+  if (raw.startsWith("ar")) return "ar";
+  if (raw.startsWith("fr")) return "fr";
+  if (raw.startsWith("de")) return "de";
+  if (raw.startsWith("vi")) return "vi";
   return "en";
 }
 

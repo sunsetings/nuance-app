@@ -448,9 +448,15 @@
       const STORAGE_KEY = "tonara_ui_locale";
       const resolveLocale = (value) => {
         const raw = String(value || "").toLowerCase();
+        if (raw.startsWith("zh-tw") || raw.startsWith("zh-hant")) return "zh-tw";
+        if (raw.startsWith("zh")) return "zh-cn";
         if (raw.startsWith("ko")) return "ko";
         if (raw.startsWith("ja")) return "ja";
         if (raw.startsWith("es")) return "es";
+        if (raw.startsWith("ar")) return "ar";
+        if (raw.startsWith("fr")) return "fr";
+        if (raw.startsWith("de")) return "de";
+        if (raw.startsWith("vi")) return "vi";
         return "en";
       };
       const preference = localStorage.getItem(STORAGE_KEY);

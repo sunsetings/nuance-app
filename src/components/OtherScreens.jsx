@@ -30,6 +30,12 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
     { id: "ko", label: copy.t("account.korean") },
     { id: "ja", label: copy.t("account.japanese") },
     { id: "es", label: copy.t("account.spanish") },
+    { id: "ar", label: copy.t("account.arabic") },
+    { id: "fr", label: copy.t("account.french") },
+    { id: "de", label: copy.t("account.german") },
+    { id: "vi", label: copy.t("account.vietnamese") },
+    { id: "zh-cn", label: copy.t("account.chineseSimplified") },
+    { id: "zh-tw", label: copy.t("account.chineseTraditional") },
   ];
 
   const handleManagePlan = async () => {
@@ -139,27 +145,44 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
 
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>{copy.t("account.language")}</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {languageOptions.map((opt) => (
-              <button
-                key={opt.id}
-                onClick={() => setLocalePreference?.(opt.id)}
-                style={{
-                  padding: "8px 10px",
-                  borderRadius: 999,
-                  border: `1px solid ${localePreference === opt.id ? t.highlightBorder : t.border}`,
-                  background: localePreference === opt.id ? t.highlight : t.surface,
-                  color: localePreference === opt.id ? t.accent : t.textMuted,
-                  fontSize: 11,
-                  fontFamily: "'Lora',Georgia,serif",
-                  cursor: "pointer",
-                  fontWeight: localePreference === opt.id ? "bold" : "normal",
-                  transition: "all 0.15s",
-                }}
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div style={{ position: "relative" }}>
+            <select
+              value={localePreference}
+              onChange={(e) => setLocalePreference?.(e.target.value)}
+              style={{
+                width: "100%",
+                appearance: "none",
+                WebkitAppearance: "none",
+                background: t.surface,
+                color: t.text,
+                border: `1px solid ${t.border}`,
+                borderRadius: 12,
+                padding: "11px 40px 11px 14px",
+                fontSize: 12,
+                fontFamily: "'Lora',Georgia,serif",
+                outline: "none",
+                cursor: "pointer",
+              }}
+            >
+              {languageOptions.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <span
+              style={{
+                position: "absolute",
+                right: 14,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: t.textFaint,
+                fontSize: 10,
+                pointerEvents: "none",
+              }}
+            >
+              ▾
+            </span>
           </div>
         </div>
 
