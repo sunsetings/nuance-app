@@ -77,6 +77,8 @@ Rules:
 - Do not explicitly mention, label, or name the selected tone in the refined or translated output unless the original message itself calls for that wording.
 - Prefer natural, culturally appropriate phrasing over literal wording whenever they conflict.
 - Prefer the way people naturally speak in real conversation over textbook, robotic, or overly literal phrasing.
+- If the declared source language conflicts with the actual language of the message, trust the actual message itself.
+- The refined version must stay in the language the original message is actually written in, never a third language.
 - Preserve intensity in both steps:
   - 1x = subtle
   - 2x = clear and balanced
