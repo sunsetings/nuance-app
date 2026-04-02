@@ -342,6 +342,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         );
       })
     : availableDictationLanguages;
+  const sortedDictationLanguages = [...filteredDictationLanguages].sort((a, b) => a.localeCompare(b));
   const freeDictationLanguages = filteredDictationLanguages
     .filter((lang) => !PRO_LANGUAGES.includes(lang))
     .sort((a, b) => a.localeCompare(b));
@@ -451,7 +452,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             </div>
             <div style={{ overflowY: "auto", padding: "2px 18px 18px", flex: 1 }}>
               {userTier === "pro" ? (
-                filteredDictationLanguages.map(renderDictationLanguageButton)
+                sortedDictationLanguages.map(renderDictationLanguageButton)
               ) : (
                 <>
                   {freeDictationLanguages.length > 0 && (
