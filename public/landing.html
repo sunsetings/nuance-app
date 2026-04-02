@@ -34,7 +34,13 @@
     .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
     .hero-note { margin-top: 16px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; opacity: 0; animation: fadeUp 0.7s ease forwards 0.8s; }
     .mockup-section { padding: 0 24px 100px; display: flex; justify-content: center; opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s; }
-    .mockup-grid { display: flex; gap: 28px; align-items: flex-end; justify-content: center; flex-wrap: wrap; }
+    .mockup-stage { width: min(1120px, 100%); }
+    .mockup-copy { text-align: center; margin-bottom: 34px; }
+    .mockup-headline { font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.12; letter-spacing: -0.9px; margin-bottom: 12px; color: var(--text); }
+    .mockup-sub { font-size: 16px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto; }
+    .mockup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
+    .mockup-card { display: flex; flex-direction: column; align-items: center; }
+    .mockup-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
     .phone-shell { width: 296px; background: #f8f4ef; border-radius: 36px; border: 8px solid #d8d4c8; box-shadow: 0 0 0 1px #c9c3b8, 0 40px 72px rgba(0,0,0,0.35), 0 0 60px rgba(200,240,160,0.03); overflow: hidden; padding: 28px 18px 16px; position: relative; }
     .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 24px; background: #d8d4c8; border-radius: 0 0 16px 16px; }
     .phone-screen { font-size: 11px; line-height: 1.5; min-height: 560px; display: flex; flex-direction: column; color: #1a180e; }
@@ -147,7 +153,12 @@
       .steps { grid-template-columns: 1fr; }
       .steps::before { display: none; }
       .compare { grid-template-columns: 1fr; }
-      .mockup-grid { flex-direction: column; align-items: center; }
+      .mockup-section { padding-left: 0; padding-right: 0; }
+      .mockup-stage { width: 100%; }
+      .mockup-copy { padding: 0 24px; }
+      .mockup-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; padding: 0 24px 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .mockup-grid::-webkit-scrollbar { display: none; }
+      .mockup-card { min-width: 296px; scroll-snap-align: center; }
       footer { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
@@ -169,64 +180,199 @@
     <p class="hero-note">Free to try · No credit card needed</p>
   </section>
   <div class="mockup-section">
-    <div class="mockup-grid">
-      <div class="phone-shell">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="ps-results-top">
-            <div class="ps-results-left">
-              <span class="ps-back">←</span>
-              <span class="ps-results-title">Results</span>
+    <div class="mockup-stage">
+      <div class="mockup-copy">
+        <h2 class="mockup-headline">For work, relationships, and everyday life</h2>
+        <p class="mockup-sub">See how tonara helps the same message come across better in real conversations.</p>
+      </div>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-label">Work</div>
+          <div class="phone-shell">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="ps-results-top">
+                <div class="ps-results-left">
+                  <span class="ps-back">←</span>
+                  <span class="ps-results-title">Results</span>
+                </div>
+                <span class="ps-proline">✦ Pro — more ways to say it right</span>
+              </div>
+              <div class="ps-refine-row">
+                <div class="ps-refine-title">Try a different tone</div>
+                <div class="ps-scroll">Pick how it should come across</div>
+              </div>
+              <div class="ps-tones">
+                <div class="ps-tone active">Polite</div>
+                <div class="ps-tone">Friendly</div>
+                <div class="ps-tone">Assertive</div>
+                <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left">Original</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-original">I need this report done by Friday or we'll have a problem.</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined — Polite (Medium)</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">Could you please have the report ready by Friday? I’d really appreciate it.</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined and translated</div>
+                  <div class="ps-meta-right"><span>KO</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">금요일까지 보고서를 준비해 주실 수 있을까요? 정말 감사하겠습니다.</div>
+              </div>
+              <div class="ps-actions">
+                <div class="ps-action-btn">↗ Share</div>
+                <div class="ps-action-btn saved">♥ Saved</div>
+              </div>
+              <div class="ps-bottom">
+                <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
+                <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
+                <div class="ps-nav-item active"><span class="ps-nav-icon">◎</span>Account</div>
+              </div>
             </div>
-            <span class="ps-proline">✦ Pro — more ways to say it right</span>
           </div>
-          <div class="ps-refine-row">
-            <div class="ps-refine-title">Try a different tone</div>
-            <div class="ps-scroll">Pick how it should come across</div>
-          </div>
-          <div class="ps-tones">
-            <div class="ps-tone active">Polite</div>
-            <div class="ps-tone">Friendly</div>
-            <div class="ps-tone">Assertive</div>
-            <div class="ps-tone">+ More</div>
-          </div>
-          <div class="ps-strength-wrap">
-            <div class="ps-strength-label">Tone strength</div>
-            <div class="ps-strength">
-              <div class="ps-strength-item">Light</div>
-              <div class="ps-strength-item active">Medium</div>
-              <div class="ps-strength-item">Strong</div>
+        </div>
+        <div class="mockup-card">
+          <div class="mockup-label">Relationships</div>
+          <div class="phone-shell">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="ps-results-top">
+                <div class="ps-results-left">
+                  <span class="ps-back">←</span>
+                  <span class="ps-results-title">Results</span>
+                </div>
+                <span class="ps-proline">✦ Pro — more ways to say it right</span>
+              </div>
+              <div class="ps-refine-row">
+                <div class="ps-refine-title">Try a different tone</div>
+                <div class="ps-scroll">Pick how it should come across</div>
+              </div>
+              <div class="ps-tones">
+                <div class="ps-tone active">Warm</div>
+                <div class="ps-tone">Sincere</div>
+                <div class="ps-tone">Flirty</div>
+                <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left">Original</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-original">Can we talk later? I felt hurt by what happened.</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined — Warm (Medium)</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">Can we talk later? I was hurt by what happened, and I want to talk about it calmly.</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined and translated</div>
+                  <div class="ps-meta-right"><span>JA</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">後で話せる？ あのことが少し傷ついたから、落ち着いて話したい。</div>
+              </div>
+              <div class="ps-actions">
+                <div class="ps-action-btn">↗ Share</div>
+                <div class="ps-action-btn saved">♥ Saved</div>
+              </div>
+              <div class="ps-bottom">
+                <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
+                <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
+                <div class="ps-nav-item active"><span class="ps-nav-icon">◎</span>Account</div>
+              </div>
             </div>
           </div>
-          <div class="ps-section">
-            <div class="ps-meta">
-              <div class="ps-meta-left">Original</div>
-              <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+        </div>
+        <div class="mockup-card">
+          <div class="mockup-label">Everyday life</div>
+          <div class="phone-shell">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="ps-results-top">
+                <div class="ps-results-left">
+                  <span class="ps-back">←</span>
+                  <span class="ps-results-title">Results</span>
+                </div>
+                <span class="ps-proline">✦ Pro — more ways to say it right</span>
+              </div>
+              <div class="ps-refine-row">
+                <div class="ps-refine-title">Try a different tone</div>
+                <div class="ps-scroll">Pick how it should come across</div>
+              </div>
+              <div class="ps-tones">
+                <div class="ps-tone active">Polite</div>
+                <div class="ps-tone">Clear</div>
+                <div class="ps-tone">Friendly</div>
+                <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left">Original</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-original">The heater isn't working. Could someone come tomorrow to check it?</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined — Polite (Medium)</div>
+                  <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">Hello, the heater isn’t working. Could someone please come tomorrow to take a look?</div>
+              </div>
+              <div class="ps-section">
+                <div class="ps-meta">
+                  <div class="ps-meta-left refined">Refined and translated</div>
+                  <div class="ps-meta-right"><span>KO</span><span>Copy</span></div>
+                </div>
+                <div class="ps-result-bubble">안녕하세요. 보일러가 작동하지 않는데, 내일 와서 확인해 주실 수 있을까요?</div>
+              </div>
+              <div class="ps-actions">
+                <div class="ps-action-btn">↗ Share</div>
+                <div class="ps-action-btn saved">♥ Saved</div>
+              </div>
+              <div class="ps-bottom">
+                <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
+                <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
+                <div class="ps-nav-item active"><span class="ps-nav-icon">◎</span>Account</div>
+              </div>
             </div>
-            <div class="ps-original">I need this report done by Friday or we'll have a problem.</div>
-          </div>
-          <div class="ps-section">
-            <div class="ps-meta">
-              <div class="ps-meta-left refined">Refined — Polite (Medium)</div>
-              <div class="ps-meta-right"><span>EN</span><span>Copy</span></div>
-            </div>
-            <div class="ps-result-bubble">Could you please have the report ready by Friday? I’d really appreciate it.</div>
-          </div>
-          <div class="ps-section">
-            <div class="ps-meta">
-              <div class="ps-meta-left refined">Refined and translated</div>
-              <div class="ps-meta-right"><span>KO</span><span>Copy</span></div>
-            </div>
-            <div class="ps-result-bubble">금요일까지 보고서를 준비해 주실 수 있을까요? 정말 감사하겠습니다.</div>
-          </div>
-          <div class="ps-actions">
-            <div class="ps-action-btn">↗ Share</div>
-            <div class="ps-action-btn saved">♥ Saved</div>
-          </div>
-          <div class="ps-bottom">
-            <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
-            <div class="ps-nav-item"><span class="ps-nav-icon">♡</span>Saved</div>
-            <div class="ps-nav-item active"><span class="ps-nav-icon">◎</span>Account</div>
           </div>
         </div>
       </div>
