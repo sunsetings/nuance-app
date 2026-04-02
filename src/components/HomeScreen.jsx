@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel, getLocalizedLanguageName } from "../lib/constants.js";
+import { ALL_LANGUAGES, ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel, getLocalizedLanguageName } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -312,25 +312,15 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const charsLeft = CHAR_LIMIT - text.length;
   const charsNearLimit = charsLeft <= 50;
   const browserSuggestedDictation = getDefaultDictationLanguage(copy.locale);
+  const supportedDictationLanguages = ALL_LANGUAGES
+    .filter((lang) => getSpeechRecognitionLang(lang, "") !== "")
+    .sort((a, b) => a.localeCompare(b));
   const availableDictationLanguages = [...new Set([
     dictationLang,
     browserSuggestedDictation,
     ...bookmarked,
     toLang,
-    "English",
-    "Korean",
-    "Japanese",
-    "Spanish",
-    "Arabic",
-    "French",
-    "German",
-    "Vietnamese",
-    "Chinese (Simplified)",
-    "Chinese (Traditional)",
-    "Portuguese",
-    "Italian",
-    "Russian",
-    "Dutch",
+    ...supportedDictationLanguages,
   ].filter((lang) => lang && lang !== AUTO_DETECT_LANGUAGE))]
     .map((lang) => getCanonicalLanguageLabel(lang, copy.locale))
     .filter((lang, index, arr) => lang && lang !== AUTO_DETECT_LANGUAGE && arr.indexOf(lang) === index);
