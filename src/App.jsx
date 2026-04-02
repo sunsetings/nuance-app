@@ -10,18 +10,7 @@ import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./componen
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
-
-const SCREEN_LABELS = {
-  home: "Home", results: "Results — Refine",
-  quickresults: "Results — Quick", account: "Account",
-  upgrade: "Upgrade to Pro", saved: "Saved Favourites",
-  signin_nav: "Sign In (account / nav)",
-  signin_save: "Sign In (save)",
-  signin_bm: "Sign In (bookmark)",
-  signin_tone: "Sign In (tone unlock)",
-  signin_cap: "Sign In (cap hit)",
-  cap: "Daily Cap Hit",
-};
+import { createI18n } from "./lib/i18n.js";
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
@@ -39,6 +28,7 @@ function resolveTheme(preference) {
 }
 
 export default function App() {
+  const copy = createI18n();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [screen, setScreen] = useState("home");
@@ -208,7 +198,7 @@ export default function App() {
   const handleTranslate = async ({ text, tone, toneCount = 1, fromLang, toLang, mode }) => {
     const cap = userTier === "pro" ? 300 : userTier === "free" ? 20 : 10;
     if (mode === "quick" && quickUsageCount >= cap) {
-      showToast(`You've used today's ${cap} standard translations. Come back tomorrow.`);
+      showToast(copy.t("app.standardTranslationsCap", { cap }));
       return;
     }
 
@@ -236,8 +226,8 @@ export default function App() {
         setScreen("results");
       }
     } catch (e) {
-      console.error("Translation failed:", e);
-      setTranslationData({ original: text, refined: "Translation failed — check your API key.", translated: "", fromLang, toLang, tone, toneCount, mode });
+      console.error(copy.t("app.translationFailed"), e);
+      setTranslationData({ original: text, refined: copy.t("app.translationFailed"), translated: "", fromLang, toLang, tone, toneCount, mode });
       setScreen(mode === "quick" ? "quickresults" : "results");
     } finally {
       setIsTranslating(false);
@@ -289,7 +279,7 @@ export default function App() {
           <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ background: theme === "light" ? "#faf8f3" : "#1c1c1c", borderRadius: 20, padding: "28px 40px", textAlign: "center", border: `1px solid ${t.border2}` }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>✦</div>
-              <div style={{ fontSize: 14, color: t.textMuted, fontFamily: "'Lora',Georgia,serif" }}>translating…</div>
+              <div style={{ fontSize: 14, color: t.textMuted, fontFamily: "'Lora',Georgia,serif" }}>{copy.t("app.translating")}</div>
             </div>
           </div>
         )}
@@ -312,7 +302,7 @@ export default function App() {
         <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ background: theme === "light" ? "#faf8f3" : "#1c1c1c", borderRadius: 20, padding: "28px 40px", textAlign: "center", border: `1px solid ${t.border2}` }}>
             <div style={{ fontSize: 28, marginBottom: 12 }}>✦</div>
-            <div style={{ fontSize: 14, color: t.textMuted, fontFamily: "'Lora',Georgia,serif" }}>translating…</div>
+            <div style={{ fontSize: 14, color: t.textMuted, fontFamily: "'Lora',Georgia,serif" }}>{copy.t("app.translating")}</div>
           </div>
         </div>
       )}
@@ -323,14 +313,14 @@ export default function App() {
       </PhoneFrame>
 
       <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256 }}>
-        <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>Interactive Preview</div>
+        <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>{copy.t("app.interactivePreview")}</div>
         <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>tonara.</div>
-        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>✓ AI runs server-side</div>
-        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.6 }}>{user ? `✓ ${user.email}` : "◎ Not logged in"}</div>
+        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>✓ {copy.t("app.aiRunsServerSide")}</div>
+        <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.6 }}>{user ? `✓ ${user.email}` : `◎ ${copy.t("app.notLoggedIn")}`}</div>
         {user && (
           <>
-            <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>Screens</div>
-            {Object.entries(SCREEN_LABELS).map(([id, label]) => (
+            <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>{copy.t("app.screens")}</div>
+            {Object.entries(copy.t("app.screenLabels")).map(([id, label]) => (
               <button key={id} onClick={() => navigate(id)} style={{
                 display: "block", width: "100%", textAlign: "left", padding: "7px 11px", marginBottom: 3,
                 background: screen === id ? (theme === "light" ? "#e0dcd2" : "#181818") : "transparent",
@@ -340,7 +330,7 @@ export default function App() {
                 fontSize: 12, cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
               }}>{label}</button>
             ))}
-            <button onClick={handleLogout} style={{ marginTop: 12, width: "100%", padding: "8px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 8, color: t.textDim, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Sign out</button>
+            <button onClick={handleLogout} style={{ marginTop: 12, width: "100%", padding: "8px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 8, color: t.textDim, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("app.signOut")}</button>
           </>
         )}
       </div>

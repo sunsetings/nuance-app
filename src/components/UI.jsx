@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, FREE_SAVE_LIMIT, GUEST_DAILY_CAP, PRO_DAILY_CAP } from "../lib/constants.js";
+import { createI18n } from "../lib/i18n.js";
 
 // ─── TOAST ───────────────────────────────────────────────────
 export function Toast({ message, visible, theme }) {
@@ -28,14 +29,15 @@ export function Toast({ message, visible, theme }) {
 // ─── SHARE SHEET ─────────────────────────────────────────────
 export function ShareSheet({ visible, onClose, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   if (!visible) return null;
   const options = [
-    { icon: "💬", label: "Messages" },
+    { icon: "💬", label: copy.t("ui.messages") },
     { icon: "💚", label: "WhatsApp" },
-    { icon: "✉️", label: "Mail" },
-    { icon: "📋", label: "Copy all" },
+    { icon: "✉️", label: copy.t("ui.mail") },
+    { icon: "📋", label: copy.t("ui.copyAll") },
     { icon: "🔵", label: "Telegram" },
-    { icon: "📤", label: "More…" },
+    { icon: "📤", label: copy.t("ui.more") },
   ];
   return (
     <div style={{ position: "absolute", inset: 0, zIndex: 600, display: "flex", flexDirection: "column", justifyContent: "flex-end" }} onClick={onClose}>
@@ -47,7 +49,7 @@ export function ShareSheet({ visible, onClose, theme }) {
         borderTop: `1px solid ${t.border2}`,
       }}>
         <div style={{ width: 36, height: 4, background: t.border2, borderRadius: 2, margin: "0 auto 18px" }} />
-        <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.1em", marginBottom: 14 }}>SHARE VIA</div>
+        <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.1em", marginBottom: 14 }}>{copy.t("ui.shareVia")}</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {options.map(opt => (
             <button key={opt.label} onClick={onClose} style={{
@@ -65,7 +67,7 @@ export function ShareSheet({ visible, onClose, theme }) {
           background: "transparent", border: `1px solid ${t.border}`,
           borderRadius: 12, color: t.textMuted, fontSize: 13,
           fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
-        }}>Cancel</button>
+        }}>{copy.t("ui.cancel")}</button>
       </div>
     </div>
   );
@@ -140,6 +142,7 @@ function ShareIcon({ size = 14, color }) {
 
 export function BottomNav({ active, navigate, theme, userTier }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const isGuest = userTier === "guest";
   return (
     <div style={{
@@ -148,9 +151,9 @@ export function BottomNav({ active, navigate, theme, userTier }) {
       borderTop: `1px solid ${t.borderLight}`, marginTop: 14,
     }}>
       {[
-        { id: "home", icon: "⌂", label: "Home" },
-        { id: "saved", icon: "♥", label: "Saved", heart: true },
-        { id: "account", icon: "◎", label: isGuest ? "Sign in" : "Account" },
+        { id: "home", icon: "⌂", label: copy.t("ui.home") },
+        { id: "saved", icon: "♥", label: copy.t("ui.savedNav"), heart: true },
+        { id: "account", icon: "◎", label: isGuest ? copy.t("ui.signInNav") : copy.t("ui.accountNav") },
       ].map(item => (
         <button key={item.id} onClick={() => navigate(isGuest && item.id === "account" ? "account" : item.id)} style={{
           flex: 1,
@@ -182,6 +185,7 @@ export function BottomNav({ active, navigate, theme, userTier }) {
 // ─── COPY BUTTON ─────────────────────────────────────────────
 export function CopyBtn({ text, theme, variant = "default" }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     if (text) navigator.clipboard.writeText(text).catch(() => {});
@@ -202,7 +206,7 @@ export function CopyBtn({ text, theme, variant = "default" }) {
         fontFamily: "'Lora',Georgia,serif",
         letterSpacing: "0.04em",
       }}>
-        {copied ? "✓ Copied" : "Copy"}
+        {copied ? copy.t("ui.copied") : copy.t("ui.copy")}
       </button>
     );
   }
@@ -216,7 +220,7 @@ export function CopyBtn({ text, theme, variant = "default" }) {
       transition: "all 0.15s", whiteSpace: "nowrap",
       fontFamily: "'Lora',Georgia,serif",
     }}>
-      {copied ? "✓" : "Copy"}
+      {copied ? "✓" : copy.t("ui.copy")}
     </button>
   );
 }
@@ -224,6 +228,7 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 // ─── MIC BUTTON ──────────────────────────────────────────────
 export function MicButton({ userTier, onDictate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const [listening, setListening] = useState(false);
   const handleTap = () => {
     if (listening) return;
@@ -273,7 +278,7 @@ export function MicButton({ userTier, onDictate, theme }) {
         transition: "color 0.2s", height: 9,
         fontFamily: "'Lora',Georgia,serif",
       }}>
-        {listening ? "listening…" : "​"}
+        {listening ? copy.t("ui.listening") : "​"}
       </span>
     </div>
   );
@@ -282,6 +287,7 @@ export function MicButton({ userTier, onDictate, theme }) {
 // ─── SHARE + SAVE ROW ────────────────────────────────────────
 export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveCount = 0, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const handleSave = () => {
     if (userTier === "guest") {
       navigate("signin_save");
@@ -294,12 +300,12 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
     onSave();
   };
   const saveLabel = userTier === "guest"
-    ? "Create free account to save"
+    ? copy.t("ui.createFreeAccountToSave")
     : saved
-      ? "Saved"
+      ? copy.t("ui.saved")
       : userTier === "free" && saveCount >= FREE_SAVE_LIMIT
-        ? "Upgrade to save more"
-        : `Save${userTier === "free" ? ` (${saveCount}/${FREE_SAVE_LIMIT})` : ""}`;
+        ? copy.t("ui.upgradeToSaveMore")
+        : `${copy.t("ui.save")}${userTier === "free" ? ` (${saveCount}/${FREE_SAVE_LIMIT})` : ""}`;
   return (
     <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
       <button onClick={onShare} style={{
@@ -310,7 +316,7 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
         display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
       }}>
         <ShareIcon size={14} color={t.textFaint} />
-        <span>Share</span>
+        <span>{copy.t("ui.share")}</span>
       </button>
       <button
         onClick={handleSave}
@@ -334,6 +340,7 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
 // ─── REFINE COUNTER (top right, free tier) ───────────────────
 export function RefineCounter({ usageCount, userTier, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   if (userTier === "pro") return null;
   const cap = userTier === "free" ? FREE_DAILY_CAP : GUEST_DAILY_CAP;
   const remaining = Math.max(0, cap - usageCount);
@@ -344,11 +351,11 @@ export function RefineCounter({ usageCount, userTier, theme }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
       <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.04em" }}>
-        {remaining} of {cap} refines
+        {copy.t("ui.remainingRefines", { remaining, cap })}
       </span>
       {remaining <= 3 && (
         <span style={{ fontSize: 9, color: t.proTag }}>
-          {userTier === "guest" ? "· sign up for more" : "· upgrade for 300"}
+          {userTier === "guest" ? copy.t("ui.signUpForMore") : copy.t("ui.upgradeFor300")}
         </span>
       )}
     </div>

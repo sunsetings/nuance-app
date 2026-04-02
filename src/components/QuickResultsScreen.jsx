@@ -2,14 +2,16 @@ import { useState } from "react";
 import { THEMES, getLanguageCode } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
+import { createI18n } from "../lib/i18n.js";
 
 export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
 
   const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("Translation saved to favourites");
+  const [toastMessage, setToastMessage] = useState(copy.t("quickResults.translationSaved"));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,7 +29,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   );
   const saved = !!existingSave;
 
-  const showToast = (message = "Translation saved to favourites") => {
+  const showToast = (message = copy.t("quickResults.translationSaved")) => {
     setToastMessage(message);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2200);
@@ -35,8 +37,8 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
 
   const handleShare = async () => {
     const shareText = [
-      `Original: ${original}`,
-      `Translation (${toLang}): ${translated}`,
+      `${copy.t("quickResults.original")}: ${original}`,
+      `${copy.t("quickResults.translation")} (${toLang}): ${translated}`,
     ].filter(Boolean).join("\n\n");
 
     try {
@@ -49,10 +51,10 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
       }
 
       await navigator.clipboard.writeText(shareText);
-      showToast("Copied to clipboard for sharing");
+      showToast(copy.t("quickResults.copiedForSharing"));
     } catch (e) {
       if (e?.name !== "AbortError") {
-        setError("Couldn't open native share.");
+        setError(copy.t("quickResults.nativeShareError"));
       }
     }
   };
@@ -78,7 +80,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
       }
     } catch (e) {
       console.error("Save failed:", e);
-      setError("Couldn't save — please try again.");
+      setError(copy.t("quickResults.saveError"));
     } finally {
       setSaving(false);
     }
@@ -117,8 +119,8 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
             >
               ←
             </button>
-            <span style={{ fontSize: 15, fontWeight: "bold" }}>Translation</span>
-            {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
+            <span style={{ fontSize: 15, fontWeight: "bold" }}>{copy.t("quickResults.title")}</span>
+            {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>{copy.t("quickResults.fromSaved")}</span>}
           </div>
         </div>
 
@@ -130,7 +132,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
 
         {[
           {
-            label: "ORIGINAL",
+            label: copy.t("quickResults.original"),
             content: original,
             lang: sourceLangCode,
           textToCopy: original,
@@ -145,7 +147,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
           },
         },
           {
-            label: "TRANSLATION",
+            label: copy.t("quickResults.translation"),
             content: translated,
             lang: targetLangCode,
             textToCopy: translated,
@@ -185,7 +187,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
             fontSize: 12, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", marginTop: 8, marginBottom: 4,
           }}>
-            ✦ Need it to sound more natural? Try Refine & Translate
+            ✦ {copy.t("quickResults.needMoreNatural")}
           </button>
         )}
       </div>

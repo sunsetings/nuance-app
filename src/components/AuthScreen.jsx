@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
+import { createI18n } from "../lib/i18n.js";
 
 const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
 
@@ -24,6 +25,7 @@ const POST_AUTH_ROUTE = {
 
 export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const [mode, setMode] = useState("signup"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,20 +36,21 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
   const ctx = SIGNIN_CONTEXT[context] || SIGNIN_CONTEXT.default;
   const showBenefits = context === "nav" || context === "tone";
   const isSignup = mode === "signup";
-  const displayTitle = mode === "forgot" ? "Reset your password" : isSignup ? "Create your free account" : "Welcome back";
+  const localizedContext = copy.t(`auth.contexts.${context}`) || copy.t("auth.contexts.default");
+  const displayTitle = mode === "forgot" ? copy.t("auth.resetPassword") : isSignup ? copy.t("auth.createFreeAccount") : copy.t("auth.welcomeBack");
   const displaySubtitle = mode === "forgot"
-    ? "Enter your email and we'll send you a reset link."
+    ? copy.t("auth.resetPasswordHelp")
     : isSignup
-      ? (ctx.sub || "Save messages, bookmark languages, and get 20 refines a day.")
-      : "Sign in to your saved messages, tones, and account.";
+      ? (localizedContext?.sub || ctx.sub || copy.t("auth.contexts.nav.sub"))
+      : copy.t("auth.signinSubtitle");
   const benefitItems = context === "tone"
     ? [
-        { icon: "◈", text: "Quick sign up for access to all 5 free tones." },
-        { icon: "◐", text: "Keep refining with 20 refines a day, saved messages, and one bookmarked language." },
+        { icon: "◈", text: copy.t("auth.benefitTone1") },
+        { icon: "◐", text: copy.t("auth.benefitTone2") },
       ]
     : [
-        { icon: "◈", text: "20 refines a day for everyday chats, requests, and quick fixes." },
-        { icon: "◐", text: "5 tones to help your message sound more natural, warm, playful, or direct." },
+        { icon: "◈", text: copy.t("auth.benefitNav1") },
+        { icon: "◐", text: copy.t("auth.benefitNav2") },
       ];
 
   const resolvePostAuthTarget = ({ forOAuth = false } = {}) => {
@@ -64,11 +67,11 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
 
   const handleSubmit = async () => {
     if (!email || !password) {
-      setError("Please enter your email and password.");
+      setError(copy.t("auth.enterEmailPassword"));
       return;
     }
     if (mode === "signup" && password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(copy.t("auth.passwordsDoNotMatch"));
       return;
     }
     setLoading(true);
@@ -79,7 +82,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        setSuccess("Check your email to confirm your account, then log in.");
+        setSuccess(copy.t("auth.checkEmailConfirm"));
         setMode("login");
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -95,13 +98,13 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
   };
 
   const handleForgot = async () => {
-    if (!email) { setError("Enter your email address first."); return; }
+    if (!email) { setError(copy.t("auth.enterEmailFirst")); return; }
     setLoading(true);
     setError(null);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email);
       if (error) throw error;
-      setSuccess("Password reset email sent — check your inbox.");
+      setSuccess(copy.t("auth.passwordResetSent"));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -161,7 +164,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
 
         {mode !== "forgot" && (
           <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 12 }}>
-            {[{ id: "signup", label: "Create account" }, { id: "login", label: "Sign in" }].map(opt => (
+            {[{ id: "signup", label: copy.t("auth.createAccount") }, { id: "login", label: copy.t("auth.signIn") }].map(opt => (
               <button key={opt.id} onClick={() => { setMode(opt.id); setError(null); }} style={{
                 flex: 1, padding: "8px 6px", borderRadius: 8, border: "none",
                 background: mode === opt.id ? t.surface2 : "transparent",
@@ -188,13 +191,13 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
               transition: "all 0.2s",
             }}>
               <span style={{ fontSize: 14, fontWeight: "bold", fontFamily: "sans-serif", color: t.textDim }}>G</span>
-              Continue with Google
+              {copy.t("auth.continueWithGoogle")}
             </button>
 
             {/* Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
               <div style={{ flex: 1, height: 1, background: t.border }} />
-              <span style={{ fontSize: 11, color: t.textFaint }}>or</span>
+              <span style={{ fontSize: 11, color: t.textFaint }}>{copy.t("auth.or")}</span>
               <div style={{ flex: 1, height: 1, background: t.border }} />
             </div>
           </>
@@ -204,7 +207,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
           <input
             type="email" value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="Email address"
+            placeholder={copy.t("auth.emailAddress")}
             style={{
               width: "100%", padding: "11px 14px",
               background: t.surface, border: `1px solid ${t.border}`,
@@ -221,7 +224,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
               type="password" value={password}
               onChange={e => setPassword(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              placeholder="Password"
+              placeholder={copy.t("auth.password")}
               style={{
                 width: "100%", padding: "11px 14px",
                 background: t.surface, border: `1px solid ${t.border}`,
@@ -240,7 +243,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              placeholder="Confirm password"
+              placeholder={copy.t("auth.confirmPassword")}
               style={{
                 width: "100%", padding: "11px 14px",
                 background: t.surface, border: `1px solid ${t.border}`,
@@ -258,7 +261,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
               background: "none", border: "none",
               color: t.textDim, fontSize: 11,
               cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
-            }}>Forgot password?</button>
+            }}>{copy.t("auth.forgotPassword")}</button>
           </div>
         )}
 
@@ -289,15 +292,15 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
           marginBottom: 10, marginTop: mode === "forgot" ? 18 : 0,
           letterSpacing: "-0.1px",
         }}>
-          {loading ? "…" : mode === "login" ? "Sign in" : mode === "signup" ? "Create free account" : "Send reset email"}
+          {loading ? copy.t("auth.loading") : mode === "login" ? copy.t("auth.signIn") : mode === "signup" ? copy.t("auth.createFreeAccountButton") : copy.t("auth.sendResetEmail")}
         </button>
       </div>
 
       <div style={{ textAlign: "center", marginTop: "auto", paddingTop: 14 }}>
         {mode === "forgot" ? (
-          <button onClick={() => { setMode("login"); setError(null); setSuccess(null); }} style={{ background: "none", border: "none", color: t.textFaint, cursor: "pointer", fontSize: 11, fontFamily: "'Lora',Georgia,serif" }}>← Back to sign in</button>
+          <button onClick={() => { setMode("login"); setError(null); setSuccess(null); }} style={{ background: "none", border: "none", color: t.textFaint, cursor: "pointer", fontSize: 11, fontFamily: "'Lora',Georgia,serif" }}>← {copy.t("auth.backToSignIn")}</button>
         ) : (
-          <button onClick={() => navigate?.("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Continue as guest</button>
+          <button onClick={() => navigate?.("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("auth.continueAsGuest")}</button>
         )}
       </div>
     </div>

@@ -6,9 +6,11 @@ import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
+import { createI18n } from "../lib/i18n.js";
 
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
   const sourceToneSelection = parseToneSelection(source.tone);
@@ -224,7 +226,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       }
       onAddRecentTone(tone);
     } catch (e) {
-      setError("Something went wrong — please try again.");
+      setError(copy.t("results.genericError"));
       console.error(e);
     } finally {
       setLoading(false);
@@ -285,23 +287,23 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
           toLang,
         });
         setSavedItems(prev => [newItem, ...prev]);
-        showToast("All 3 panels saved to favourites");
+        showToast(copy.t("results.saveSuccess"));
       }
     } catch (e) {
       console.error("Save failed:", e);
-      setError("Couldn't save — please try again.");
+      setError(copy.t("quickResults.saveError"));
     } finally {
       setSaving(false);
     }
   };
 
   const strengthLabelMap = {
-    1: "LIGHT",
-    2: "MEDIUM",
-    3: "STRONG",
+    1: copy.t("results.light"),
+    2: copy.t("results.medium"),
+    3: copy.t("results.strong"),
   };
   const toneLabel = activeTone.toUpperCase();
-  const refinedLabel = `REFINED — ${toneLabel} (${strengthLabelMap[toneCount] || "LIGHT"})`;
+  const refinedLabel = copy.t("results.refined", { tone: toneLabel, strength: strengthLabelMap[toneCount] || copy.t("results.light") });
   const sourceLangCode = getLanguageCode(source.fromLang || source.from_lang || "EN");
   const targetLangCode = getLanguageCode(toLang);
   const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
@@ -310,7 +312,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
   const resultSections = [
     {
-      label: "ORIGINAL",
+      label: copy.t("results.original"),
       content: original,
       lang: sourceLangCode,
       textToCopy: original,
@@ -342,7 +344,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       labelWeight: "bold",
     },
     {
-      label: "REFINED AND TRANSLATED",
+      label: copy.t("results.refinedTranslated"),
       content: translated,
       lang: targetLangCode,
       textToCopy: translated,
@@ -377,7 +379,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         onSelectTone={handleSheetSelect}
         navigate={navigate}
         theme={theme}
-        title="Tones"
+        title={copy.t("results.tones")}
       />
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
@@ -385,8 +387,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, marginTop: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button onClick={() => navigate(fromSaved ? "saved" : "home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
-            <span style={{ fontSize: 15, fontWeight: "bold" }}>Results</span>
-            {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
+            <span style={{ fontSize: 15, fontWeight: "bold" }}>{copy.t("results.title")}</span>
+            {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>{copy.t("results.fromSaved")}</span>}
           </div>
           <ResultsHeaderCTA userTier={userTier} navigate={navigate} theme={theme} />
         </div>
@@ -394,8 +396,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         {/* Tone row */}
         <div style={{ marginBottom: 12 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 2 }}>
-            <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>Try a different tone</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Pick how it should come across</div>
+            <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>{copy.t("results.tryDifferentTone")}</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{copy.t("results.pickHow")}</div>
           </div>
           <ToneRow
             activeTone={activeTone} toneCount={toneCount}
@@ -413,7 +415,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
         {loading && (
           <div style={{ textAlign: "center", padding: "20px", color: t.textDim, fontSize: 13, fontStyle: "italic", letterSpacing: "0.05em" }}>
-            refining…
+            {copy.t("results.refining")}
           </div>
         )}
 
@@ -450,11 +452,12 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
 function ResultsHeaderCTA({ userTier, navigate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   if (userTier === "guest") {
-    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock more tones →</button>;
+    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("results.unlockMoreTones")}</button>;
   }
   if (userTier === "free") {
-    return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock Pro tones →</button>;
+    return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("results.unlockProTones")}</button>;
   }
-  return <span style={{ fontSize: 10, color: t.accentDim, letterSpacing: "0.02em" }}>✦ Pro — all tones unlocked</span>;
+  return <span style={{ fontSize: 10, color: t.accentDim, letterSpacing: "0.02em" }}>{copy.t("results.proUnlocked")}</span>;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, GUEST_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
+import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 10, color, filled = false }) {
   return (
@@ -34,6 +35,7 @@ export function ToneRow({
   const scrollerRef = useRef(null);
   const activePillRef = useRef(null);
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
     : userTier === "free"
@@ -88,9 +90,9 @@ export function ToneRow({
 
   const pills = rowTones.map((tone) => ({ tone, level: 1, type: "tone" }));
   const levelOptions = [
-    { level: 1, label: "Light" },
-    { level: 2, label: "Medium" },
-    { level: 3, label: "Strong" },
+    { level: 1, label: copy.t("toneRow.light") },
+    { level: 2, label: copy.t("toneRow.medium") },
+    { level: 3, label: copy.t("toneRow.strong") },
   ];
 
   return (
@@ -176,7 +178,7 @@ export function ToneRow({
           disabled={disabled}
           style={{ flexShrink: 0, minWidth: 60, padding: "7px 10px", borderRadius: 18, border: `1px solid ${t.border}`, background: "transparent", color: t.textDim, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap", opacity: disabled ? 0.2 : 1, fontFamily: "'Lora',Georgia,serif" }}
         >
-          + More
+          {copy.t("toneRow.more")}
         </button>
       </div>
 
@@ -184,7 +186,7 @@ export function ToneRow({
         <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <div style={{ width: "100%", maxWidth: 236 }}>
             <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
-              Tone strength
+              {copy.t("toneRow.toneStrength")}
             </div>
             <div style={{
               display: "grid",

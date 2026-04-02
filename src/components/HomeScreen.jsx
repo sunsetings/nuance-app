@@ -4,6 +4,7 @@ import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
+import { createI18n } from "../lib/i18n.js";
 
 const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
@@ -38,6 +39,7 @@ function getDefaultHomeTone(userTier) {
 
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
   // Load last-used languages from localStorage, fall back to defaults
@@ -174,22 +176,22 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         onSelectTone={handleSheetToneSelect}
         navigate={navigate}
         theme={theme}
-        title="Tones"
+        title={copy.t("results.tones")}
       />
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
         <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
         {userTier === "pro" ? (
           <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.highlightBorder}`, borderRadius: 10, padding: "5px 11px", color: t.accent, fontSize: 11, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>
-            ✦ Pro
+            ✦ {copy.t("home.pro")}
           </button>
         ) : userTier === "free" ? (
           <button onClick={() => navigate("upgrade")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-            Upgrade to Pro
+            {copy.t("home.upgradeToPro")}
           </button>
         ) : (
           <button onClick={() => navigate("signin_nav")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-            Create free account
+            {copy.t("home.createFreeAccount")}
           </button>
         )}
       </div>
@@ -200,7 +202,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       {/* Language bar */}
       <div style={{ marginBottom: 11, position: "relative", zIndex: 300 }}>
         <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, background: t.surface, borderRadius: 12 }}>
-          <LangSelector label="FROM" value={fromLang} onChange={handleFromLangChange} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="from" navigate={navigate} theme={theme} />
+          <LangSelector label={copy.t("home.from")} value={fromLang} onChange={handleFromLangChange} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="from" navigate={navigate} theme={theme} />
           <button onClick={swapLanguages} style={{
             background: "transparent", border: "none",
             width: 28, height: 28,
@@ -209,15 +211,15 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             flexShrink: 0, transition: "transform 0.3s",
             transform: swapping ? "rotate(180deg)" : "rotate(0deg)",
           }}>⇄</button>
-          <LangSelector label="TO" value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="to" navigate={navigate} theme={theme} />
+          <LangSelector label={copy.t("home.to")} value={toLang} onChange={setToLang} bookmarked={bookmarked} onToggleBookmark={toggleBM} bookmarkLimit={bookmarkLimit} userTier={userTier} openId={openLang} setOpenId={setOpenLang} myId="to" navigate={navigate} theme={theme} />
         </div>
         {userTier !== "guest" && bookmarked.length > 0 && (
           <div style={{ padding: "4px 14px 0", display: "flex", justifyContent: "flex-end" }}>
             <span style={{ fontSize: 9, color: bookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
-              {bookmarked.length}/{bookmarkLimit} bookmarked
+              {copy.t("home.bookmarkedCount", { count: bookmarked.length, limit: bookmarkLimit })}
               {userTier === "free" && bookmarked.length >= bookmarkLimit && (
                 <span style={{ color: t.proTag }}>
-                  {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 10</span>
+                  {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>{copy.t("home.proEquals10")}</span>
                 </span>
               )}
             </span>
@@ -227,7 +229,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
       {/* Mode toggle */}
       <div style={{ display: "flex", marginBottom: 10, gap: 2, padding: "2px", background: t.surface, borderRadius: 10 }}>
-        {[{ id: "refine", label: "Refine & Translate" }, { id: "quick", label: "Translate only" }].map(opt => (
+        {[{ id: "refine", label: copy.t("home.refineTranslateTab") }, { id: "quick", label: copy.t("home.translateOnlyTab") }].map(opt => (
           <button key={opt.id} onClick={() => setMode(opt.id)} style={{
             flex: 1, padding: "8px 4px", borderRadius: 8, border: "none",
             background: mode === opt.id ? t.surface2 : "transparent",
@@ -243,8 +245,8 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       {isRefine && (
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
-            <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>Tone</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Pick how it should come across</div>
+            <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>{copy.t("home.tone")}</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{copy.t("home.pickHow")}</div>
           </div>
           <ToneRow
             activeTone={tone} toneCount={toneCount}
@@ -273,10 +275,10 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       }}>
         <div style={{ padding: "13px 16px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           <span style={{ fontSize: 10, color: t.textFaint, fontStyle: "italic", letterSpacing: "0.03em" }}>
-            {isRefine ? "Write it naturally" : "Write it naturally"}
+            {copy.t("home.writeNaturally")}
           </span>
           <span style={{ fontSize: 10, color: charsNearLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em", transition: "color 0.2s" }}>
-            {charsLeft} left
+            {copy.t("home.left", { count: charsLeft })}
           </span>
         </div>
         <textarea
@@ -285,7 +287,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           onChange={e => setText(e.target.value.slice(0, CHAR_LIMIT))}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 160)}
-          placeholder={isRefine ? "Type your message naturally — tonara will help it sound right." : "Type your message and tonara will translate it."}
+          placeholder={isRefine ? copy.t("home.refinePlaceholder") : copy.t("home.quickPlaceholder")}
           style={{
             flex: 1, background: "transparent", border: "none",
             padding: "12px 16px", color: t.text, fontSize: 13,
@@ -306,7 +308,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
               fontSize: 11, fontFamily: "'Lora',Georgia,serif",
               cursor: "pointer", transition: "all 0.2s",
               letterSpacing: "0.04em",
-            }}>Paste</button>
+            }}>{copy.t("home.paste")}</button>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} />
@@ -325,7 +327,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Upgrade to Pro`}
+          {userTier === "pro" ? copy.t("home.dailyLimitPro", { cap }) : copy.t("home.dailyLimitUpgrade", { cap })}
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
@@ -339,7 +341,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           transition: "all 0.2s",
           letterSpacing: "-0.1px",
         }}>
-          {mode === "refine" ? "Refine & translate" : "Translate only"}
+          {mode === "refine" ? copy.t("home.refineTranslateButton") : copy.t("home.translateOnlyButton")}
         </button>
       )}
 

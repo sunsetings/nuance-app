@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FREE_TONES, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, TONE_DESCRIPTIONS, getToneStatus } from "../lib/constants.js";
+import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -17,6 +18,7 @@ function SmallHeart({ size = 14, color, filled = false }) {
 
 export function ToneSheet({ visible, onClose, activeTone, userTier, favourites = [], onToggleFav, onSelectTone, navigate, theme, title = "Tones" }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const [search, setSearch] = useState("");
 
   if (!visible) return null;
@@ -48,22 +50,22 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <button onClick={closeAll} style={{ background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, padding: 0, fontFamily: "'Lora',Georgia,serif" }}>
               <span style={{ fontSize: 16, lineHeight: 1 }}>←</span>
-              <span style={{ fontSize: 12, letterSpacing: "0.02em" }}>Back</span>
+              <span style={{ fontSize: 12, letterSpacing: "0.02em" }}>{copy.t("toneSheet.back")}</span>
             </button>
             <span style={{ fontSize: 15, fontWeight: "bold", color: t.text, letterSpacing: "-0.2px" }}>{title}</span>
             {userTier === "pro" ? (
-              <span style={{ fontSize: 10, color: t.textDim, letterSpacing: "0.04em" }}>{favourites.length}/{PRO_SAVED_TONE_LIMIT} saved</span>
+              <span style={{ fontSize: 10, color: t.textDim, letterSpacing: "0.04em" }}>{copy.t("toneSheet.saved", { count: favourites.length, limit: PRO_SAVED_TONE_LIMIT })}</span>
             ) : (
               <div style={{ width: 60 }} />
             )}
           </div>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tones…" style={{ width: "100%", background: t.surface2, border: "none", borderRadius: 10, padding: "9px 13px", color: t.text, fontSize: 13, outline: "none", marginBottom: 12, fontFamily: "'Lora',Georgia,serif" }} />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={copy.t("toneSheet.searchTones")} style={{ width: "100%", background: t.surface2, border: "none", borderRadius: 10, padding: "9px 13px", color: t.text, fontSize: 13, outline: "none", marginBottom: 12, fontFamily: "'Lora',Georgia,serif" }} />
         </div>
 
         <div style={{ overflowY: "auto", padding: "2px 18px 24px", flex: 1 }}>
           {userTier === "pro" && favourites.length > 0 && !search && (
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 9 }}>Your saved tones</div>
+              <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 9 }}>{copy.t("toneSheet.yourSavedTones")}</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                 {favourites.map((tone) => (
                   <div key={tone} style={{ display: "flex", alignItems: "center", gap: 2 }}>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AUTO_DETECT_LANGUAGE, BASE_LANGUAGES, PRO_LANGUAGES, THEMES } from "../lib/constants.js";
+import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -30,15 +31,18 @@ export function LangSelector({
   theme,
 }) {
   const t = THEMES[theme] || THEMES.dark;
+  const copy = createI18n();
   const [search, setSearch] = useState("");
   const open = openId === myId;
+  const isFrom = myId === "from";
+  const isTo = myId === "to";
   const isPro = userTier === "pro";
   const canBookmarkAny = userTier !== "guest";
   const visibleBookmarked = canBookmarkAny ? bookmarked : [];
   const canBookmark = visibleBookmarked.length < bookmarkLimit;
   const sortedBaseLanguages = [...BASE_LANGUAGES].sort((a, b) => a.localeCompare(b));
   const sortedProLanguages = [...PRO_LANGUAGES].sort((a, b) => a.localeCompare(b));
-  const allLanguages = label === "FROM"
+  const allLanguages = isFrom
     ? [AUTO_DETECT_LANGUAGE, ...sortedBaseLanguages, ...sortedProLanguages]
     : [...sortedBaseLanguages, ...sortedProLanguages];
 
@@ -48,7 +52,7 @@ export function LangSelector({
 
   const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
   const availableLanguages = allLanguages.filter((lang) => !visibleBookmarked.includes(lang));
-  const visibleAutoDetect = label === "FROM" && availableLanguages.includes(AUTO_DETECT_LANGUAGE)
+  const visibleAutoDetect = isFrom && availableLanguages.includes(AUTO_DETECT_LANGUAGE)
     ? [AUTO_DETECT_LANGUAGE]
     : [];
   const baseAvailable = filterList(availableLanguages.filter((lang) => BASE_LANGUAGES.includes(lang)));
@@ -88,7 +92,7 @@ export function LangSelector({
           fontFamily: "'Lora',Georgia,serif",
         }}
       >
-        <span style={{ flex: 1, textAlign: label === "TO" ? "right" : "left" }}>{value}</span>
+        <span style={{ flex: 1, textAlign: isTo ? "right" : "left" }}>{value}</span>
         {value !== AUTO_DETECT_LANGUAGE && visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
@@ -103,8 +107,8 @@ export function LangSelector({
           style={{
             position: "absolute",
             top: "calc(100% + 12px)",
-            left: label === "TO" ? "auto" : "-14px",
-            right: label === "TO" ? "-14px" : "auto",
+            left: isTo ? "auto" : "-14px",
+            right: isTo ? "-14px" : "auto",
             width: 244,
             background: theme === "light" ? "#faf6ee" : "#1a1a1a",
             borderRadius: 14,
@@ -118,7 +122,7 @@ export function LangSelector({
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search languages…"
+              placeholder={copy.t("langSelector.searchLanguages")}
               style={{
                 width: "100%",
                 background: t.surface2,
@@ -142,7 +146,7 @@ export function LangSelector({
                 }}
                 style={{ background: "none", border: "none", cursor: "pointer", fontSize: 10, color: t.freeTag, padding: 0, letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}
               >
-                ✦ Create free account to bookmark languages
+                ✦ {copy.t("langSelector.createAccountToBookmark")}
               </button>
             </div>
           )}
@@ -150,16 +154,16 @@ export function LangSelector({
           {canBookmarkAny && (
             <div style={{ padding: "4px 14px 4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 9, color: visibleBookmarked.length >= bookmarkLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em" }}>
-                {visibleBookmarked.length}/{bookmarkLimit} bookmarked
+                {copy.t("home.bookmarkedCount", { count: visibleBookmarked.length, limit: bookmarkLimit })}
               </span>
-              {!canBookmark && <span style={{ fontSize: 9, color: t.proTag }}>limit reached</span>}
+              {!canBookmark && <span style={{ fontSize: 9, color: t.proTag }}>{copy.t("langSelector.limitReached")}</span>}
             </div>
           )}
 
           <div style={{ maxHeight: 240, overflowY: "auto" }}>
             {bookmarkedFiltered.length > 0 && (
               <div>
-                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Bookmarked</div>
+                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>{copy.t("langSelector.sectionBookmarked")}</div>
                 {bookmarkedFiltered.map((lang) => (
                   <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
                     <button
@@ -200,7 +204,7 @@ export function LangSelector({
             {(visibleAutoDetect.length > 0 || baseAvailable.length > 0 || proAvailable.length > 0) && (
               <div>
                 {bookmarkedFiltered.length > 0 && <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />}
-                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Available</div>
+                <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>{copy.t("langSelector.sectionAvailable")}</div>
                 {visibleAutoDetect.map((lang) => {
                   const canBookmarkLanguage = false;
                   return (
@@ -228,7 +232,7 @@ export function LangSelector({
                   </div>
                 )})}
                 {baseAvailable.length > 0 && showGroupedAvailable && (
-                  <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>Free languages</div>
+                  <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>{copy.t("langSelector.freeLanguages")}</div>
                 )}
                 {[...(showGroupedAvailable ? baseAvailable : [...baseAvailable, ...proAvailable])].map((lang) => {
                   const isProLanguage = PRO_LANGUAGES.includes(lang);
@@ -273,7 +277,7 @@ export function LangSelector({
                 {showGroupedAvailable && proAvailable.length > 0 && (
                   <>
                     <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />
-                    <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>Pro languages</div>
+                    <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>{copy.t("langSelector.proLanguages")}</div>
                     {proAvailable.map((lang) => {
                       const canBookmarkLanguage = false;
                       return (
@@ -310,7 +314,7 @@ export function LangSelector({
             )}
 
             {bookmarkedFiltered.length === 0 && visibleAutoDetect.length === 0 && baseAvailable.length === 0 && proAvailable.length === 0 && (
-              <div style={{ padding: "18px 14px", textAlign: "center", fontSize: 12, color: t.textDim }}>No languages found</div>
+              <div style={{ padding: "18px 14px", textAlign: "center", fontSize: 12, color: t.textDim }}>{copy.t("langSelector.noLanguagesFound")}</div>
             )}
           </div>
         </div>
