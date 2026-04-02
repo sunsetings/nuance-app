@@ -1,39 +1,11 @@
 import { useEffect, useState } from "react";
-import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection } from "../lib/constants.js";
+import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection, getLanguageCode } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
-
-function getLanguageCode(label) {
-  const value = String(label || "").trim();
-  if (!value) return "";
-  const map = {
-    english: "EN",
-    korean: "KO",
-    japanese: "JA",
-    vietnamese: "VI",
-    spanish: "ES",
-    french: "FR",
-    german: "DE",
-    italian: "IT",
-    portuguese: "PT",
-    russian: "RU",
-    arabic: "AR",
-    dutch: "NL",
-    thai: "TH",
-    turkish: "TR",
-    indonesian: "ID",
-    hindi: "HI",
-    chinese: "ZH",
-  };
-  const matched = Object.entries(map).find(([key]) => value.toLowerCase().includes(key));
-  if (matched) return matched[1];
-  if (/detect|auto/i.test(value)) return "";
-  return value.slice(0, 2).toUpperCase();
-}
 
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
