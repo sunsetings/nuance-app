@@ -326,7 +326,6 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     .filter((lang) => getSpeechRecognitionLang(lang, "") !== "")
     .sort((a, b) => a.localeCompare(b));
   const availableDictationLanguages = [...new Set([
-    dictationLang,
     browserSuggestedDictation,
     ...bookmarked,
     toLang,
