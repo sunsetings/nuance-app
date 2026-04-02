@@ -36,7 +36,7 @@ function getDefaultHomeTone(userTier) {
   return "Friendly";
 }
 
-export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone }) {
+export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
@@ -94,6 +94,16 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     const unlocked = userTier === "free" ? FREE_TONES : userTier === "guest" ? GUEST_TONES : ALL_TONES;
     if (!unlocked.includes(tone)) setTone(getDefaultHomeTone(userTier));
   }, [userTier, tone]);
+
+  useEffect(() => {
+    if (!navContext || typeof navContext !== "object") return;
+    if (typeof navContext.prefillText === "string") {
+      setText(navContext.prefillText.slice(0, CHAR_LIMIT));
+    }
+    if (navContext.mode === "refine" || navContext.mode === "quick") {
+      setMode(navContext.mode);
+    }
+  }, [navContext]);
 
   const toggleBM = lang => setBookmarked(prev =>
     lang === AUTO_DETECT_LANGUAGE ? prev :

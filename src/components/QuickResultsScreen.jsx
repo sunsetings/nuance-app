@@ -159,7 +159,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
         <ShareSaveRow userTier={userTier} saved={saved} onSave={handleSave} onShare={handleShare} navigate={navigate} saveCount={savedItems?.length || 0} theme={theme} />
 
         {!fromSaved && (
-          <button onClick={() => navigate("home")} style={{
+          <button onClick={() => navigate({ screen: "home", context: { prefillText: original, mode: "refine" } })} style={{
             width: "100%", padding: "11px",
             background: t.highlight, border: `1px dashed ${t.highlightBorder}`,
             borderRadius: 10, color: theme === "light" ? "#2a6a2a" : "#8adc8a",
