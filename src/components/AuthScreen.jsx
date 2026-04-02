@@ -6,11 +6,11 @@ import { createI18n, isRTLLocale } from "../lib/i18n.js";
 const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
 
 const SIGNIN_CONTEXT = {
-  nav: { title: "Create your free account", sub: "Save messages, bookmark languages, and get 20 refines a day." },
+  nav: { title: "Create your free account", sub: "Save messages, bookmark languages, and get 30 refines a day." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
-  tone: { title: "Create your free account", sub: "Quick sign up to unlock all 5 Free tones, save messages, and get 20 refines a day." },
-  cap: { title: "You’ve used today’s 10 guest refines", sub: "Create a free account for 20 refines a day, 5 tones, and saved messages." },
+  tone: { title: "Create your free account", sub: "Quick sign up to unlock all 5 Free tones, save messages, and get 30 refines a day." },
+  cap: { title: "You’ve used today’s 10 guest refines", sub: "Create a free account for 30 refines a day, 5 tones, and saved messages." },
   default: { title: "Welcome to tonara.", sub: "" },
 };
 

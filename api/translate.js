@@ -158,7 +158,7 @@ async function getSignedInUsageContext(userId, req) {
     supabase.from("profiles").select("is_pro").eq("id", userId).single(),
   ]);
 
-  const cap = profile?.is_pro ? 300 : 20;
+  const cap = profile?.is_pro ? 300 : 30;
   return {
     cap,
     refineCount: refineUsage?.count || 0,

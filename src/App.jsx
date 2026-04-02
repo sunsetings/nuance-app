@@ -214,7 +214,7 @@ export default function App() {
   };
 
   const handleTranslate = async ({ text, tone, toneCount = 1, fromLang, toLang, mode }) => {
-    const cap = userTier === "pro" ? 300 : userTier === "free" ? 20 : 10;
+    const cap = userTier === "pro" ? 300 : userTier === "free" ? 30 : 10;
     if (mode === "quick" && quickUsageCount >= cap) {
       showToast(copy.t("app.standardTranslationsCap", { cap }));
       return;
