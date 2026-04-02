@@ -173,6 +173,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const [dictationLang, setDictationLang] = useState(() => getDefaultDictationLanguage(copy.locale));
   const [listening, setListening] = useState(false);
   const textareaRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const isRefine = mode === "refine";
   const hasText = text.trim().length > 0;
@@ -219,6 +220,10 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       setToLang(getCanonicalLanguageLabel(navContext.toLang, copy.locale));
     }
   }, [navContext]);
+  useEffect(() => () => {
+    try { recognitionRef.current?.stop?.(); } catch {}
+    recognitionRef.current = null;
+  }, []);
 
   const toggleBM = lang => setBookmarked(prev =>
     lang === AUTO_DETECT_LANGUAGE ? prev :
@@ -255,6 +260,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     const recognitionLocale = getRecognitionLang(lang, copy.locale);
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SR();
+    recognitionRef.current = recognition;
     recognition.lang = recognitionLocale;
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
@@ -262,14 +268,25 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     recognition.onresult = (e) => {
       const transcript = e.results?.[0]?.[0]?.transcript || "";
       setListening(false);
+      recognitionRef.current = null;
       if (transcript) handleDictate(transcript);
     };
-    recognition.onerror = () => { setListening(false); };
-    recognition.onend = () => { setListening(false); };
+    recognition.onerror = () => {
+      setListening(false);
+      recognitionRef.current = null;
+    };
+    recognition.onend = () => {
+      setListening(false);
+      recognitionRef.current = null;
+    };
     recognition.start();
   };
 
   const handleMicTap = () => {
+    if (listening) {
+      try { recognitionRef.current?.stop?.(); } catch {}
+      return;
+    }
     if (fromLang !== AUTO_DETECT_LANGUAGE) {
       startDictation(fromLang);
       return;

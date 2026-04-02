@@ -229,14 +229,10 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 export function MicButton({ theme, listening = false, onTap }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
-  const handleTap = () => {
-    if (listening) return;
-    onTap?.();
-  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
-      <button onClick={handleTap} style={{
+      <button onClick={() => onTap?.()} style={{
         width: 34, height: 34, borderRadius: "50%",
         background: "transparent",
         border: `1px solid ${listening ? t.accent : t.border}`,
