@@ -85,7 +85,7 @@ export const TONE_DESCRIPTIONS = {
   Poetic: "Lyrical and expressive",
   Rapper: "Rhythmic, punchy, and rhyme-forward",
   Flirty: "Playful and romantic",
-  Tea: "Chatty, juicy, and a little gossipy",
+  Tea: "Extra chatty, juicy, and unapologetically gossipy",
   Noir: "Moody and mysterious",
 };
 

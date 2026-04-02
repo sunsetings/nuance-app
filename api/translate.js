@@ -31,6 +31,7 @@ Respond in this exact JSON format (no markdown, no backticks):
     Overexplaining: "Needlessly detailed. Over-clarify obvious things, add extra explanation and qualifiers, and make the message comically more elaborate while keeping the same meaning.",
     "Dad Joke": "Corny and harmless. Use light groan-worthy humor, puns, or wholesome joke energy without becoming too silly or derailing the message.",
     Rapper: "Rhythmic, punchy, and rhyme-forward. Use bars, internal rhyme or end-rhyme when natural, and a rap-like flow that feels intentional and musical. Make the wording sound like lyrics or confident rap-influenced speech, but keep the meaning clear and avoid turning it into nonsense just to force a rhyme.",
+    Tea: "Extremely chatty, juicy, and gossipy. Make it sound like someone spilling tea with animated side-comments, little reactions, knowing phrasing, and conversational momentum. Lean into nosy, dramatic, 'can you believe this?' energy when appropriate, but keep the core meaning intact and don't invent new facts.",
     Shakespearean: "Theatrical, elevated, and Bard-like — use expressive, dramatic phrasing inspired by Shakespearean English without becoming unreadable. Favor lyrical turns of phrase, grand feeling, and stage-like rhythm, adapted naturally to the target language.",
     Noir: "Moody and mysterious. Use shadowy, understated, slightly cinematic wording with a cool, enigmatic edge. Keep it modern and readable, not cheesy detective parody.",
   };
