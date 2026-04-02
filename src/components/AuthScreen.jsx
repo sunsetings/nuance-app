@@ -7,7 +7,7 @@ const SIGNIN_CONTEXT = {
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
   tone: { title: "Create your free account", sub: "Quick sign up to unlock all 5 Free tones, save messages, and get 20 refines a day." },
-  cap: { title: "You've used today's refines", sub: "Sign up free for 20 refines a day." },
+  cap: { title: "You’ve used today’s 10 guest refines", sub: "Create a free account for 20 refines a day, 5 tones, and saved messages." },
   default: { title: "Welcome to tonara.", sub: "" },
 };
 
@@ -40,7 +40,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
       : "Sign in to your saved messages, tones, and account.";
   const benefitItems = context === "tone"
     ? [
-        { icon: "◈", text: "Quick sign up for access to all 5 Free tones, including Poetic, Gen A, and Flirty." },
+        { icon: "◈", text: "Quick sign up for access to all 5 free tones." },
         { icon: "◐", text: "Keep refining with 20 refines a day, saved messages, and one bookmarked language." },
       ]
     : [

@@ -293,7 +293,13 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
     }
     onSave();
   };
-  const saveLabel = userTier === "guest" ? "Create free account to save" : saved ? "Saved" : `Save${userTier === "free" ? ` (${saveCount}/${FREE_SAVE_LIMIT})` : ""}`;
+  const saveLabel = userTier === "guest"
+    ? "Create free account to save"
+    : saved
+      ? "Saved"
+      : userTier === "free" && saveCount >= FREE_SAVE_LIMIT
+        ? "Upgrade to save more"
+        : `Save${userTier === "free" ? ` (${saveCount}/${FREE_SAVE_LIMIT})` : ""}`;
   return (
     <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
       <button onClick={onShare} style={{
