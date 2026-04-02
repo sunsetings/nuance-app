@@ -158,6 +158,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
   const t = THEMES[theme] || THEMES.dark;
   const [checkoutError, setCheckoutError] = useState(null);
   const [loadingPlan, setLoadingPlan] = useState(null);
+  const isCurrentPro = userTier === "pro";
 
   const handleCheckout = async (plan) => {
     if (!user?.id) {
@@ -205,14 +206,19 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px", color: t.text }}>tonara.</span>
         </div>
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px", color: t.textMuted }}>Choose your plan</span>
+          <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px", color: t.textMuted }}>{isCurrentPro ? "Your Pro benefits" : "Choose your plan"}</span>
         </div>
 
         <div style={{ marginBottom: 18, paddingBottom: 16, borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
-          {[
-            "Avoid sounding awkward, rude, or off",
-            "More tones, more languages, more control",
-          ].map((line, i) => (
+          {(isCurrentPro
+            ? [
+                "You're already on Pro with everything unlocked below",
+                "More tones, more languages, more control",
+              ]
+            : [
+                "Avoid sounding awkward, rude, or off",
+                "More tones, more languages, more control",
+              ]).map((line, i) => (
             <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i === 0 ? 7 : 0 }}>
               <span style={{ color: theme === "light" ? "#2a6a2a" : "#78b86f", fontSize: 12, marginTop: 1, flexShrink: 0 }}>·</span>
               <span style={{ fontSize: 12, color: i === 0 ? t.textMuted : t.textDim, lineHeight: 1.6 }}>{line}</span>
@@ -252,40 +258,67 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
 
         <div style={{ height: 14 }} />
 
-        <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
-          Best for everyday use and important conversations
-        </div>
+        {isCurrentPro ? (
+          <div>
+            <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
+              Your account already has the full Pro set
+            </div>
+            <div style={{ background: t.highlight, border: `1px solid ${t.highlightBorder}`, borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+              {[
+                `${PRO_DAILY_CAP} refines a day`,
+                `All ${ALL_TONES.length} tones unlocked`,
+                "100 languages available",
+                `${PRO_BOOKMARK_LIMIT} bookmarked languages`,
+                `${PRO_SAVE_LIMIT} saved messages and ${PRO_SAVED_TONE_LIMIT} saved tones`,
+              ].map((line) => (
+                <div key={line} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: theme === "light" ? "#2a6a2a" : "#78b86f", fontSize: 12, marginTop: 1, flexShrink: 0 }}>·</span>
+                  <span style={{ fontSize: 12, color: t.highlightText, lineHeight: 1.6 }}>{line}</span>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => navigate("account")} style={{ width: "100%", padding: "12px 18px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 10, cursor: "pointer", fontFamily: "'Lora',Georgia,serif", color: t.textMuted, fontSize: 12 }}>
+              Manage subscription in Account
+            </button>
+          </div>
+        ) : (
+          <div>
+            <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
+              Best for everyday use and important conversations
+            </div>
 
-        {checkoutError && (
-          <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#e88", textAlign: "center" }}>
-            {checkoutError}
+            {checkoutError && (
+              <div style={{ background: "#2a0a0a", border: "1px solid #6a2020", borderRadius: 10, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#e88", textAlign: "center" }}>
+                {checkoutError}
+              </div>
+            )}
+
+            <div>
+              {[
+                { label: "Annual", plan: "yearly", price: "$29.99 / year", sub: "About $2.50 / mo — save 37%", highlight: true },
+                { label: "Monthly", plan: "monthly", price: "$3.99 / month", sub: null },
+              ].map(opt => (
+                <button key={opt.label} onClick={() => handleCheckout(opt.plan)} disabled={loadingPlan !== null} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: loadingPlan ? "default" : "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted, opacity: loadingPlan && loadingPlan !== opt.plan ? 0.55 : 1 }}>
+                  <div style={{ textAlign: "left" }}>
+                    <div style={{ fontSize: opt.highlight ? 13 : 12, fontWeight: "bold", letterSpacing: "-0.2px" }}>{opt.label}</div>
+                    {opt.sub && <div style={{ fontSize: 10, opacity: 0.75, marginTop: 1 }}>{opt.sub}</div>}
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: opt.highlight ? 14 : 12, fontWeight: opt.highlight ? "bold" : "normal" }}>
+                      {loadingPlan === opt.plan ? "Loading…" : opt.price}
+                    </div>
+                  </div>
+                </button>
+              ))}
+              <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: userTier === "guest" ? 12 : 0, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
+              {userTier === "guest" && (
+                <button onClick={() => navigate("signin_nav")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
+                  Sign up free instead
+                </button>
+              )}
+            </div>
           </div>
         )}
-
-        <div>
-          {[
-            { label: "Annual", plan: "yearly", price: "$29.99 / year", sub: "About $2.50 / mo — save 37%", highlight: true },
-            { label: "Monthly", plan: "monthly", price: "$3.99 / month", sub: null },
-          ].map(opt => (
-            <button key={opt.label} onClick={() => handleCheckout(opt.plan)} disabled={loadingPlan !== null} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: loadingPlan ? "default" : "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted, opacity: loadingPlan && loadingPlan !== opt.plan ? 0.55 : 1 }}>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: opt.highlight ? 13 : 12, fontWeight: "bold", letterSpacing: "-0.2px" }}>{opt.label}</div>
-                {opt.sub && <div style={{ fontSize: 10, opacity: 0.75, marginTop: 1 }}>{opt.sub}</div>}
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: opt.highlight ? 14 : 12, fontWeight: opt.highlight ? "bold" : "normal" }}>
-                  {loadingPlan === opt.plan ? "Loading…" : opt.price}
-                </div>
-              </div>
-            </button>
-          ))}
-          <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: userTier === "guest" ? 12 : 0, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
-          {userTier === "guest" && (
-            <button onClick={() => navigate("signin_nav")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
-              Sign up free instead
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
