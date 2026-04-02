@@ -343,8 +343,12 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         );
       })
     : availableDictationLanguages;
-  const freeDictationLanguages = filteredDictationLanguages.filter((lang) => !PRO_LANGUAGES.includes(lang));
-  const proDictationLanguages = filteredDictationLanguages.filter((lang) => PRO_LANGUAGES.includes(lang));
+  const freeDictationLanguages = filteredDictationLanguages
+    .filter((lang) => !PRO_LANGUAGES.includes(lang))
+    .sort((a, b) => a.localeCompare(b));
+  const proDictationLanguages = filteredDictationLanguages
+    .filter((lang) => PRO_LANGUAGES.includes(lang))
+    .sort((a, b) => a.localeCompare(b));
 
   const renderDictationLanguageButton = (lang) => {
     const active = dictationLang === lang;
