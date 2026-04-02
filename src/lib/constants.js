@@ -6,14 +6,14 @@ export const PRO_TONES = [
   "Empathetic", "Apologetic", "Enthusiastic", "Urgent",
   "Shakespearean", "Professional", "Motivational", "Humble",
   "Anger", "Royal", "Luxury", "Chaotic", "Iconic",
-  "Overexplaining", "Dad Joke",
+  "Overexplaining", "Dad Joke", "Rapper", "Tea",
   "Noir",
 ];
 export const ALL_TONES = [...FREE_TONES, ...PRO_TONES];
 export const DEFAULT_PRO_TONES = ["Luxury", "Poetic", "Diplomatic", "Empathetic"];
 export const MAX_SAME_TONE = 3;
 export const GUEST_DAILY_CAP = 10;
-export const FREE_DAILY_CAP = 30;
+export const FREE_DAILY_CAP = 20;
 export const PRO_DAILY_CAP = 500;
 export const PRO_SAVE_LIMIT = 50;
 export const PRO_SAVE_WARN = 45;
@@ -52,8 +52,8 @@ export const TONE_CATEGORIES = [
   { label: "Polished", tones: ["Polite", "Professional", "Diplomatic", "Succinct", "Assertive", "Luxury"] },
   { label: "Heartfelt", tones: ["Empathetic", "Sincere", "Apologetic", "Humble", "Motivational"] },
   { label: "Intense", tones: ["Serious", "Urgent", "Anger", "Noir"] },
-  { label: "Stylized", tones: ["Poetic", "Shakespearean", "Royal", "Iconic"] },
-  { label: "Character", tones: ["Chaotic", "Overexplaining", "Dad Joke", "Enthusiastic"] },
+  { label: "Stylized", tones: ["Poetic", "Rapper", "Shakespearean", "Royal", "Iconic"] },
+  { label: "Character", tones: ["Chaotic", "Tea", "Overexplaining", "Dad Joke", "Enthusiastic"] },
 ];
 
 export const TONE_DESCRIPTIONS = {
@@ -83,7 +83,9 @@ export const TONE_DESCRIPTIONS = {
   Overexplaining: "Needlessly detailed",
   "Dad Joke": "Corny and harmless",
   Poetic: "Lyrical and expressive",
+  Rapper: "Rhythmic, punchy, and bar-heavy",
   Flirty: "Playful and romantic",
+  Tea: "Chatty, juicy, and a little gossipy",
   Noir: "Moody and mysterious",
 };
 
