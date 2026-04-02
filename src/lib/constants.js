@@ -152,6 +152,12 @@ export const LANGUAGE_CODE_MAP = {
 };
 
 const LANGUAGE_DISPLAY_OVERRIDES = {
+  ru: {
+    [AUTO_DETECT_LANGUAGE]: "Определить язык",
+    "Chinese (Simplified)": "Китайский (упрощённый)",
+    "Chinese (Traditional)": "Китайский (традиционный)",
+    "Haitian Creole": "Гаитянский креольский",
+  },
   ar: {
     [AUTO_DETECT_LANGUAGE]: "اكتشاف اللغة",
     "Chinese (Simplified)": "الصينية (المبسطة)",
@@ -203,6 +209,39 @@ const LANGUAGE_DISPLAY_OVERRIDES = {
 };
 
 const TONE_NAME_TRANSLATIONS = {
+  ru: {
+    Friendly: "Дружелюбный",
+    Playful: "Игривый",
+    Poetic: "Поэтичный",
+    "Gen A": "Gen A",
+    Flirty: "Флиртующий",
+    Polite: "Вежливый",
+    Casual: "Непринуждённый",
+    Sincere: "Искренний",
+    Succinct: "Краткий",
+    Assertive: "Напористый",
+    Diplomatic: "Дипломатичный",
+    Empathetic: "Сочувствующий",
+    Apologetic: "Извиняющийся",
+    Warm: "Тёплый",
+    Enthusiastic: "Воодушевлённый",
+    Urgent: "Срочный",
+    Shakespearean: "Шекспировский",
+    Professional: "Профессиональный",
+    Motivational: "Мотивирующий",
+    Humble: "Скромный",
+    Anger: "Злой",
+    Royal: "Королевский",
+    Luxury: "Роскошный",
+    Chaotic: "Хаотичный",
+    Sarcastic: "Саркастичный",
+    Savage: "Жёсткий",
+    Overexplaining: "Слишком подробно объясняющий",
+    "Dad Joke": "Папина шутка",
+    Rapper: "Рэперский",
+    Tea: "Сплетничающий",
+    Noir: "Нуар",
+  },
   ar: {
     Friendly: "ودي",
     Playful: "مرح",
@@ -503,6 +542,14 @@ const TONE_NAME_TRANSLATIONS = {
 };
 
 const TONE_CATEGORY_TRANSLATIONS = {
+  ru: {
+    Everyday: "Повседневно",
+    Polished: "Отточенно",
+    Heartfelt: "С душой",
+    Intense: "Резко",
+    Stylized: "Стилизованно",
+    Character: "С характером",
+  },
   ar: {
     Everyday: "يومي",
     Polished: "مصقول",
@@ -578,6 +625,39 @@ const TONE_CATEGORY_TRANSLATIONS = {
 };
 
 const TONE_DESCRIPTION_TRANSLATIONS = {
+  ru: {
+    Polite: "Вежливо и уважительно",
+    Casual: "Легко и по-простому",
+    "Gen A": "Современно, по-интернетному",
+    Playful: "Легко и с юмором",
+    Friendly: "Тепло и дружелюбно",
+    Sincere: "Искренне и от души",
+    Warm: "Мягко, заботливо и тепло",
+    Succinct: "Очень кратко и по делу",
+    Assertive: "Прямо, твёрдо и без двусмысленности",
+    Diplomatic: "Тактично и взвешенно",
+    Empathetic: "С пониманием и заботой",
+    Apologetic: "Мягко и с извинением",
+    Enthusiastic: "Очень энергично и с огоньком",
+    Urgent: "Срочно, настойчиво и без промедления",
+    Shakespearean: "Театрально и по-шекспировски",
+    Professional: "Чисто и по-деловому",
+    Motivational: "Воодушевляюще и поддерживающе",
+    Humble: "Скромно и без пафоса",
+    Anger: "Резко, горячо и явно зло",
+    Royal: "Величаво и по-королевски",
+    Luxury: "Дорого, гладко и статусно",
+    Chaotic: "Безумно, рвано и неуправляемо",
+    Sarcastic: "Язвительно и с колкостью",
+    Savage: "Очень жёстко и беспощадно",
+    Overexplaining: "Чересчур подробно и с лишними пояснениями",
+    "Dad Joke": "Очень по-папиному и с корявым каламбуром",
+    Poetic: "Образно, красиво и почти как строка из стиха",
+    Rapper: "Ритмично, напористо и с рифмой",
+    Flirty: "Смело, игриво и с намёком",
+    Tea: "Очень болтливо, сочно и по-сплетнически",
+    Noir: "Мрачно, кинематографично и загадочно",
+  },
   ar: {
     Polite: "محترم ومراعٍ",
     Casual: "مرتاح ويومي",
