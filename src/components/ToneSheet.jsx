@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FREE_TONES, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, TONE_DESCRIPTIONS, getToneStatus } from "../lib/constants.js";
+import { FREE_TONES, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, getToneStatus, getLocalizedToneCategory, getLocalizedToneDescription, getLocalizedToneName } from "../lib/constants.js";
 import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
@@ -19,12 +19,24 @@ function SmallHeart({ size = 14, color, filled = false }) {
 export function ToneSheet({ visible, onClose, activeTone, userTier, favourites = [], onToggleFav, onSelectTone, navigate, theme, title = "Tones" }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const locale = copy.locale;
   const [search, setSearch] = useState("");
 
   if (!visible) return null;
 
   const statusFor = (tone) => getToneStatus(tone, userTier);
-  const filterTones = (tones) => (search ? tones.filter((tone) => tone.toLowerCase().includes(search.toLowerCase())) : tones);
+  const filterTones = (tones) => (
+    search
+      ? tones.filter((tone) => {
+          const needle = search.toLowerCase();
+          return (
+            tone.toLowerCase().includes(needle) ||
+            getLocalizedToneName(tone, locale).toLowerCase().includes(needle) ||
+            getLocalizedToneDescription(tone, locale).toLowerCase().includes(needle)
+          );
+        })
+      : tones
+  );
   const closeAll = () => {
     onClose();
     setSearch("");
@@ -70,7 +82,7 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
                 {favourites.map((tone) => (
                   <div key={tone} style={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <button onClick={() => handleTap(tone)} style={{ padding: "7px 13px", borderRadius: 20, border: `1.5px solid ${tone === activeTone ? t.accent : t.highlightBorder}`, background: tone === activeTone ? t.accent : "transparent", color: tone === activeTone ? t.accentText : t.highlightText, fontSize: 12, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-                      {tone}
+                      {getLocalizedToneName(tone, locale)}
                     </button>
                     <button onClick={() => onToggleFav?.(tone)} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 3px", display: "flex", alignItems: "center" }}>
                       <SmallHeart size={13} color={t.accent} filled />
@@ -85,8 +97,8 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
             const tones = filterTones(category.tones);
             if (!tones.length) return null;
             return (
-              <div key={category.label} style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 9 }}>{category.label}</div>
+                <div key={category.label} style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 9 }}>{getLocalizedToneCategory(category.label, locale)}</div>
                 {tones.map((tone) => {
                   const status = statusFor(tone);
                   const isFav = favourites.includes(tone);
@@ -97,12 +109,12 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
                     <div key={tone} onClick={() => handleTap(tone)} style={{ display: "flex", alignItems: "center", padding: "10px 12px", borderRadius: 11, background: isActive ? t.highlight : "transparent", cursor: "pointer", marginBottom: 2, transition: "background 0.15s" }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 2 }}>
-                          <span style={{ fontSize: 13, color: isActive ? t.highlightText : locked ? t.textDim : t.text }}>{tone}</span>
+                          <span style={{ fontSize: 13, color: isActive ? t.highlightText : locked ? t.textDim : t.text }}>{getLocalizedToneName(tone, locale)}</span>
                           {status === "free_locked" && <span style={{ background: t.freeTag, color: "#fff", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>FREE</span>}
                           {(status === "pro_locked" || (userTier === "pro" && isProTone)) && <span style={{ background: t.proTag, color: "#000", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>PRO</span>}
                           {isActive && <span style={{ fontSize: 10, color: t.accent }}>✓</span>}
                         </div>
-                        <div style={{ fontSize: 11, color: t.textDim }}>{TONE_DESCRIPTIONS[tone]}</div>
+                        <div style={{ fontSize: 11, color: t.textDim }}>{getLocalizedToneDescription(tone, locale)}</div>
                       </div>
                       {locked && <span style={{ fontSize: 11, color: t.textFaint, marginLeft: 8 }}>→</span>}
                       {userTier === "pro" && !locked && (

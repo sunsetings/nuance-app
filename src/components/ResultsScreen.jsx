@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection, getLanguageCode } from "../lib/constants.js";
+import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection, getLanguageCode, getLocalizedToneName } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
@@ -302,7 +302,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     2: copy.t("results.medium"),
     3: copy.t("results.strong"),
   };
-  const toneLabel = activeTone.toUpperCase();
+  const toneLabel = getLocalizedToneName(activeTone, copy.locale).toUpperCase();
   const refinedLabel = copy.t("results.refined", { tone: toneLabel, strength: strengthLabelMap[toneCount] || copy.t("results.light") });
   const sourceLangCode = getLanguageCode(source.fromLang || source.from_lang || "EN");
   const targetLangCode = getLanguageCode(toLang);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AUTO_DETECT_LANGUAGE, BASE_LANGUAGES, PRO_LANGUAGES, THEMES } from "../lib/constants.js";
+import { AUTO_DETECT_LANGUAGE, BASE_LANGUAGES, PRO_LANGUAGES, THEMES, getLocalizedLanguageName } from "../lib/constants.js";
 import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
@@ -32,6 +32,7 @@ export function LangSelector({
 }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const locale = copy.locale;
   const [search, setSearch] = useState("");
   const open = openId === myId;
   const isFrom = myId === "from";
@@ -47,7 +48,13 @@ export function LangSelector({
     : [...sortedBaseLanguages, ...sortedProLanguages];
 
   const filterList = (list) => (
-    search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
+    search
+      ? list.filter((item) => {
+          const needle = search.toLowerCase();
+          const localized = getLocalizedLanguageName(item, locale);
+          return item.toLowerCase().includes(needle) || localized.toLowerCase().includes(needle);
+        })
+      : list
   );
 
   const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
@@ -92,7 +99,7 @@ export function LangSelector({
           fontFamily: "'Lora',Georgia,serif",
         }}
       >
-        <span style={{ flex: 1, textAlign: isTo ? "right" : "left" }}>{value}</span>
+        <span style={{ flex: 1, textAlign: isTo ? "right" : "left" }}>{getLocalizedLanguageName(value, locale)}</span>
         {value !== AUTO_DETECT_LANGUAGE && visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
@@ -186,7 +193,7 @@ export function LangSelector({
                       }}
                     >
                       <SmallHeart size={10} color={t.proTag} filled />
-                      {lang}
+                      {getLocalizedLanguageName(lang, locale)}
                       {PRO_LANGUAGES.includes(lang) && (
                         <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
                           PRO
@@ -216,7 +223,7 @@ export function LangSelector({
                       }}
                       style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
                     >
-                      {lang}
+                      {getLocalizedLanguageName(lang, locale)}
                     </button>
                     {canBookmarkAny && (
                       <button
@@ -251,7 +258,7 @@ export function LangSelector({
                       }}
                       style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
                     >
-                      {lang}
+                      {getLocalizedLanguageName(lang, locale)}
                       {isProLanguage && (
                         <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
                           PRO
@@ -288,7 +295,7 @@ export function LangSelector({
                           }}
                           style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
                         >
-                          {lang}
+                          {getLocalizedLanguageName(lang, locale)}
                           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
                             PRO
                           </span>

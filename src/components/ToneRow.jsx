@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, GUEST_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES } from "../lib/constants.js";
+import { ALL_TONES, DEFAULT_PRO_TONES, FREE_TONES, GUEST_TONES, PRO_TONES, getToneStatus, MAX_SAME_TONE, THEMES, getLocalizedToneName } from "../lib/constants.js";
 import { createI18n } from "../lib/i18n.js";
 
 function SmallHeart({ size = 10, color, filled = false }) {
@@ -36,6 +36,7 @@ export function ToneRow({
   const activePillRef = useRef(null);
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const locale = copy.locale;
   const defaultPriorityTones = userTier === "pro"
     ? DEFAULT_PRO_TONES
     : userTier === "free"
@@ -114,7 +115,7 @@ export function ToneRow({
               const status = getToneStatus(pill.tone, userTier);
               const isFavourite = favourites.includes(pill.tone);
               const isActive = pill.tone === activeTone;
-              const label = pill.tone;
+              const label = getLocalizedToneName(pill.tone, locale);
               const showProBadge = PRO_TONES.includes(pill.tone);
               const heartRight = showProBadge ? 18 : 6;
               const borderColor = isActive ? t.accent : status !== "unlocked" ? t.border : t.border2;
