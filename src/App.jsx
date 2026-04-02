@@ -10,7 +10,7 @@ import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./componen
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
-import { createI18n } from "./lib/i18n.js";
+import { createI18n, UI_LOCALE_STORAGE_KEY, getLocalePreference } from "./lib/i18n.js";
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
@@ -28,7 +28,6 @@ function resolveTheme(preference) {
 }
 
 export default function App() {
-  const copy = createI18n();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [screen, setScreen] = useState("home");
@@ -37,6 +36,8 @@ export default function App() {
   const [isPremium, setIsPremium] = useState(false);
   const [themePreference, setThemePreference] = useState(() => localStorage.getItem(LS_THEME_PREFERENCE) || "system");
   const [theme, setTheme] = useState(() => resolveTheme(localStorage.getItem(LS_THEME_PREFERENCE) || "system"));
+  const [localePreference, setLocalePreference] = useState(() => getLocalePreference());
+  const copy = createI18n(localePreference === "device" ? undefined : localePreference);
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(() => getRefinesToday());
@@ -85,6 +86,15 @@ export default function App() {
     localStorage.setItem(LS_THEME_PREFERENCE, themePreference);
     setTheme(resolveTheme(themePreference));
   }, [themePreference]);
+
+  const applyLocalePreference = (nextPreference) => {
+    if (nextPreference === "device") {
+      localStorage.removeItem(UI_LOCALE_STORAGE_KEY);
+    } else {
+      localStorage.setItem(UI_LOCALE_STORAGE_KEY, nextPreference);
+    }
+    setLocalePreference(nextPreference);
+  };
 
   useEffect(() => {
     if (themePreference !== "system" || typeof window.matchMedia !== "function") return;
@@ -244,7 +254,7 @@ export default function App() {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} navContext={screenContext} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={{ ...(screenContext || {}), returnScreen: "account" }} />;
+      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} localePreference={localePreference} setLocalePreference={applyLocalePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={{ ...(screenContext || {}), returnScreen: "account" }} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} context={screenContext} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "cap": return <CapScreen {...props} />;

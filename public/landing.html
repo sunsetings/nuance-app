@@ -443,5 +443,346 @@
     <span>tonara. © 2026</span>
     <span><a href="/privacy" style="color:inherit;">Privacy Policy</a></span>
   </footer>
+  <script>
+    (() => {
+      const STORAGE_KEY = "tonara_ui_locale";
+      const resolveLocale = (value) => {
+        const raw = String(value || "").toLowerCase();
+        if (raw.startsWith("ko")) return "ko";
+        if (raw.startsWith("ja")) return "ja";
+        if (raw.startsWith("es")) return "es";
+        return "en";
+      };
+      const preference = localStorage.getItem(STORAGE_KEY);
+      const locale = preference && preference !== "device"
+        ? resolveLocale(preference)
+        : resolveLocale((navigator.languages && navigator.languages[0]) || navigator.language);
+
+      const translations = {
+        ko: {
+          title: "tonara. — 실제 대화에 더 나은 번역",
+          navCta: "무료로 시작하기",
+          heroTag: "✦ 톤 중심 번역",
+          heroHeadline: "실제 대화를 위한 <em>더 나은</em> 번역 앱",
+          heroSub: "tonara는 단순한 직역이 아니라 <strong>톤</strong>까지 맞춰, 메시지가 더 자연스럽고 상황에 맞게 들리도록 도와줍니다.",
+          heroSecondary: "실제로 보기",
+          note: "무료로 사용해 보기 · 신용카드 필요 없음",
+          mockupHeadline: "일, 관계, 그리고 해외 생활을 위해",
+          mockupSub: "실제 대화에서 tonara가 메시지를 더 잘 전달하도록 돕는 방식을 확인해 보세요.",
+          mockupLabels: ["업무", "관계", "해외 생활"],
+          results: "결과",
+          toneRows: [
+            ["정중하게", "친근하게", "단호하게", "+ 더 보기"],
+            ["따뜻하게", "진심 있게", "플러티하게", "+ 더 보기"],
+            ["정중하게", "명확하게", "친근하게", "+ 더 보기"],
+          ],
+          strength: "톤 강도",
+          strengthItems: ["약하게", "중간", "강하게"],
+          blockLabels: ["원문", "다듬음", "번역"],
+          mockupCta: "무료로 시작하기",
+          problemTag: "문제",
+          problemHeadline: "기본 번역 앱은 단어만 옮길 뿐, 메시지가 어떻게 들리는지는 잡아주지 못합니다",
+          problemBody: "같은 문장도 상대와 상황에 따라 무례하거나 차갑거나 어색하거나 지나치게 직설적으로 들릴 수 있습니다. tonara는 보내기 전에 그 말을 제대로 다듬도록 도와줍니다.",
+          exampleLabels: ["✗ 일반 번역", "✓ tonara 사용 — 정중하게", "✓ tonara 사용 — 친근하게"],
+          comparisonTitle: "왜 그냥 일반 번역 앱이 아니죠?",
+          comparisonSub: "실제 대화에는 문자 그대로의 한 버전만으로는 부족하기 때문입니다.",
+          comparisonTitles: ["일반 번역", "tonara"],
+          comparisonBullets: [
+            "문자 그대로의 한 가지 버전",
+            "기본 의미 전달에는 충분함",
+            "어색하거나 차갑거나 지나치게 직설적으로 들리기 쉬움",
+            "여러 톤 옵션",
+            "실제 대화에 더 적합함",
+            "메시지가 의도한 방식으로 들리도록 도와줌",
+          ],
+          comparisonFoot: "톤이 중요할 때, 단순한 직역보다 더 낫습니다.",
+          howTag: "사용 방법",
+          howHeadline: "더 나은 메시지를 위한 세 단계",
+          stepTitles: ["메시지 입력", "어떻게 들릴지 선택", "다듬고 번역"],
+          stepBodies: [
+            "먼저 내 언어로 자연스럽게 적어보세요. 아직 표현을 너무 고민할 필요는 없습니다.",
+            "상대와 상황에 맞는 톤을 고르세요. 친근하게, 정중하게, 단호하게, 플러티하게, Gen A 등 다양하게 선택할 수 있습니다.",
+            "tonara가 메시지를 알맞은 톤으로 다듬고 번역해, 실제로 보낼 때 더 자연스럽게 들리도록 해줍니다.",
+          ],
+          pricingTag: "요금제",
+          pricingHeadline: "무료로 시작하고, 더 많은 제어가 필요할 때 업그레이드하세요.",
+          planLabels: ["무료", "PRO"],
+          pricingSubs: ["일상적인 대화에 적합", "표현이 중요할 때 가장 적합"],
+          pricingBullets: [
+            "일상적인 메시지를 번역하고 다듬기",
+            "자주 쓰는 상황을 위한 톤 5가지",
+            "메시지 몇 개를 저장하고 언어 1개를 북마크하기",
+            "더 자연스럽고, 명확하고, 따뜻하고, 다듬어진 표현",
+            "중요한 대화에 더 적합함",
+            "더 많이 다듬고, 저장하고, 언어를 자유롭게 전환하기",
+          ],
+          pricingSpecs: [
+            "하루 20회 · 언어 14개",
+            "저장 메시지 3개 · 북마크 1개",
+            "톤 31개 · 하루 300회 · 언어 100개",
+            "저장 메시지 50개 · 북마크 10개",
+          ],
+          freePrice: "<span class=\"price-amount\">무료</span><br/>영구 제공",
+          proPrice: "<span class=\"price-amount\">$3.99</span> / 월<br/>또는 연 $29.99 — 월 약 $2.50, 37% 절약",
+          whoHeading: "이런 분들께",
+          whoSub: "단순히 번역되는 것이 아니라, 다른 언어에서도 제대로 들리고 싶은 사람들을 위해 만들었습니다.",
+          whoTitles: ["해외에 거주하는 사람", "다른 언어권과 연애하거나 관계를 맺는 사람", "비원어민 직장인"],
+          whoBodies: [
+            "집주인, 병원, 지역 고객센터와의 소통을 더 자연스럽게 처리하세요.",
+            "따뜻함과 배려, 그리고 알맞은 톤으로 말할 수 있도록 도와줍니다.",
+            "더 분명한 요청, 후속 메시지, 업무용 문장을 작성하세요.",
+          ],
+          finalHeadline: "다른 언어로도 더 잘 소통하세요",
+          finalSub: "보내기 전에 톤부터 맞춰보세요.",
+          finalCta: "무료로 시작하기",
+          privacy: "개인정보 처리방침",
+        },
+        ja: {
+          title: "tonara. — リアルな会話のための、もっといい翻訳",
+          navCta: "無料で試す",
+          heroTag: "✦ トーン重視の翻訳",
+          heroHeadline: "リアルな会話のための <em>より良い</em> 翻訳アプリ",
+          heroSub: "tonara はただの直訳ではなく、<strong>トーン</strong>まで整えて、メッセージがより自然で場面に合ったものになるようにします。",
+          heroSecondary: "動きを見る",
+          note: "無料で試せます · クレジットカード不要",
+          mockupHeadline: "仕事、関係、そして海外生活のために",
+          mockupSub: "リアルな会話で、tonara がメッセージの伝わり方をどう良くするかをご覧ください。",
+          mockupLabels: ["仕事", "関係", "海外生活"],
+          results: "結果",
+          toneRows: [
+            ["丁寧", "フレンドリー", "はっきり", "+ もっと見る"],
+            ["あたたかい", "誠実", "フラーティー", "+ もっと見る"],
+            ["丁寧", "明確", "フレンドリー", "+ もっと見る"],
+          ],
+          strength: "トーンの強さ",
+          strengthItems: ["弱め", "中間", "強め"],
+          blockLabels: ["原文", "リファイン", "翻訳"],
+          mockupCta: "無料で試す",
+          problemTag: "課題",
+          problemHeadline: "一般的な翻訳アプリは言葉は訳せても、どう伝わるかまでは整えてくれません",
+          problemBody: "同じ一文でも、相手や状況によって失礼、冷たい、不自然、あるいは強すぎる印象になることがあります。tonara は送る前に、その言い方を整えるのを助けます。",
+          exampleLabels: ["✗ 標準翻訳", "✓ tonara あり — 丁寧", "✓ tonara あり — フレンドリー"],
+          comparisonTitle: "なぜ普通の翻訳アプリでは足りないの？",
+          comparisonSub: "リアルな会話には、文字どおりの一つの訳だけでは足りないからです。",
+          comparisonTitles: ["標準翻訳", "tonara"],
+          comparisonBullets: [
+            "文字どおりの一つの訳",
+            "基本的な意味を伝えるには十分",
+            "不自然、冷たい、または強すぎる印象になりやすい",
+            "複数のトーンを選べる",
+            "リアルな会話に向いている",
+            "伝わり方をちょうどよく整えられる",
+          ],
+          comparisonFoot: "トーンが大事なとき、ただの直訳よりずっといい。",
+          howTag: "使い方",
+          howHeadline: "より良いメッセージのための 3 ステップ",
+          stepTitles: ["メッセージを書く", "どう伝わるかを選ぶ", "リファインして翻訳"],
+          stepBodies: [
+            "まずは自分の言葉で自然に書いてください。最初から言い回しを考えすぎなくて大丈夫です。",
+            "相手や状況に合うトーンを選びます。フレンドリー、丁寧、はっきり、フラーティー、Gen A などから選べます。",
+            "tonara がメッセージを適切なトーンに整えたうえで翻訳し、送るときにもっと自然に聞こえるようにします。",
+          ],
+          pricingTag: "料金",
+          pricingHeadline: "まずは無料で。もっとコントロールしたくなったらアップグレード。",
+          planLabels: ["無料", "PRO"],
+          pricingSubs: ["日常の会話にちょうどいい", "言い回しが大事なときに最適"],
+          pricingBullets: [
+            "日常メッセージの翻訳とリファイン",
+            "よくある場面向けの 5 つのトーン",
+            "少しのメッセージ保存と 1 言語のブックマーク",
+            "より自然で、明確で、あたたかく、洗練された言い方",
+            "大事な会話により向いている",
+            "もっと自由にリファイン、保存、言語切り替え",
+          ],
+          pricingSpecs: [
+            "1 日 20 回 · 14 言語",
+            "保存メッセージ 3 件 · ブックマーク 1 件",
+            "31 トーン · 1 日 300 回 · 100 言語",
+            "保存メッセージ 50 件 · ブックマーク 10 件",
+          ],
+          freePrice: "<span class=\"price-amount\">無料</span><br/>ずっと無料",
+          proPrice: "<span class=\"price-amount\">$3.99</span> / 月<br/>または年 $29.99 — 月あたり約 $2.50、37% お得",
+          whoHeading: "こんな人に",
+          whoSub: "ただ翻訳されるだけでなく、別の言語でもちゃんと伝わりたい人のために。",
+          whoTitles: ["海外で暮らしている人", "言語をまたいで恋愛・関係を築いている人", "非ネイティブの社会人"],
+          whoBodies: [
+            "家主、クリニック、地域のカスタマーサービスとのやり取りをもっと自然に。",
+            "あたたかさや思いやり、ちょうどいいトーンで伝えられます。",
+            "依頼、フォローアップ、仕事のメッセージをより明確に書けます。",
+          ],
+          finalHeadline: "別の言語でも、もっと伝わるコミュニケーションを",
+          finalSub: "送る前に、まずトーンを整えましょう。",
+          finalCta: "無料で試す",
+          privacy: "プライバシーポリシー",
+        },
+        es: {
+          title: "tonara. — una mejor traducción para conversaciones reales",
+          navCta: "Probar tonara gratis",
+          heroTag: "✦ Traducción centrada en el tono",
+          heroHeadline: "Una app de traducción <em>mejor</em> para conversaciones reales",
+          heroSub: "tonara te ayuda a acertar con el <strong>tono</strong>, no solo con una traducción literal, para que tus mensajes suenen más naturales y adecuados.",
+          heroSecondary: "Verlo en acción",
+          note: "Gratis para probar · No necesitas tarjeta",
+          mockupHeadline: "Para trabajo, relaciones y vivir en el extranjero",
+          mockupSub: "Mira cómo tonara ayuda a que los mensajes suenen mejor en conversaciones reales.",
+          mockupLabels: ["Trabajo", "Relaciones", "Vivir fuera"],
+          results: "Resultados",
+          toneRows: [
+            ["Cortés", "Amable", "Firme", "+ Más"],
+            ["Cálido", "Sincero", "Coqueto", "+ Más"],
+            ["Cortés", "Claro", "Amable", "+ Más"],
+          ],
+          strength: "Intensidad del tono",
+          strengthItems: ["Suave", "Media", "Fuerte"],
+          blockLabels: ["Original", "Refinado", "Traducido"],
+          mockupCta: "Probar tonara gratis",
+          problemTag: "El problema",
+          problemHeadline: "Las apps de traducción por defecto te dan las palabras, pero no cómo suena tu mensaje",
+          problemBody: "La misma frase puede sonar brusca, fría, rara o demasiado directa según la persona y la situación. tonara te ayuda a decirlo bien antes de enviarlo.",
+          exampleLabels: ["✗ Traducción estándar", "✓ Con tonara — Cortés", "✓ Con tonara — Amable"],
+          comparisonTitle: "¿Por qué no usar solo una app de traducción estándar?",
+          comparisonSub: "Porque las conversaciones reales necesitan más que una versión literal.",
+          comparisonTitles: ["Traducción estándar", "tonara"],
+          comparisonBullets: [
+            "Una sola versión literal",
+            "Sirve para el significado básico",
+            "Es fácil sonar raro, frío o demasiado directo",
+            "Múltiples opciones de tono",
+            "Mejor para conversaciones reales",
+            "Ayuda a que tu mensaje suene como quieres",
+          ],
+          comparisonFoot: "Mejor que una traducción literal cuando importa el tono.",
+          howTag: "Cómo funciona",
+          howHeadline: "Tres pasos para un mejor mensaje",
+          stepTitles: ["Escribe tu mensaje", "Elige cómo debería sonar", "Refina y traduce"],
+          stepBodies: [
+            "Escríbelo con naturalidad en tu propio idioma. No hace falta pensar demasiado en la redacción al principio.",
+            "Elige el tono que encaje con la persona y la situación: amable, cortés, firme, coqueto, Gen A y más.",
+            "tonara reescribe tu mensaje con el tono correcto y luego lo traduce para que suene mejor al enviarlo.",
+          ],
+          pricingTag: "Precios",
+          pricingHeadline: "Empieza gratis. Mejora cuando quieras tener más control.",
+          planLabels: ["GRATIS", "PRO"],
+          pricingSubs: ["Ideal para conversaciones cotidianas", "Mejor cuando importa cómo lo dices"],
+          pricingBullets: [
+            "Traducir y refinar mensajes del día a día",
+            "5 tonos para situaciones comunes",
+            "Guardar algunos mensajes y marcar un idioma",
+            "Más formas de sonar natural, claro, cálido o más pulido",
+            "Mejor para conversaciones importantes",
+            "Más espacio para refinar, guardar y cambiar idiomas libremente",
+          ],
+          pricingSpecs: [
+            "20 refinados/día · 14 idiomas",
+            "3 mensajes guardados · 1 marcador",
+            "31 tonos · 300 refinados/día · 100 idiomas",
+            "50 mensajes guardados · 10 marcadores",
+          ],
+          freePrice: "<span class=\"price-amount\">Gratis</span><br/>para siempre",
+          proPrice: "<span class=\"price-amount\">$3.99</span> / mes<br/>o $29.99 / año — aprox. $2.50/mes, ahorra 37%",
+          whoHeading: "Para quién es",
+          whoSub: "Para quienes quieren sonar bien en otro idioma, no solo traducidos.",
+          whoTitles: ["Personas que viven en el extranjero", "Personas que salen o tienen relaciones entre idiomas", "Profesionales no nativos"],
+          whoBodies: [
+            "Habla con caseros, clínicas y atención al cliente local de forma más natural.",
+            "Di las cosas con calidez, cuidado y el tono adecuado.",
+            "Escribe pedidos, seguimientos y mensajes de trabajo con más claridad.",
+          ],
+          finalHeadline: "Comunícate mejor en otro idioma",
+          finalSub: "Ajusta el tono antes de pulsar enviar.",
+          finalCta: "Probar tonara gratis",
+          privacy: "Política de privacidad",
+        },
+      };
+
+      const setText = (selector, value, index = 0) => {
+        const nodes = document.querySelectorAll(selector);
+        if (!nodes[index] || value == null) return;
+        nodes[index].textContent = value;
+      };
+      const setHTML = (selector, value, index = 0) => {
+        const nodes = document.querySelectorAll(selector);
+        if (!nodes[index] || value == null) return;
+        nodes[index].innerHTML = value;
+      };
+      const setAll = (selector, values) => {
+        const nodes = document.querySelectorAll(selector);
+        values.forEach((value, index) => {
+          if (nodes[index] && value != null) nodes[index].textContent = value;
+        });
+      };
+
+      const copy = translations[locale];
+      document.documentElement.lang = locale;
+      if (!copy) return;
+
+      document.title = copy.title;
+      setText(".nav-cta", copy.navCta);
+      setText(".hero-tag", copy.heroTag);
+      setHTML(".hero-headline", copy.heroHeadline);
+      setHTML(".hero-sub", copy.heroSub);
+      setText(".hero-actions .btn-primary", copy.navCta);
+      setText(".hero-actions .btn-ghost", copy.heroSecondary);
+      setText(".hero-note", copy.note);
+      setText(".mockup-headline", copy.mockupHeadline);
+      setText(".mockup-sub", copy.mockupSub);
+      setAll(".mockup-label", copy.mockupLabels);
+      setAll(".ps-results-title", [copy.results, copy.results, copy.results]);
+      document.querySelectorAll(".ps-tones").forEach((row, rowIndex) => {
+        const values = copy.toneRows[rowIndex] || [];
+        row.querySelectorAll(".ps-tone").forEach((pill, pillIndex) => {
+          if (values[pillIndex]) pill.textContent = values[pillIndex];
+        });
+      });
+      setAll(".ps-strength-label", [copy.strength, copy.strength, copy.strength]);
+      document.querySelectorAll(".ps-strength").forEach((row) => {
+        row.querySelectorAll(".ps-strength-item").forEach((item, index) => {
+          item.textContent = copy.strengthItems[index] || item.textContent;
+        });
+      });
+      document.querySelectorAll(".phone-screen").forEach((screen) => {
+        screen.querySelectorAll(".ps-meta-left").forEach((label, index) => {
+          const blockIndex = index % 3;
+          label.textContent = copy.blockLabels[blockIndex];
+        });
+      });
+      setText(".mockup-cta .btn-primary", copy.mockupCta);
+      setText(".mockup-cta-note", copy.note);
+      setText(".problem .section-tag", copy.problemTag);
+      setText(".problem-headline", copy.problemHeadline);
+      setText(".problem-body", copy.problemBody);
+      setAll(".example-label", copy.exampleLabels);
+      setText(".comparison-title", copy.comparisonTitle);
+      setText(".comparison-sub", copy.comparisonSub);
+      setAll(".comparison-col-title", copy.comparisonTitles);
+      setAll(".comparison-list li", copy.comparisonBullets);
+      setText(".comparison-foot", copy.comparisonFoot);
+      setText(".how .section-tag", copy.howTag);
+      setText(".how-headline", copy.howHeadline);
+      setAll(".step-title", copy.stepTitles);
+      setAll(".step-body", copy.stepBodies);
+      setText(".features .section-tag", copy.pricingTag);
+      setText(".features-headline", copy.pricingHeadline);
+      setAll(".compare-card-label", copy.planLabels);
+      setText(".compare .compare-card:nth-child(1) > div:nth-child(3)", copy.pricingSubs[0]);
+      setText(".compare .compare-card:nth-child(2) > div:nth-child(3)", copy.pricingSubs[1]);
+      setAll(".feature-list li", copy.pricingBullets);
+      setText(".compare .compare-card:nth-child(1) > div:nth-child(5)", copy.pricingSpecs[0]);
+      setText(".compare .compare-card:nth-child(1) > div:nth-child(6)", copy.pricingSpecs[1]);
+      setText(".compare .compare-card:nth-child(2) > div:nth-child(5)", copy.pricingSpecs[2]);
+      setText(".compare .compare-card:nth-child(2) > div:nth-child(6)", copy.pricingSpecs[3]);
+      setHTML(".compare .compare-card:nth-child(1) .price", copy.freePrice);
+      setHTML(".compare .compare-card:nth-child(2) .price", copy.proPrice);
+      setText(".who-heading", copy.whoHeading);
+      setText(".who-sub", copy.whoSub);
+      setAll(".who-card-title", copy.whoTitles);
+      setAll(".who-card-body", copy.whoBodies);
+      setText(".final-cta-headline", copy.finalHeadline);
+      setText(".final-cta-sub", copy.finalSub);
+      setText(".final-cta .btn-primary", copy.finalCta);
+      setText(".final-cta p:last-of-type", copy.note);
+      setText("footer a", copy.privacy);
+    })();
+  </script>
 </body>
 </html>

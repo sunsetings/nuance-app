@@ -1,3 +1,6 @@
+export const UI_LOCALE_STORAGE_KEY = "tonara_ui_locale";
+export const UI_LOCALE_OPTIONS = ["device", "en", "ko", "ja", "es"];
+
 const dictionaries = {
   en: {
     app: {
@@ -173,7 +176,7 @@ const dictionaries = {
       proPlan: "Pro plan",
       freePlan: "Free plan",
       proSubtitle: "More control for important conversations",
-      freeSubtitle: "Good for everyday messages",
+      freeSubtitle: "Good for everyday conversations",
       upgradeToPro: "Upgrade to Pro",
       subscription: "Subscription",
       changeBilling: "Change billing or cancel anytime.",
@@ -186,6 +189,7 @@ const dictionaries = {
       savedMessages: "Saved messages",
       savedTones: "Saved tones",
       proOnly: "Pro only",
+      perDay: "{count}/{cap} a day",
       all: "All {count}",
       ofTotal: "{count} of {total}",
       upTo: "Up to {count}",
@@ -193,6 +197,12 @@ const dictionaries = {
       system: "System",
       dark: "Dark",
       light: "Light",
+      language: "Language",
+      followDevice: "Follow device",
+      english: "English",
+      korean: "Korean",
+      japanese: "Japanese",
+      spanish: "Spanish",
       signOut: "Sign out",
     },
     upgrade: {
@@ -435,7 +445,7 @@ const dictionaries = {
       proPlan: "Pro 플랜",
       freePlan: "무료 플랜",
       proSubtitle: "중요한 대화에 더 많은 제어",
-      freeSubtitle: "일상적인 메시지에 적합",
+      freeSubtitle: "일상적인 대화에 적합",
       upgradeToPro: "Pro로 업그레이드",
       subscription: "구독",
       changeBilling: "언제든 결제 방식을 변경하거나 취소할 수 있어요.",
@@ -448,6 +458,7 @@ const dictionaries = {
       savedMessages: "저장한 메시지",
       savedTones: "저장한 톤",
       proOnly: "Pro 전용",
+      perDay: "하루 {cap}회 중 {count}회",
       all: "전체 {count}개",
       ofTotal: "{total}개 중 {count}개",
       upTo: "최대 {count}개",
@@ -455,6 +466,12 @@ const dictionaries = {
       system: "시스템",
       dark: "다크",
       light: "라이트",
+      language: "언어",
+      followDevice: "기기 설정 따르기",
+      english: "영어",
+      korean: "한국어",
+      japanese: "일본어",
+      spanish: "스페인어",
       signOut: "로그아웃",
     },
     upgrade: {
@@ -710,6 +727,7 @@ const dictionaries = {
       savedMessages: "保存したメッセージ",
       savedTones: "保存したトーン",
       proOnly: "Pro のみ",
+      perDay: "1日 {cap} 回中 {count} 回",
       all: "全 {count}",
       ofTotal: "{total} 中 {count}",
       upTo: "最大 {count}",
@@ -717,6 +735,12 @@ const dictionaries = {
       system: "システム",
       dark: "ダーク",
       light: "ライト",
+      language: "言語",
+      followDevice: "端末設定に合わせる",
+      english: "英語",
+      korean: "韓国語",
+      japanese: "日本語",
+      spanish: "スペイン語",
       signOut: "ログアウト",
     },
     upgrade: {
@@ -972,6 +996,7 @@ const dictionaries = {
       savedMessages: "Mensajes guardados",
       savedTones: "Tonos guardados",
       proOnly: "Solo Pro",
+      perDay: "{count} de {cap} al día",
       all: "Todos {count}",
       ofTotal: "{count} de {total}",
       upTo: "Hasta {count}",
@@ -979,6 +1004,12 @@ const dictionaries = {
       system: "Sistema",
       dark: "Oscuro",
       light: "Claro",
+      language: "Idioma",
+      followDevice: "Seguir el dispositivo",
+      english: "Inglés",
+      korean: "Coreano",
+      japanese: "Japonés",
+      spanish: "Español",
       signOut: "Cerrar sesión",
     },
     upgrade: {
@@ -1065,7 +1096,15 @@ export function resolveLocale(input) {
   return "en";
 }
 
+export function getLocalePreference() {
+  if (typeof localStorage === "undefined") return "device";
+  const stored = localStorage.getItem(UI_LOCALE_STORAGE_KEY);
+  return UI_LOCALE_OPTIONS.includes(stored) ? stored : "device";
+}
+
 export function getPreferredLocale() {
+  const preference = getLocalePreference();
+  if (preference !== "device") return resolveLocale(preference);
   if (typeof navigator === "undefined") return "en";
   const candidates = [...(navigator.languages || []), navigator.language].filter(Boolean);
   return resolveLocale(candidates[0]);

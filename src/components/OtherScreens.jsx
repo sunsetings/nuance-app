@@ -5,7 +5,7 @@ import { supabase } from "../lib/supabase.js";
 import { createI18n } from "../lib/i18n.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
-export function AccountScreen({ navigate, isPremium, userTier, theme, themePreference = "system", setTheme, user, savedItems, usageCount = 0, onLogout }) {
+export function AccountScreen({ navigate, isPremium, userTier, theme, themePreference = "system", setTheme, localePreference = "device", setLocalePreference, user, savedItems, usageCount = 0, onLogout }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   const savedCount = savedItems?.length || 0;
@@ -13,7 +13,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState(null);
   const planRows = [
-    { label: copy.t("account.messagesRefinedToday"), value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
+    { label: copy.t("account.messagesRefinedToday"), value: copy.t("account.perDay", { count: usageCount, cap: dailyRefineCap }), accent: true },
     { label: copy.t("account.tonesAvailable"), value: isPremium ? copy.t("account.all", { count: ALL_TONES.length }) : copy.t("account.ofTotal", { count: FREE_TONES.length, total: ALL_TONES.length }), accent: true },
     { label: copy.t("account.bookmarkedLanguages"), value: copy.t("account.upTo", { count: isPremium ? PRO_BOOKMARK_LIMIT : FREE_BOOKMARK_LIMIT }), accent: true },
     { label: copy.t("account.savedMessages"), value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
@@ -23,6 +23,13 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
     { id: "system", label: copy.t("account.system"), icon: "◐" },
     { id: "dark", label: copy.t("account.dark"), icon: "☾" },
     { id: "light", label: copy.t("account.light"), icon: "☀" },
+  ];
+  const languageOptions = [
+    { id: "device", label: copy.t("account.followDevice") },
+    { id: "en", label: copy.t("account.english") },
+    { id: "ko", label: copy.t("account.korean") },
+    { id: "ja", label: copy.t("account.japanese") },
+    { id: "es", label: copy.t("account.spanish") },
   ];
 
   const handleManagePlan = async () => {
@@ -125,6 +132,32 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
             {displayOptions.map(opt => (
               <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: themePreference === opt.id ? t.surface2 : "transparent", color: themePreference === opt.id ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: themePreference === opt.id ? "bold" : "normal", transition: "all 0.15s" }}>
                 {opt.icon} {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>{copy.t("account.language")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {languageOptions.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => setLocalePreference?.(opt.id)}
+                style={{
+                  padding: "8px 10px",
+                  borderRadius: 999,
+                  border: `1px solid ${localePreference === opt.id ? t.highlightBorder : t.border}`,
+                  background: localePreference === opt.id ? t.highlight : t.surface,
+                  color: localePreference === opt.id ? t.accent : t.textMuted,
+                  fontSize: 11,
+                  fontFamily: "'Lora',Georgia,serif",
+                  cursor: "pointer",
+                  fontWeight: localePreference === opt.id ? "bold" : "normal",
+                  transition: "all 0.15s",
+                }}
+              >
+                {opt.label}
               </button>
             ))}
           </div>
