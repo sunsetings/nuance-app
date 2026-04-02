@@ -53,10 +53,10 @@
     .ps-strength { display: flex; gap: 2px; padding: 2px; background: #efe9df; border: 1px solid #cdc6b9; border-radius: 11px; }
     .ps-strength-item { flex: 1; text-align: center; padding: 7px 0; font-size: 10px; color: #7b766b; border-radius: 9px; }
     .ps-strength-item.active { background: #e6dfd2; color: #2a281f; font-weight: 700; }
-    .ps-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #ddd6c9; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 6px; }
-    .ps-nav-item { font-size: 7px; color: #7e7a70; letter-spacing: 0.1em; text-transform: uppercase; }
-    .ps-nav-icon { display: block; font-size: 12px; margin-bottom: 3px; color: #7e7a70; }
-    .ps-nav-item.active, .ps-nav-item.active .ps-nav-icon { color: var(--green-text); }
+    .ps-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(221,214,201,0.8); display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 6px; opacity: 0.52; }
+    .ps-nav-item { font-size: 7px; color: #8a8478; letter-spacing: 0.1em; text-transform: uppercase; }
+    .ps-nav-icon { display: block; font-size: 12px; margin-bottom: 3px; color: #8a8478; }
+    .ps-nav-item.active, .ps-nav-item.active .ps-nav-icon { color: #5f8e57; }
     .ps-results-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 2px; }
     .ps-results-left { display: flex; align-items: center; gap: 8px; }
     .ps-back { color: #6a655a; font-size: 16px; }
@@ -71,9 +71,19 @@
     .ps-meta-right { display: flex; gap: 8px; align-items: center; font-size: 8px; color: #8a857a; }
     .ps-original { padding: 0 0 0 12px; border-left: 2px solid #cfc8bd; color: #49443b; font-size: 10px; line-height: 1.72; }
     .ps-result-bubble { padding: 14px 16px; background: #dcefd7; border: 1px solid #a7c79c; border-radius: 14px; color: #2f5d2b; font-size: 10px; line-height: 1.72; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45); }
-    .ps-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .ps-actions { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
     .ps-action-btn { border: 1px solid #d2cbbf; border-radius: 12px; padding: 10px 0; text-align: center; color: #615b4f; background: #faf6ef; font-size: 11px; }
     .ps-action-btn.saved { background: #faf6ef; border-color: #d2cbbf; color: #615b4f; font-weight: 600; }
+    .mockup-cta { padding: 0 24px 72px; text-align: center; }
+    .mockup-cta .btn-primary { min-width: 220px; }
+    .mockup-cta-note { margin-top: 14px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+    .mockup-cta-link { display: inline-block; margin-top: 12px; font-size: 14px; color: var(--green-text); text-decoration: none; }
+    .who-strip { padding: 0 24px 88px; }
+    .who-inner { max-width: 920px; margin: 0 auto; text-align: center; }
+    .who-heading { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 12px; color: var(--text); }
+    .who-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+    .who-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .who-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; font-size: 15px; color: var(--muted); line-height: 1.5; }
     section { position: relative; z-index: 1; }
     .section-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
     .section-tag { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
@@ -91,6 +101,19 @@
     .example-label.good { color: var(--green-text); }
     .example-text { font-size: 14px; color: var(--muted); line-height: 1.6; font-style: italic; margin-bottom: 8px; }
     .example-translation { font-size: 12px; color: var(--faint); line-height: 1.65; }
+    .comparison-strip { padding: 0 24px 100px; }
+    .comparison-wrap { max-width: 920px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 34px 32px 28px; }
+    .comparison-head { text-align: center; margin-bottom: 26px; }
+    .comparison-title { font-size: clamp(24px, 4vw, 38px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 10px; color: var(--text); }
+    .comparison-sub { font-size: 15px; color: var(--muted); line-height: 1.7; }
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .comparison-col { border-radius: 18px; padding: 22px 22px 18px; border: 1px solid var(--border); background: #f8f4ee; }
+    .comparison-col.tonara { background: #edf6e7; border-color: var(--highlight-border); }
+    .comparison-col-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+    .comparison-col.tonara .comparison-col-title { color: var(--green-text); }
+    .comparison-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .comparison-list li { font-size: 14px; color: var(--muted); line-height: 1.55; }
+    .comparison-foot { margin-top: 18px; text-align: center; font-size: 13px; color: var(--dim); font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
     .how { padding: 100px 24px; border-top: 1px solid var(--border); text-align: center; }
     .how-headline { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 56px; color: var(--text); }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 860px; margin: 0 auto; position: relative; }
@@ -115,6 +138,12 @@
     .compare-card.pro .price { border-color: var(--highlight-border); color: var(--muted); }
     .price-amount { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
     .compare-card.pro .price-amount { color: var(--green-text); }
+    .trust-strip { padding: 0 24px 100px; border-top: 1px solid var(--border); }
+    .trust-wrap { max-width: 860px; margin: 0 auto; text-align: center; padding-top: 72px; }
+    .trust-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 12px; color: var(--text); }
+    .trust-sub { font-size: 15px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto 24px; }
+    .trust-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .trust-tag { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--dim); font-size: 12px; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
     .mic-inline { display: inline-flex; width: 14px; height: 14px; vertical-align: -2px; margin-left: 4px; }
     .mic-inline svg { display: block; }
     .final-cta { padding: 120px 24px; border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
@@ -130,12 +159,15 @@
       .steps { grid-template-columns: 1fr; }
       .steps::before { display: none; }
       .compare { grid-template-columns: 1fr; }
+      .who-grid { grid-template-columns: 1fr; }
+      .comparison-grid { grid-template-columns: 1fr; }
       .mockup-section { padding-left: 0; padding-right: 0; }
       .mockup-stage { width: 100%; }
       .mockup-copy { padding: 0 24px; }
       .mockup-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; padding: 0 24px 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
       .mockup-grid::-webkit-scrollbar { display: none; }
       .mockup-card { min-width: 296px; scroll-snap-align: center; }
+      .comparison-wrap { padding: 28px 22px 22px; }
       footer { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
@@ -216,7 +248,6 @@
               </div>
               <div class="ps-actions">
                 <div class="ps-action-btn">↗ Share</div>
-                <div class="ps-action-btn saved">♥ Saved</div>
               </div>
               <div class="ps-bottom">
                 <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
@@ -279,7 +310,6 @@
               </div>
               <div class="ps-actions">
                 <div class="ps-action-btn">↗ Share</div>
-                <div class="ps-action-btn saved">♥ Saved</div>
               </div>
               <div class="ps-bottom">
                 <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
@@ -342,7 +372,6 @@
               </div>
               <div class="ps-actions">
                 <div class="ps-action-btn">↗ Share</div>
-                <div class="ps-action-btn saved">♥ Saved</div>
               </div>
               <div class="ps-bottom">
                 <div class="ps-nav-item"><span class="ps-nav-icon">⌂</span>Home</div>
@@ -355,6 +384,22 @@
       </div>
     </div>
   </div>
+  <section class="mockup-cta">
+    <a class="btn-primary" href="/app">Try tonara free</a>
+    <p class="mockup-cta-note">Free to try · No credit card needed</p>
+    <a class="mockup-cta-link" href="#pricing">See pricing</a>
+  </section>
+  <section class="who-strip">
+    <div class="who-inner">
+      <h2 class="who-heading">Who it’s for</h2>
+      <p class="who-sub">Built for people communicating with real people in another language.</p>
+      <div class="who-grid">
+        <div class="who-card">People living abroad</div>
+        <div class="who-card">People dating or in relationships across languages</div>
+        <div class="who-card">Non-native professionals</div>
+      </div>
+    </div>
+  </section>
   <section class="problem">
     <div class="problem-grid">
       <div>
@@ -379,6 +424,33 @@
           <div class="example-translation">嗨，我的订单收到时有损坏。你可以帮我处理一下退款吗？</div>
         </div>
       </div>
+    </div>
+  </section>
+  <section class="comparison-strip">
+    <div class="comparison-wrap">
+      <div class="comparison-head">
+        <h2 class="comparison-title">Why not just a standard translation app?</h2>
+        <p class="comparison-sub">Because real conversations need more than one literal version.</p>
+      </div>
+      <div class="comparison-grid">
+        <div class="comparison-col">
+          <div class="comparison-col-title">Standard translation</div>
+          <ul class="comparison-list">
+            <li>One literal version</li>
+            <li>Good for basic meaning</li>
+            <li>Easy to sound awkward, cold, or too direct</li>
+          </ul>
+        </div>
+        <div class="comparison-col tonara">
+          <div class="comparison-col-title">tonara</div>
+          <ul class="comparison-list">
+            <li>Multiple tone options</li>
+            <li>Better for real conversations</li>
+            <li>Helps your message come across the right way</li>
+          </ul>
+        </div>
+      </div>
+      <div class="comparison-foot">Better than literal translation when how you sound matters.</div>
     </div>
   </section>
   <section class="how" id="how">
@@ -410,7 +482,7 @@
       </div>
     </div>
   </section>
-  <section class="features">
+  <section class="features" id="pricing">
     <div class="section-inner">
       <div class="section-tag" style="text-align:center">Pricing</div>
       <h2 class="features-headline">Start free. Upgrade for more control.</h2>
@@ -439,6 +511,19 @@
           <div style="margin-top:16px;font-size:12px;color:var(--faint);line-height:1.6;">31 tones · 300 refines/day · 100 languages · 50 saved messages · 10 bookmarks</div>
           <div class="price"><span class="price-amount">$3.99</span> / month<br/>or $29.99 / year — about $2.50/mo, save 37%</div>
         </div>
+      </div>
+    </div>
+  </section>
+  <section class="trust-strip">
+    <div class="trust-wrap">
+      <h2 class="trust-title">Made for real conversations across languages</h2>
+      <p class="trust-sub">Use tonara for work, relationships, and daily life when literal translation isn’t enough.</p>
+      <div class="trust-tags">
+        <span class="trust-tag">Work</span>
+        <span class="trust-tag">Relationships</span>
+        <span class="trust-tag">Living abroad</span>
+        <span class="trust-tag">Customer service</span>
+        <span class="trust-tag">Appointments</span>
       </div>
     </div>
   </section>
