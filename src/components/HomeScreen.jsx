@@ -200,7 +200,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
               {bookmarked.length}/{bookmarkLimit} bookmarked
               {userTier === "free" && bookmarked.length >= bookmarkLimit && (
                 <span style={{ color: t.proTag }}>
-                  {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 6</span>
+                  {" "}· <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => navigate("upgrade")}>Pro = 10</span>
                 </span>
               )}
             </span>
