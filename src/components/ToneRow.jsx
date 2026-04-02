@@ -74,10 +74,11 @@ export function ToneRow({
         ...contextualTones.filter((tone) => !priorityTonesOverride.includes(tone)),
       ]
     : contextualTones;
+  const maxResultsRowTones = favourites.length >= 5 ? 6 : 5;
   const limitedResultsRowTones = (() => {
     const next = [];
     const add = (tone) => {
-      if (!tone || next.includes(tone) || next.length >= 4) return;
+      if (!tone || next.includes(tone) || next.length >= maxResultsRowTones) return;
       next.push(tone);
     };
 
