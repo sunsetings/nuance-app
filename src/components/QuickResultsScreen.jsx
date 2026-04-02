@@ -2,11 +2,12 @@ import { useState } from "react";
 import { THEMES, getLanguageCode } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
 
@@ -92,7 +93,8 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column", minHeight: "100%",
       boxSizing: "border-box",
-    }}>
+      direction: isRTL ? "rtl" : "ltr",
+    }} dir={isRTL ? "rtl" : "ltr"}>
       <Toast message={toastMessage} visible={toastVisible} theme={theme} />
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
@@ -117,7 +119,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
               }
               style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}
             >
-              ←
+              {isRTL ? "→" : "←"}
             </button>
             <span style={{ fontSize: 15, fontWeight: "bold" }}>{copy.t("quickResults.title")}</span>
             {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>{copy.t("quickResults.fromSaved")}</span>}
@@ -139,7 +141,8 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
           labelColor: t.textFaint,
           contentStyle: {
             padding: "0 20px 4px 20px",
-            borderLeft: `2px solid ${t.border}`,
+            borderLeft: isRTL ? "none" : `2px solid ${t.border}`,
+            borderRight: isRTL ? `2px solid ${t.border}` : "none",
             color: t.textDim,
             fontSize: 12,
             lineHeight: 1.72,

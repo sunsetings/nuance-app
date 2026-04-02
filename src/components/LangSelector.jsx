@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AUTO_DETECT_LANGUAGE, BASE_LANGUAGES, PRO_LANGUAGES, THEMES, getLocalizedLanguageName } from "../lib/constants.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -33,6 +33,7 @@ export function LangSelector({
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   const locale = copy.locale;
+  const isRTL = isRTLLocale(locale);
   const [search, setSearch] = useState("");
   const open = openId === myId;
   const isFrom = myId === "from";
@@ -99,14 +100,14 @@ export function LangSelector({
           fontFamily: "'Lora',Georgia,serif",
         }}
       >
-        <span style={{ flex: 1, textAlign: isTo ? "right" : "left", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{getLocalizedLanguageName(value, locale)}</span>
+        <span style={{ flex: 1, textAlign: isTo ? (isRTL ? "left" : "right") : (isRTL ? "right" : "left"), minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{getLocalizedLanguageName(value, locale)}</span>
         {value !== AUTO_DETECT_LANGUAGE && visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
             PRO
           </span>
         )}
-        <span style={{ color: t.textFaint, fontSize: 10, marginLeft: 2 }}>{open ? "▴" : "▾"}</span>
+        <span style={{ color: t.textFaint, fontSize: 10, marginInlineStart: 2 }}>{open ? "▴" : "▾"}</span>
       </button>
 
       {open && (
@@ -114,8 +115,8 @@ export function LangSelector({
           style={{
             position: "absolute",
             top: "calc(100% + 12px)",
-            left: isTo ? "auto" : "-14px",
-            right: isTo ? "-14px" : "auto",
+            left: isRTL ? (isTo ? "-14px" : "auto") : (isTo ? "auto" : "-14px"),
+            right: isRTL ? (isTo ? "auto" : "-14px") : (isTo ? "-14px" : "auto"),
             width: 262,
             maxWidth: "calc(100vw - 40px)",
             background: theme === "light" ? "#faf6ee" : "#1a1a1a",
@@ -123,7 +124,9 @@ export function LangSelector({
             zIndex: 400,
             overflow: "hidden",
             boxShadow: theme === "light" ? "0 8px 32px rgba(0,0,0,0.1)" : "0 12px 40px rgba(0,0,0,0.7)",
+            direction: isRTL ? "rtl" : "ltr",
           }}
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <div style={{ padding: "10px 12px 8px" }}>
             <input
@@ -186,7 +189,7 @@ export function LangSelector({
                         color: lang === value ? t.accent : t.textMuted,
                         fontSize: 12.5,
                         cursor: "pointer",
-                        textAlign: "left",
+                        textAlign: isRTL ? "right" : "left",
                         display: "flex",
                         alignItems: "center",
                         gap: 6,
@@ -222,7 +225,7 @@ export function LangSelector({
                         onChange(lang);
                         handleClose();
                       }}
-                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 12.5, cursor: "pointer", textAlign: isRTL ? "right" : "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
                     >
                       {getLocalizedLanguageName(lang, locale)}
                     </button>
@@ -257,7 +260,7 @@ export function LangSelector({
                         onChange(lang);
                         handleClose();
                       }}
-                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: isRTL ? "right" : "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
                     >
                       {getLocalizedLanguageName(lang, locale)}
                       {isProLanguage && (
@@ -294,7 +297,7 @@ export function LangSelector({
                           onClick={() => {
                             navigate("upgrade");
                           }}
-                          style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
+                          style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: isRTL ? "right" : "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
                         >
                           {getLocalizedLanguageName(lang, locale)}
                           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>

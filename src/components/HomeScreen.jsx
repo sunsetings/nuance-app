@@ -4,7 +4,7 @@ import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
@@ -40,6 +40,7 @@ function getDefaultHomeTone(userTier) {
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const bookmarkLimit = getBookmarkLimitForTier(userTier);
 
   // Load last-used languages from localStorage, fall back to defaults
@@ -165,7 +166,8 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       padding: "12px 20px 8px", fontFamily: "'Lora',Georgia,serif",
       color: t.text, display: "flex", flexDirection: "column",
       height: "100%", boxSizing: "border-box", background: t.phoneBg,
-    }}>
+      direction: isRTL ? "rtl" : "ltr",
+    }} dir={isRTL ? "rtl" : "ltr"}>
       <ToneSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
@@ -248,7 +250,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
             <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>{copy.t("home.tone")}</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", textAlign: "right", lineHeight: 1.2, maxWidth: "46%" }}>{copy.t("home.pickHow")}</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", textAlign: isRTL ? "left" : "right", lineHeight: 1.2, maxWidth: "46%" }}>{copy.t("home.pickHow")}</div>
           </div>
           <ToneRow
             activeTone={tone} toneCount={toneCount}

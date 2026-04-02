@@ -10,7 +10,7 @@ import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./componen
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
-import { createI18n, UI_LOCALE_STORAGE_KEY, getLocalePreference } from "./lib/i18n.js";
+import { createI18n, UI_LOCALE_STORAGE_KEY, getLocalePreference, isRTLLocale } from "./lib/i18n.js";
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
@@ -38,6 +38,7 @@ export default function App() {
   const [theme, setTheme] = useState(() => resolveTheme(localStorage.getItem(LS_THEME_PREFERENCE) || "system"));
   const [localePreference, setLocalePreference] = useState(() => getLocalePreference());
   const copy = createI18n(localePreference === "device" ? undefined : localePreference);
+  const isRTL = isRTLLocale(copy.locale);
   const [openedSavedItem, setOpenedSavedItem] = useState(null);
   const [translationData, setTranslationData] = useState(null);
   const [usageCount, setUsageCount] = useState(() => getRefinesToday());
@@ -104,6 +105,13 @@ export default function App() {
     mediaQuery.addEventListener?.("change", handleChange);
     return () => mediaQuery.removeEventListener?.("change", handleChange);
   }, [themePreference]);
+
+  useEffect(() => {
+    const dir = isRTL ? "rtl" : "ltr";
+    document.documentElement.lang = copy.locale;
+    document.documentElement.dir = dir;
+    document.body.dir = dir;
+  }, [copy.locale, isRTL]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -283,7 +291,8 @@ export default function App() {
         display: "flex", flexDirection: "column",
         position: "relative",
         overflow: "hidden",
-      }}>
+        direction: isRTL ? "rtl" : "ltr",
+      }} dir={isRTL ? "rtl" : "ltr"}>
         <Toast message={toastMessage} visible={toastVisible} theme={theme} />
         {isTranslating && (
           <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -307,7 +316,8 @@ export default function App() {
       display: "flex", alignItems: "center", justifyContent: "center",
       gap: 48, padding: 40, fontFamily: "'Lora',Georgia,serif",
       transition: "background 0.3s",
-    }}>
+      direction: isRTL ? "rtl" : "ltr",
+    }} dir={isRTL ? "rtl" : "ltr"}>
       {isTranslating && (
         <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ background: theme === "light" ? "#faf8f3" : "#1c1c1c", borderRadius: 20, padding: "28px 40px", textAlign: "center", border: `1px solid ${t.border2}` }}>
@@ -322,7 +332,7 @@ export default function App() {
         {screenContent}
       </PhoneFrame>
 
-      <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256 }}>
+      <div style={{ color: theme === "light" ? "#1a1a0a" : "#f5f1e8", maxWidth: 256, textAlign: isRTL ? "right" : "left" }}>
         <div style={{ fontSize: 11, color: t.textDim, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>{copy.t("app.interactivePreview")}</div>
         <div style={{ fontSize: 24, fontWeight: "bold", marginBottom: 3 }}>tonara.</div>
         <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4, lineHeight: 1.6 }}>✓ {copy.t("app.aiRunsServerSide")}</div>
@@ -332,10 +342,11 @@ export default function App() {
             <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>{copy.t("app.screens")}</div>
             {Object.entries(copy.t("app.screenLabels")).map(([id, label]) => (
               <button key={id} onClick={() => navigate(id)} style={{
-                display: "block", width: "100%", textAlign: "left", padding: "7px 11px", marginBottom: 3,
+                display: "block", width: "100%", textAlign: isRTL ? "right" : "left", padding: "7px 11px", marginBottom: 3,
                 background: screen === id ? (theme === "light" ? "#e0dcd2" : "#181818") : "transparent",
                 border: `1px solid ${screen === id ? (theme === "light" ? "#ccc" : t.border) : "transparent"}`,
-                borderLeft: `2px solid ${screen === id ? t.accent : "transparent"}`,
+                borderLeft: isRTL ? "2px solid transparent" : `2px solid ${screen === id ? t.accent : "transparent"}`,
+                borderRight: isRTL ? `2px solid ${screen === id ? t.accent : "transparent"}` : "2px solid transparent",
                 borderRadius: 7, color: screen === id ? (theme === "light" ? "#1a1a0a" : "#f5f1e8") : t.textDim,
                 fontSize: 12, cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
               }}>{label}</button>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
 
@@ -26,6 +26,7 @@ const POST_AUTH_ROUTE = {
 export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const [mode, setMode] = useState("signup"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -135,14 +136,15 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
       color: t.text, background: t.phoneBg,
       display: "flex", flexDirection: "column",
       minHeight: "100%", boxSizing: "border-box",
-    }}>
+      direction: isRTL ? "rtl" : "ltr",
+    }} dir={isRTL ? "rtl" : "ltr"}>
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24, marginTop: 6, height: 36 }}>
-          <button onClick={() => navigate?.("__back")} style={{ position: "absolute", left: 0, background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>←</button>
+          <button onClick={() => navigate?.("__back")} style={{ position: "absolute", left: isRTL ? "auto" : 0, right: isRTL ? 0 : "auto", background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>{isRTL ? "→" : "←"}</button>
           <span style={{ fontSize: 24, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
         </div>
 
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
           <div style={{ fontSize: 17, fontWeight: "bold", marginBottom: 7, letterSpacing: "-0.2px" }}>
             {displayTitle}
           </div>
@@ -156,7 +158,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
             {benefitItems.map((item, index, arr) => (
               <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
                 <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
-                <span style={{ fontSize: 12, color: t.textMuted }}>{item.text}</span>
+                <span style={{ fontSize: 12, color: t.textMuted, textAlign: isRTL ? "right" : "left" }}>{item.text}</span>
               </div>
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FREE_TONES, PRO_SAVED_TONE_LIMIT, THEMES, TONE_CATEGORIES, getToneStatus, getLocalizedToneCategory, getLocalizedToneDescription, getLocalizedToneName } from "../lib/constants.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 function SmallHeart({ size = 14, color, filled = false }) {
   return (
@@ -20,6 +20,7 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   const locale = copy.locale;
+  const isRTL = isRTLLocale(locale);
   const [search, setSearch] = useState("");
 
   if (!visible) return null;
@@ -56,12 +57,12 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
   return (
     <div style={{ position: "absolute", inset: 0, zIndex: 600, display: "flex", flexDirection: "column", justifyContent: "flex-end" }} onClick={closeAll}>
       <div style={{ background: "rgba(0,0,0,0.6)", position: "absolute", inset: 0 }} />
-      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: theme === "light" ? "#f6f2ea" : "#161616", borderRadius: "22px 22px 0 0", maxHeight: "76vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: theme === "light" ? "#f6f2ea" : "#161616", borderRadius: "22px 22px 0 0", maxHeight: "76vh", display: "flex", flexDirection: "column", overflow: "hidden", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
         <div style={{ padding: "14px 18px 0", flexShrink: 0 }}>
           <div style={{ width: 30, height: 3, background: t.border2, borderRadius: 2, margin: "0 auto 14px" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <button onClick={closeAll} style={{ background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, padding: 0, fontFamily: "'Lora',Georgia,serif" }}>
-              <span style={{ fontSize: 16, lineHeight: 1 }}>←</span>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>{isRTL ? "→" : "←"}</span>
               <span style={{ fontSize: 12, letterSpacing: "0.02em" }}>{copy.t("toneSheet.back")}</span>
             </button>
             <span style={{ fontSize: 15, fontWeight: "bold", color: t.text, letterSpacing: "-0.2px" }}>{title}</span>
@@ -116,9 +117,9 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
                         </div>
                         <div style={{ fontSize: 11, color: t.textDim }}>{getLocalizedToneDescription(tone, locale)}</div>
                       </div>
-                      {locked && <span style={{ fontSize: 11, color: t.textFaint, marginLeft: 8 }}>→</span>}
+                      {locked && <span style={{ fontSize: 11, color: t.textFaint, marginInlineStart: 8 }}>{isRTL ? "←" : "→"}</span>}
                       {userTier === "pro" && !locked && (
-                        <button onClick={(e) => { e.stopPropagation(); onToggleFav?.(tone); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 4px", marginLeft: 6, display: "flex", alignItems: "center" }}>
+                        <button onClick={(e) => { e.stopPropagation(); onToggleFav?.(tone); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 4px", marginInlineStart: 6, display: "flex", alignItems: "center" }}>
                           <SmallHeart size={14} color={isFav ? t.accent : t.textDim} filled={isFav} />
                         </button>
                       )}

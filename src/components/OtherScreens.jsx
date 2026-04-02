@@ -2,12 +2,13 @@ import { useState } from "react";
 import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, FREE_TONES, GUEST_TONES, PRO_BOOKMARK_LIMIT, PRO_DAILY_CAP, PRO_SAVE_LIMIT, PRO_SAVED_TONE_LIMIT, THEMES, parseToneSelection } from "../lib/constants.js";
 import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, userTier, theme, themePreference = "system", setTheme, localePreference = "device", setLocalePreference, user, savedItems, usageCount = 0, onLogout }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const savedCount = savedItems?.length || 0;
   const dailyRefineCap = isPremium ? PRO_DAILY_CAP : FREE_DAILY_CAP;
   const [portalLoading, setPortalLoading] = useState(false);
@@ -75,10 +76,10 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
   };
 
   return (
-    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22, marginTop: 4 }}>
-          <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
+          <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>{isRTL ? "→" : "←"}</button>
           <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px" }}>{copy.t("account.title")}</span>
         </div>
 
@@ -127,7 +128,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
         {planRows.map((item, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, padding: "10px 0", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
             <span style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.35, minWidth: 0, flex: 1 }}>{item.label}</span>
-            <span style={{ fontSize: 12, color: item.accent ? t.accent : t.textFaint, fontWeight: item.accent ? "bold" : "normal", lineHeight: 1.35, textAlign: "right", maxWidth: "44%", flexShrink: 0 }}>
+            <span style={{ fontSize: 12, color: item.accent ? t.accent : t.textFaint, fontWeight: item.accent ? "bold" : "normal", lineHeight: 1.35, textAlign: isRTL ? "left" : "right", maxWidth: "44%", flexShrink: 0 }}>
               {item.value}
             </span>
           </div>
@@ -160,7 +161,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
                 color: t.text,
                 border: `1px solid ${t.border}`,
                 borderRadius: 12,
-                padding: "11px 40px 11px 14px",
+                padding: isRTL ? "11px 14px 11px 40px" : "11px 40px 11px 14px",
                 fontSize: 12,
                 fontFamily: "'Lora',Georgia,serif",
                 outline: "none",
@@ -177,7 +178,8 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
             <span
               style={{
                 position: "absolute",
-                right: 14,
+                right: isRTL ? "auto" : 14,
+                left: isRTL ? 14 : "auto",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: t.textFaint,
@@ -220,6 +222,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
 export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, context = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const [checkoutError, setCheckoutError] = useState(null);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const isCurrentPro = userTier === "pro";
@@ -263,10 +266,10 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, c
     }
   };
   return (
-    <div style={{ padding: "16px 20px 28px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
+    <div style={{ padding: "16px 20px 28px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 8 }}>
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", marginTop: 4, marginBottom: 14, height: 36 }}>
-          <button onClick={() => navigate("home")} style={{ position: "absolute", left: 0, background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>←</button>
+          <button onClick={() => navigate("home")} style={{ position: "absolute", left: isRTL ? "auto" : 0, right: isRTL ? 0 : "auto", background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer", lineHeight: 1, padding: 0 }}>{isRTL ? "→" : "←"}</button>
           <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px", color: t.text }}>tonara.</span>
         </div>
         <div style={{ textAlign: "center", marginBottom: 20 }}>
@@ -378,11 +381,11 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, c
                 { label: copy.t("upgrade.monthly"), plan: "monthly", price: "$3.99 / month", sub: null },
               ].map(opt => (
                 <button key={opt.label} onClick={() => handleCheckout(opt.plan)} disabled={loadingPlan !== null} style={{ width: "100%", padding: opt.highlight ? "14px 18px" : "12px 18px", marginBottom: opt.highlight ? 7 : 8, background: opt.highlight ? t.accent : "transparent", border: opt.highlight ? "none" : `1px solid ${t.border}`, borderRadius: opt.highlight ? 12 : 10, cursor: loadingPlan ? "default" : "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "'Lora',Georgia,serif", color: opt.highlight ? t.accentText : t.textMuted, opacity: loadingPlan && loadingPlan !== opt.plan ? 0.55 : 1 }}>
-                  <div style={{ textAlign: "left" }}>
+                  <div style={{ textAlign: isRTL ? "right" : "left" }}>
                     <div style={{ fontSize: opt.highlight ? 13 : 12, fontWeight: "bold", letterSpacing: "-0.2px" }}>{opt.label}</div>
                     {opt.sub && <div style={{ fontSize: 10, opacity: 0.75, marginTop: 1 }}>{opt.sub}</div>}
                   </div>
-                  <div style={{ textAlign: "right" }}>
+                  <div style={{ textAlign: isRTL ? "left" : "right" }}>
                     <div style={{ fontSize: opt.highlight ? 14 : 12, fontWeight: opt.highlight ? "bold" : "normal" }}>
                       {loadingPlan === opt.plan ? copy.t("upgrade.loading") : opt.price}
                     </div>
@@ -406,6 +409,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, c
 export function CapScreen({ navigate, userTier, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const isGuest = userTier === "guest";
   const isPro = userTier === "pro";
   const variant = isGuest
@@ -439,8 +443,8 @@ export function CapScreen({ navigate, userTier, theme }) {
         };
 
   return (
-    <div style={{ padding: "14px 20px 28px", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", fontFamily: "'Lora',Georgia,serif" }}>
-      <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", alignSelf: "flex-start", marginTop: 4, marginBottom: 20 }}>←</button>
+    <div style={{ padding: "14px 20px 28px", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", fontFamily: "'Lora',Georgia,serif", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
+      <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textDim, fontSize: 18, cursor: "pointer", alignSelf: isRTL ? "flex-end" : "flex-start", marginTop: 4, marginBottom: 20 }}>{isRTL ? "→" : "←"}</button>
 
       <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingBottom: 70 }}>
         <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10, letterSpacing: "-0.2px" }}>
@@ -475,6 +479,7 @@ export function CapScreen({ navigate, userTier, theme }) {
 export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   const items = savedItems || [];
   const isGuest = userTier === "guest";
   const saveLimit = isPremium ? PRO_SAVE_LIMIT : FREE_SAVE_LIMIT;
@@ -490,10 +495,10 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
   };
 
   return (
-    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
+    <div style={{ padding: "14px 20px 8px", fontFamily: "'Lora',Georgia,serif", color: t.text, background: t.phoneBg, minHeight: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 4 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
+          <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>{isRTL ? "→" : "←"}</button>
           <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px" }}>{copy.t("saved.title")}</span>
         </div>
         {!isGuest && <span style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>{items.length} / {saveLimit}</span>}
@@ -538,7 +543,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
                 fromLang: item.from_lang,
                 toLang: item.to_lang,
               });
-            }} style={{ width: "100%", background: t.surface, border: "none", borderRadius: 10, padding: "11px 14px", marginBottom: 6, textAlign: "left", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
+            }} style={{ width: "100%", background: t.surface, border: "none", borderRadius: 10, padding: "11px 14px", marginBottom: 6, textAlign: isRTL ? "right" : "left", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   {item.mode === "refine" ? (
@@ -550,7 +555,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
                       })()}
                     </span>
                   ) : <span style={{ padding: "2px 8px", borderRadius: 8, background: t.surface2, fontSize: 10, color: t.textFaint, letterSpacing: "0.04em" }}>{copy.t("saved.quick")}</span>}
-                  <span style={{ fontSize: 10, color: t.textFaint }}>→ {item.to_lang}</span>
+                  <span style={{ fontSize: 10, color: t.textFaint }}>{isRTL ? `${item.to_lang} ←` : `→ ${item.to_lang}`}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 10, color: t.textFaint }}>{formatDate(item.created_at)}</span>

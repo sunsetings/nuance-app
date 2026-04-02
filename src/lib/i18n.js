@@ -2113,6 +2113,10 @@ export function resolveLocale(input) {
   return "en";
 }
 
+export function isRTLLocale(input) {
+  return resolveLocale(input) === "ar";
+}
+
 export function getLocalePreference() {
   if (typeof localStorage === "undefined") return "device";
   const stored = localStorage.getItem(UI_LOCALE_STORAGE_KEY);

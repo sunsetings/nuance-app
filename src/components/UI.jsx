@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { THEMES, FREE_DAILY_CAP, FREE_SAVE_LIMIT, GUEST_DAILY_CAP, PRO_DAILY_CAP } from "../lib/constants.js";
-import { createI18n } from "../lib/i18n.js";
+import { createI18n, isRTLLocale } from "../lib/i18n.js";
 
 // ─── TOAST ───────────────────────────────────────────────────
 export function Toast({ message, visible, theme }) {
@@ -343,6 +343,7 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
 export function RefineCounter({ usageCount, userTier, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
+  const isRTL = isRTLLocale(copy.locale);
   if (userTier === "pro") return null;
   const cap = userTier === "free" ? FREE_DAILY_CAP : GUEST_DAILY_CAP;
   const remaining = Math.max(0, cap - usageCount);
@@ -351,12 +352,12 @@ export function RefineCounter({ usageCount, userTier, theme }) {
   if (pct >= 0.85) color = t.cCrit;
   else if (pct >= 0.6) color = t.cWarn;
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
-      <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.02em", lineHeight: 1.2, textAlign: "right" }}>
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 6, justifyContent: isRTL ? "flex-start" : "flex-end", flexWrap: "wrap" }}>
+      <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.02em", lineHeight: 1.2, textAlign: isRTL ? "left" : "right" }}>
         {copy.t("ui.remainingRefines", { remaining, cap })}
       </span>
       {remaining <= 3 && (
-        <span style={{ fontSize: 9, color: t.proTag, lineHeight: 1.2, textAlign: "right" }}>
+        <span style={{ fontSize: 9, color: t.proTag, lineHeight: 1.2, textAlign: isRTL ? "left" : "right" }}>
           {userTier === "guest" ? copy.t("ui.signUpForMore") : copy.t("ui.upgradeFor300")}
         </span>
       )}

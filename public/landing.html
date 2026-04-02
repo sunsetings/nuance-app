@@ -1424,7 +1424,10 @@
       };
 
       const copy = translations[locale];
+      const isRTL = locale === "ar";
       document.documentElement.lang = locale;
+      document.documentElement.dir = isRTL ? "rtl" : "ltr";
+      document.body.dir = isRTL ? "rtl" : "ltr";
       if (!copy) return;
 
       document.title = copy.title;
