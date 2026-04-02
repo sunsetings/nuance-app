@@ -1147,6 +1147,27 @@ export function getLocalizedLanguageName(label, locale = "en") {
   }
 }
 
+export function getCanonicalLanguageLabel(value, locale = "en") {
+  const raw = String(value || "").trim();
+  if (!raw) return raw;
+
+  const all = [AUTO_DETECT_LANGUAGE, ...ALL_LANGUAGES];
+  if (all.includes(raw)) return raw;
+
+  const normalized = raw.toLowerCase();
+  const exact = all.find((item) => String(item).toLowerCase() === normalized);
+  if (exact) return exact;
+
+  const localeMatch = all.find((item) => getLocalizedLanguageName(item, locale).toLowerCase() === normalized);
+  if (localeMatch) return localeMatch;
+
+  const broadMatch = all.find((item) => {
+    const locales = ["en", "ko", "ja", "es", "pt", "it", "ru", "ar", "fr", "de", "vi", "zh-cn", "zh-tw"];
+    return locales.some((candidate) => getLocalizedLanguageName(item, candidate).toLowerCase() === normalized);
+  });
+  return broadMatch || raw;
+}
+
 export const SPEECH_RECOGNITION_LANG_MAP = {
   en: "en-US",
   "en-us": "en-US",

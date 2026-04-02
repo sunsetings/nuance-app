@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -38,16 +38,28 @@ function getDefaultHomeTone(userTier) {
 }
 
 function getRecognitionLang(fromLang, locale) {
-  if (fromLang && fromLang !== AUTO_DETECT_LANGUAGE) {
-    return getSpeechRecognitionLang(fromLang, "en-US");
-  }
+  const browserLocales = typeof navigator !== "undefined"
+    ? [...new Set([...(navigator.languages || []), navigator.language].filter(Boolean))]
+    : [];
 
-  if (typeof navigator !== "undefined") {
-    const browserLocales = [...(navigator.languages || []), navigator.language].filter(Boolean);
+  if (fromLang && fromLang !== AUTO_DETECT_LANGUAGE) {
+    const canonical = getCanonicalLanguageLabel(fromLang, locale);
+    const preferred = getSpeechRecognitionLang(canonical, "en-US");
+    const preferredBase = preferred.split("-")[0].toLowerCase();
+
     for (const candidate of browserLocales) {
       const resolved = getSpeechRecognitionLang(candidate, "");
-      if (resolved) return resolved;
+      if (resolved && resolved.split("-")[0].toLowerCase() === preferredBase) {
+        return resolved;
+      }
     }
+
+    return preferred;
+  }
+
+  for (const candidate of browserLocales) {
+    const resolved = getSpeechRecognitionLang(candidate, "");
+    if (resolved) return resolved;
   }
 
   return getSpeechRecognitionLang(locale, "en-US");
@@ -64,10 +76,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     const stored = localStorage.getItem(LS_FROM);
     const touched = localStorage.getItem(LS_FROM_TOUCHED) === "true";
     if (!stored) return DEFAULT_FROM_LANG;
-    if (!touched && stored === "English") return DEFAULT_FROM_LANG;
-    return stored;
+    const normalized = getCanonicalLanguageLabel(stored, copy.locale);
+    if (!touched && normalized === "English") return DEFAULT_FROM_LANG;
+    return normalized;
   });
-  const [toLang, setToLang] = useState(() => localStorage.getItem(LS_TO) || DEFAULT_TO_LANG);
+  const [toLang, setToLang] = useState(() => getCanonicalLanguageLabel(localStorage.getItem(LS_TO) || DEFAULT_TO_LANG, copy.locale));
   const [bookmarked, setBookmarked] = useState(() => {
     try {
       const stored = localStorage.getItem(LS_BOOKMARKS);
@@ -124,10 +137,10 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     }
     if (typeof navContext.fromLang === "string" && navContext.fromLang) {
       localStorage.setItem(LS_FROM_TOUCHED, "true");
-      setFromLang(navContext.fromLang);
+      setFromLang(getCanonicalLanguageLabel(navContext.fromLang, copy.locale));
     }
     if (typeof navContext.toLang === "string" && navContext.toLang) {
-      setToLang(navContext.toLang);
+      setToLang(getCanonicalLanguageLabel(navContext.toLang, copy.locale));
     }
   }, [navContext]);
 
@@ -152,7 +165,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleFromLangChange = (nextLang) => {
     localStorage.setItem(LS_FROM_TOUCHED, "true");
-    setFromLang(nextLang);
+    setFromLang(getCanonicalLanguageLabel(nextLang, copy.locale));
   };
 
   const handleDictate = val => {
