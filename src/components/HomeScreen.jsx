@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel, getLocalizedLanguageName } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -10,6 +10,7 @@ const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
 const LS_BOOKMARKS = "tonara_bookmarks";
 const LS_FROM_TOUCHED = "tonara_fromLang_touched";
+const LS_DICTATION_LANG = "tonara_dictationLang";
 
 function buildHomeToneOrder(userTier, savedTones = []) {
   const next = [];
@@ -65,6 +66,76 @@ function getRecognitionLang(fromLang, locale) {
   return getSpeechRecognitionLang(locale, "en-US");
 }
 
+function getDefaultDictationLanguage(locale) {
+  const stored = typeof localStorage !== "undefined" ? localStorage.getItem(LS_DICTATION_LANG) : "";
+  const storedCanonical = getCanonicalLanguageLabel(stored, locale);
+  if (storedCanonical && storedCanonical !== AUTO_DETECT_LANGUAGE) return storedCanonical;
+
+  const browserLocales = typeof navigator !== "undefined"
+    ? [...new Set([...(navigator.languages || []), navigator.language].filter(Boolean))]
+    : [];
+  const localeMap = {
+    en: "English",
+    ko: "Korean",
+    ja: "Japanese",
+    es: "Spanish",
+    pt: "Portuguese",
+    it: "Italian",
+    ru: "Russian",
+    ar: "Arabic",
+    fr: "French",
+    de: "German",
+    vi: "Vietnamese",
+    zh: "Chinese (Simplified)",
+    nl: "Dutch",
+    hi: "Hindi",
+    id: "Indonesian",
+    th: "Thai",
+    tr: "Turkish",
+    uk: "Ukrainian",
+    pl: "Polish",
+    sv: "Swedish",
+    da: "Danish",
+    nb: "Norwegian",
+    no: "Norwegian",
+    fi: "Finnish",
+    cs: "Czech",
+    el: "Greek",
+    he: "Hebrew",
+    ro: "Romanian",
+    hu: "Hungarian",
+    bn: "Bengali",
+    ta: "Tamil",
+    te: "Telugu",
+    mr: "Marathi",
+    gu: "Gujarati",
+    pa: "Punjabi",
+    ml: "Malayalam",
+    kn: "Kannada",
+    or: "Odia",
+    si: "Sinhala",
+    ne: "Nepali",
+    ms: "Malay",
+    fil: "Tagalog",
+    tl: "Tagalog",
+    ur: "Urdu",
+  };
+
+  for (const candidate of browserLocales) {
+    const normalized = String(candidate).toLowerCase();
+    if (normalized.startsWith("zh-tw") || normalized.startsWith("zh-hk") || normalized.startsWith("zh-hant")) {
+      return "Chinese (Traditional)";
+    }
+    if (normalized.startsWith("zh")) {
+      return "Chinese (Simplified)";
+    }
+    const label = localeMap[normalized.split("-")[0]];
+    if (label) return label;
+  }
+
+  return "English";
+}
+
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
@@ -97,6 +168,10 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const [swapping, setSwapping] = useState(false);
   const [openLang, setOpenLang] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [dictationSheetOpen, setDictationSheetOpen] = useState(false);
+  const [dictationSearch, setDictationSearch] = useState("");
+  const [dictationLang, setDictationLang] = useState(() => getDefaultDictationLanguage(copy.locale));
+  const [listening, setListening] = useState(false);
   const textareaRef = useRef(null);
 
   const isRefine = mode === "refine";
@@ -108,6 +183,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   useEffect(() => { localStorage.setItem(LS_FROM, fromLang); }, [fromLang]);
   useEffect(() => { localStorage.setItem(LS_TO, toLang); }, [toLang]);
   useEffect(() => { localStorage.setItem(LS_BOOKMARKS, JSON.stringify(bookmarked)); }, [bookmarked]);
+  useEffect(() => { localStorage.setItem(LS_DICTATION_LANG, dictationLang); }, [dictationLang]);
   useEffect(() => {
     setHomeToneOrder((prev) => {
       const rebuilt = buildHomeToneOrder(userTier, savedTones);
@@ -173,6 +249,52 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     setText(val.slice(0, CHAR_LIMIT));
   };
 
+  const startDictation = (lang) => {
+    if (listening) return;
+    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) return;
+    const recognitionLocale = getRecognitionLang(lang, copy.locale);
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SR();
+    recognition.lang = recognitionLocale;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    setListening(true);
+    recognition.onresult = (e) => {
+      const transcript = e.results?.[0]?.[0]?.transcript || "";
+      setListening(false);
+      if (transcript) handleDictate(transcript);
+    };
+    recognition.onerror = () => { setListening(false); };
+    recognition.onend = () => { setListening(false); };
+    recognition.start();
+  };
+
+  const handleMicTap = () => {
+    if (fromLang !== AUTO_DETECT_LANGUAGE) {
+      startDictation(fromLang);
+      return;
+    }
+    setDictationLang((prev) => getCanonicalLanguageLabel(prev, copy.locale) || getDefaultDictationLanguage(copy.locale));
+    setDictationSearch("");
+    setDictationSheetOpen(true);
+  };
+
+  const handleUseDictationOnce = () => {
+    const selected = getCanonicalLanguageLabel(dictationLang, copy.locale) || getDefaultDictationLanguage(copy.locale);
+    setDictationLang(selected);
+    setDictationSheetOpen(false);
+    startDictation(selected);
+  };
+
+  const handleSetDictationAsSource = () => {
+    const selected = getCanonicalLanguageLabel(dictationLang, copy.locale) || getDefaultDictationLanguage(copy.locale);
+    localStorage.setItem(LS_FROM_TOUCHED, "true");
+    setFromLang(selected);
+    setDictationLang(selected);
+    setDictationSheetOpen(false);
+    startDictation(selected);
+  };
+
   const handleTranslate = () => {
     if (!hasText) return;
     onTranslate({ text, tone, toneCount, fromLang, toLang, mode });
@@ -189,6 +311,38 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const charsLeft = CHAR_LIMIT - text.length;
   const charsNearLimit = charsLeft <= 50;
+  const browserSuggestedDictation = getDefaultDictationLanguage(copy.locale);
+  const availableDictationLanguages = [...new Set([
+    dictationLang,
+    browserSuggestedDictation,
+    ...bookmarked,
+    toLang,
+    "English",
+    "Korean",
+    "Japanese",
+    "Spanish",
+    "Arabic",
+    "French",
+    "German",
+    "Vietnamese",
+    "Chinese (Simplified)",
+    "Chinese (Traditional)",
+    "Portuguese",
+    "Italian",
+    "Russian",
+    "Dutch",
+  ].filter((lang) => lang && lang !== AUTO_DETECT_LANGUAGE))]
+    .map((lang) => getCanonicalLanguageLabel(lang, copy.locale))
+    .filter((lang, index, arr) => lang && lang !== AUTO_DETECT_LANGUAGE && arr.indexOf(lang) === index);
+  const filteredDictationLanguages = dictationSearch
+    ? availableDictationLanguages.filter((lang) => {
+        const needle = dictationSearch.toLowerCase();
+        return (
+          lang.toLowerCase().includes(needle) ||
+          getLocalizedLanguageName(lang, copy.locale).toLowerCase().includes(needle)
+        );
+      })
+    : availableDictationLanguages;
 
   return (
     <div style={{
@@ -209,6 +363,70 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         theme={theme}
         title={copy.t("results.tones")}
       />
+      {dictationSheetOpen && (
+        <div style={{ position: "absolute", inset: 0, zIndex: 650, display: "flex", flexDirection: "column", justifyContent: "flex-end" }} onClick={() => setDictationSheetOpen(false)}>
+          <div style={{ background: "rgba(0,0,0,0.6)", position: "absolute", inset: 0 }} />
+          <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: theme === "light" ? "#f6f2ea" : "#161616", borderRadius: "22px 22px 0 0", maxHeight: "76vh", display: "flex", flexDirection: "column", overflow: "hidden", direction: isRTL ? "rtl" : "ltr" }} dir={isRTL ? "rtl" : "ltr"}>
+            <div style={{ padding: "14px 18px 0", flexShrink: 0 }}>
+              <div style={{ width: 30, height: 3, background: t.border2, borderRadius: 2, margin: "0 auto 14px" }} />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <button onClick={() => setDictationSheetOpen(false)} style={{ background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, padding: 0, fontFamily: "'Lora',Georgia,serif" }}>
+                  <span style={{ fontSize: 16, lineHeight: 1 }}>{isRTL ? "→" : "←"}</span>
+                  <span style={{ fontSize: 12, letterSpacing: "0.02em" }}>{copy.t("toneSheet.back")}</span>
+                </button>
+                <span style={{ fontSize: 15, fontWeight: "bold", color: t.text, letterSpacing: "-0.2px" }}>{copy.t("home.chooseDictationLanguage")}</span>
+                <div style={{ width: 56 }} />
+              </div>
+              <div style={{ fontSize: 11, color: t.textDim, lineHeight: 1.5, marginBottom: 10 }}>
+                {copy.t("home.dictationLanguageHelp")}
+              </div>
+              <input
+                value={dictationSearch}
+                onChange={(e) => setDictationSearch(e.target.value)}
+                placeholder={copy.t("langSelector.searchLanguages")}
+                style={{ width: "100%", background: t.surface2, border: "none", borderRadius: 10, padding: "9px 13px", color: t.text, fontSize: 13, outline: "none", marginBottom: 12, fontFamily: "'Lora',Georgia,serif" }}
+              />
+            </div>
+            <div style={{ overflowY: "auto", padding: "2px 18px 18px", flex: 1 }}>
+              {filteredDictationLanguages.map((lang) => {
+                const active = dictationLang === lang;
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => setDictationLang(lang)}
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "11px 12px",
+                      borderRadius: 11,
+                      background: active ? t.highlight : "transparent",
+                      color: active ? t.highlightText : t.text,
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      fontFamily: "'Lora',Georgia,serif",
+                      marginBottom: 2,
+                    }}
+                  >
+                    <span>{getLocalizedLanguageName(lang, copy.locale)}</span>
+                    {active && <span style={{ fontSize: 12, color: t.accent }}>✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "14px 18px 20px", borderTop: `1px solid ${t.borderLight}` }}>
+              <button onClick={handleUseDictationOnce} style={{ padding: "12px 10px", borderRadius: 12, border: `1px solid ${t.border}`, background: "transparent", color: t.text, fontSize: 12.5, fontFamily: "'Lora',Georgia,serif", cursor: "pointer" }}>
+                {copy.t("home.useOnce")}
+              </button>
+              <button onClick={handleSetDictationAsSource} style={{ padding: "12px 10px", borderRadius: 12, border: "none", background: t.accent, color: t.accentText, fontSize: 12.5, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: "bold" }}>
+                {copy.t("home.setAsSource")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, marginTop: 4 }}>
         <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px" }}>tonara.</span>
@@ -344,7 +562,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             }}>{copy.t("home.paste")}</button>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} recognitionLang={getRecognitionLang(fromLang, copy.locale)} />
+            <MicButton theme={theme} listening={listening} onTap={handleMicTap} />
           </div>
           <div />
         </div>

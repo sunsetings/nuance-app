@@ -85,6 +85,10 @@ const dictionaries = {
       dailyLimitUpgrade: "Daily limit reached ({cap}) — Upgrade to Pro",
       refineTranslateButton: "Refine & translate",
       translateOnlyButton: "Translate only",
+      chooseDictationLanguage: "Choose dictation language",
+      dictationLanguageHelp: "Speech input works best when you choose the language you’ll speak.",
+      useOnce: "Use once",
+      setAsSource: "Set as source",
     },
     langSelector: {
       searchLanguages: "Search languages…",
@@ -363,6 +367,10 @@ const dictionaries = {
       dailyLimitUpgrade: "일일 한도 도달 ({cap}) — Pro로 업그레이드",
       refineTranslateButton: "다듬고 번역하기",
       translateOnlyButton: "번역만 하기",
+      chooseDictationLanguage: "받아쓰기 언어 선택",
+      dictationLanguageHelp: "말할 언어를 선택하면 음성 입력이 더 정확해져요.",
+      useOnce: "이번만 사용",
+      setAsSource: "출발 언어로 설정",
     },
     langSelector: {
       searchLanguages: "언어 검색…",
@@ -641,6 +649,10 @@ const dictionaries = {
       dailyLimitUpgrade: "本日の上限に達しました（{cap}）— Pro にアップグレード",
       refineTranslateButton: "リファインして翻訳",
       translateOnlyButton: "翻訳のみ",
+      chooseDictationLanguage: "音声入力の言語を選択",
+      dictationLanguageHelp: "話す言語を選ぶと、音声入力の精度が上がります。",
+      useOnce: "今回だけ使う",
+      setAsSource: "入力言語に設定",
     },
     langSelector: {
       searchLanguages: "言語を検索…",

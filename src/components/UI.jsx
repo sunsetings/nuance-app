@@ -226,32 +226,12 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 }
 
 // ─── MIC BUTTON ──────────────────────────────────────────────
-export function MicButton({ userTier, onDictate, theme, recognitionLang = "en-US" }) {
+export function MicButton({ theme, listening = false, onTap }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
-  const [listening, setListening] = useState(false);
   const handleTap = () => {
     if (listening) return;
-    setListening(true);
-
-    // Use Web Speech API if available
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SR();
-      recognition.lang = recognitionLang;
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.onresult = (e) => {
-        const transcript = e.results[0][0].transcript;
-        setListening(false);
-        onDictate(transcript);
-      };
-      recognition.onerror = () => { setListening(false); };
-      recognition.onend = () => { setListening(false); };
-      recognition.start();
-    } else {
-      setListening(false);
-    }
+    onTap?.();
   };
 
   return (
