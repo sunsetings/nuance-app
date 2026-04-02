@@ -2,6 +2,8 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
 
+const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
+
 const SIGNIN_CONTEXT = {
   nav: { title: "Create your free account", sub: "Save messages, bookmark languages, and get 20 refines a day." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
@@ -20,7 +22,7 @@ const POST_AUTH_ROUTE = {
   default: "home",
 };
 
-export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
+export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const [mode, setMode] = useState("signup"); // "login" | "signup" | "forgot"
   const [email, setEmail] = useState("");
@@ -48,6 +50,18 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
         { icon: "◐", text: "5 tones to help your message sound more natural, warm, playful, or direct." },
       ];
 
+  const resolvePostAuthTarget = ({ forOAuth = false } = {}) => {
+    const returnScreen = typeof navContext?.returnScreen === "string" ? navContext.returnScreen : null;
+
+    if (forOAuth) {
+      if (returnScreen === "account") return "account";
+      return POST_AUTH_ROUTE[context] || POST_AUTH_ROUTE.default;
+    }
+
+    if (returnScreen) return returnScreen;
+    return POST_AUTH_ROUTE[context] || POST_AUTH_ROUTE.default;
+  };
+
   const handleSubmit = async () => {
     if (!email || !password) {
       setError("Please enter your email and password.");
@@ -71,7 +85,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         onAuth(data.user);
-        navigate?.(POST_AUTH_ROUTE[context] || POST_AUTH_ROUTE.default);
+        navigate?.(resolvePostAuthTarget());
       }
     } catch (e) {
       setError(e.message || "Something went wrong — please try again.");
@@ -99,6 +113,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
     setLoading(true);
     setError(null);
     try {
+      localStorage.setItem(LS_POST_AUTH_ROUTE, resolvePostAuthTarget({ forOAuth: true }));
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}/app` },

@@ -25,6 +25,7 @@ const SCREEN_LABELS = {
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
+const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
 
 function getSystemTheme() {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
@@ -69,6 +70,13 @@ export default function App() {
   const userTier = getUserTier(user, isPremium);
   const visibleSavedTones = userTier === "pro" ? savedTones : [];
 
+  const consumePostAuthRoute = () => {
+    const target = localStorage.getItem(LS_POST_AUTH_ROUTE);
+    if (!target) return null;
+    localStorage.removeItem(LS_POST_AUTH_ROUTE);
+    return target;
+  };
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
@@ -102,6 +110,8 @@ export default function App() {
       if (session?.user) {
         setUser(session.user);
         loadUserData(session.user.id);
+        const pendingRoute = consumePostAuthRoute();
+        if (pendingRoute) setScreen(pendingRoute);
       }
       setAuthLoading(false);
     });
@@ -110,6 +120,8 @@ export default function App() {
       if (session?.user) {
         setUser(session.user);
         loadUserData(session.user.id);
+        const pendingRoute = consumePostAuthRoute();
+        if (pendingRoute) setScreen(pendingRoute);
       } else {
         setUser(null);
         setUsageCount(getRefinesToday());
@@ -236,13 +248,13 @@ export default function App() {
 
   const renderScreen = () => {
     if (screen.startsWith("signin_")) {
-      return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} navContext={screenContext} />;
+      return <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} context={screen.replace("signin_", "")} navContext={{ ...(screenContext || {}), returnScreen: previousScreen }} />;
     }
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} navContext={screenContext} />;
       case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={screenContext} />;
+      case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={{ ...(screenContext || {}), returnScreen: "account" }} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} context={screenContext} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;
       case "cap": return <CapScreen {...props} />;
