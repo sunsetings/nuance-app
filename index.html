@@ -19,7 +19,7 @@
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.32; }
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: rgba(246,241,233,0.84); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .nav-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); text-decoration: none; }
-    .nav-cta { background: var(--accent); color: var(--accent-dark); border: none; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-family: 'Lora', serif; font-weight: 700; cursor: pointer; text-decoration: none; transition: opacity 0.2s; }
+    .nav-cta { background: var(--accent); color: var(--accent-dark); border: none; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-family: 'Lora', serif; font-weight: 700; cursor: pointer; text-decoration: none; transition: opacity 0.2s; white-space: nowrap; }
     .nav-cta:hover { opacity: 0.85; }
     .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 80px; position: relative; }
     .hero-glow { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(200,240,160,0.14) 0%, transparent 70%); pointer-events: none; }
@@ -35,13 +35,13 @@
     .hero-note { margin-top: 16px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; opacity: 0; animation: fadeUp 0.7s ease forwards 0.8s; }
     .mockup-section { padding: 0 24px 100px; display: flex; justify-content: center; opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s; }
     .mockup-stage { width: min(1120px, 100%); }
-    .mockup-copy { text-align: center; margin-bottom: 34px; }
+    .mockup-copy { text-align: center; margin-bottom: 24px; }
     .mockup-headline { font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.12; letter-spacing: -0.9px; margin-bottom: 12px; color: var(--text); }
     .mockup-sub { font-size: 16px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto; }
     .mockup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
     .mockup-card { display: flex; flex-direction: column; align-items: center; }
     .mockup-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
-    .phone-shell { width: 296px; background: #f7f2ea; border-radius: 36px; border: 8px solid #dcd6ca; box-shadow: 0 0 0 1px #c9c3b8, 0 36px 68px rgba(0,0,0,0.28), 0 0 52px rgba(200,240,160,0.04); overflow: hidden; padding: 26px 16px 12px; position: relative; }
+    .phone-shell { width: 322px; background: #f7f2ea; border-radius: 36px; border: 8px solid #dcd6ca; box-shadow: 0 0 0 1px #c9c3b8, 0 36px 68px rgba(0,0,0,0.28), 0 0 52px rgba(200,240,160,0.04); overflow: hidden; padding: 26px 16px 12px; position: relative; }
     .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 104px; height: 23px; background: #dcd6ca; border-radius: 0 0 16px 16px; }
     .phone-screen { font-size: 11px; line-height: 1.5; min-height: 488px; display: flex; flex-direction: column; color: #1a180e; }
     .ps-scroll { font-size: 8px; color: #9a9488; letter-spacing: 0.03em; }
@@ -69,7 +69,7 @@
     .ps-actions { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
     .ps-action-btn { border: 1px solid #d2cbbf; border-radius: 12px; padding: 10px 0; text-align: center; color: #615b4f; background: #faf6ef; font-size: 11px; }
     .ps-action-btn.saved { background: #faf6ef; border-color: #d2cbbf; color: #615b4f; font-weight: 600; }
-    .mockup-cta { padding: 0 24px 72px; text-align: center; }
+    .mockup-cta { padding: 0 24px 60px; text-align: center; }
     .mockup-cta .btn-primary { min-width: 220px; }
     .mockup-cta-note { margin-top: 14px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
     .who-strip { padding: 0 24px 88px; }
@@ -77,7 +77,9 @@
     .who-heading { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 12px; color: var(--text); }
     .who-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
     .who-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .who-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; font-size: 15px; color: var(--muted); line-height: 1.5; }
+    .who-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; text-align: left; }
+    .who-card-title { font-size: 15px; color: var(--text); font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+    .who-card-body { font-size: 14px; color: var(--muted); line-height: 1.55; }
     section { position: relative; z-index: 1; }
     .section-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
     .section-tag { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
@@ -94,7 +96,7 @@
     .example-label.bad { color: #c05050; }
     .example-label.good { color: var(--green-text); }
     .example-text { font-size: 14px; color: var(--muted); line-height: 1.6; font-style: italic; margin-bottom: 8px; }
-    .example-translation { font-size: 12px; color: var(--faint); line-height: 1.65; }
+    .example-translation { font-size: 12px; color: #9a958b; line-height: 1.65; }
     .comparison-strip { padding: 0 24px 100px; }
     .comparison-wrap { max-width: 920px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 34px 32px 28px; }
     .comparison-head { text-align: center; margin-bottom: 26px; }
@@ -133,11 +135,13 @@
     .price-amount { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
     .compare-card.pro .price-amount { color: var(--green-text); }
     .trust-strip { padding: 0 24px 100px; border-top: 1px solid var(--border); }
-    .trust-wrap { max-width: 860px; margin: 0 auto; text-align: center; padding-top: 72px; }
+    .trust-wrap { max-width: 900px; margin: 0 auto; text-align: center; padding-top: 72px; }
     .trust-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 12px; color: var(--text); }
-    .trust-sub { font-size: 15px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto 24px; }
-    .trust-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .trust-tag { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--dim); font-size: 12px; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+    .trust-sub { font-size: 15px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto 28px; }
+    .trust-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: left; }
+    .trust-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px 18px; }
+    .trust-card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .trust-card-body { font-size: 14px; color: var(--muted); line-height: 1.6; }
     .mic-inline { display: inline-flex; width: 14px; height: 14px; vertical-align: -2px; margin-left: 4px; }
     .mic-inline svg { display: block; }
     .final-cta { padding: 120px 24px; border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
@@ -155,12 +159,14 @@
       .compare { grid-template-columns: 1fr; }
       .who-grid { grid-template-columns: 1fr; }
       .comparison-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; }
       .mockup-section { padding-left: 0; padding-right: 0; }
       .mockup-stage { width: 100%; }
       .mockup-copy { padding: 0 24px; }
       .mockup-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; justify-content: flex-start; padding: 0 24px 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
       .mockup-grid::-webkit-scrollbar { display: none; }
       .mockup-card { min-width: 296px; scroll-snap-align: center; }
+      .phone-shell { width: 296px; }
       .comparison-wrap { padding: 28px 22px 22px; }
       footer { flex-direction: column; gap: 8px; text-align: center; }
     }
@@ -169,7 +175,7 @@
 <body>
   <nav>
     <a class="nav-logo" href="#">tonara.</a>
-    <a class="nav-cta" href="/app">Try free →</a>
+    <a class="nav-cta" href="/app">Try tonara free</a>
   </nav>
   <section class="hero">
     <div class="hero-glow"></div>
@@ -178,14 +184,14 @@
     <p class="hero-sub">tonara helps you get the tone right, not just a literal translation — so your messages sound more natural and appropriate.</p>
     <div class="hero-actions">
       <a class="btn-primary" href="/app">Try tonara free</a>
-      <a class="btn-ghost" href="#how">See how it works</a>
+      <a class="btn-ghost" href="#how">See it in action</a>
     </div>
     <p class="hero-note">Free to try · No credit card needed</p>
   </section>
   <div class="mockup-section">
     <div class="mockup-stage">
       <div class="mockup-copy">
-        <h2 class="mockup-headline">For work, relationships, and life abroad</h2>
+        <h2 class="mockup-headline">For work, relationships, and living abroad</h2>
         <p class="mockup-sub">See how tonara helps messages come across better in real conversations.</p>
       </div>
       <div class="mockup-grid">
@@ -369,9 +375,18 @@
       <h2 class="who-heading">Who it’s for</h2>
       <p class="who-sub">Built for people communicating with real people in another language.</p>
       <div class="who-grid">
-        <div class="who-card">People living abroad</div>
-        <div class="who-card">People dating or in relationships across languages</div>
-        <div class="who-card">Non-native professionals</div>
+        <div class="who-card">
+          <div class="who-card-title">People living abroad</div>
+          <div class="who-card-body">Landlords, clinics, delivery issues, and customer service.</div>
+        </div>
+        <div class="who-card">
+          <div class="who-card-title">People dating or in relationships across languages</div>
+          <div class="who-card-body">Warmth, apologies, difficult conversations, and tone that feels right.</div>
+        </div>
+        <div class="who-card">
+          <div class="who-card-title">Non-native professionals</div>
+          <div class="who-card-body">Requests, follow-ups, boundaries, and more polished communication.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -471,7 +486,8 @@
             <li><span class="icon" style="color:var(--green-text)">✓</span> 5 tones for common situations</li>
             <li><span class="icon" style="color:var(--green-text)">✓</span> Save a few messages and keep one bookmarked language</li>
           </ul>
-          <div style="margin-top:16px;font-size:12px;color:var(--faint);line-height:1.6;">20 refines/day · 14 languages · 3 saved messages</div>
+          <div style="margin-top:16px;font-size:12px;color:var(--faint);line-height:1.6;">20 refines/day · 14 languages</div>
+          <div style="font-size:12px;color:var(--faint);line-height:1.6;">3 saved messages · 1 bookmark</div>
           <div class="price"><span class="price-amount">Free</span><br/>forever</div>
         </div>
         <div class="compare-card pro">
@@ -483,7 +499,8 @@
             <li><span class="icon" style="color:var(--green-text)">✓</span> Better for important conversations</li>
             <li><span class="icon" style="color:var(--green-text)">✓</span> More room to refine, save, and switch languages freely</li>
           </ul>
-          <div style="margin-top:16px;font-size:12px;color:var(--faint);line-height:1.6;">31 tones · 300 refines/day · 100 languages · 50 saved messages · 10 bookmarks</div>
+          <div style="margin-top:16px;font-size:12px;color:var(--faint);line-height:1.6;">31 tones · 300 refines/day · 100 languages</div>
+          <div style="font-size:12px;color:var(--faint);line-height:1.6;">50 saved messages · 10 bookmarks</div>
           <div class="price"><span class="price-amount">$3.99</span> / month<br/>or $29.99 / year — about $2.50/mo, save 37%</div>
         </div>
       </div>
@@ -491,14 +508,21 @@
   </section>
   <section class="trust-strip">
     <div class="trust-wrap">
-      <h2 class="trust-title">Made for real conversations across languages</h2>
-      <p class="trust-sub">Use tonara for work, relationships, and daily life when literal translation isn’t enough.</p>
-      <div class="trust-tags">
-        <span class="trust-tag">Work</span>
-        <span class="trust-tag">Relationships</span>
-        <span class="trust-tag">Living abroad</span>
-        <span class="trust-tag">Customer service</span>
-        <span class="trust-tag">Appointments</span>
+      <h2 class="trust-title">Most common use cases</h2>
+      <p class="trust-sub">Where people use tonara most when literal translation isn’t enough.</p>
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-card-title">Daily life abroad</div>
+          <div class="trust-card-body">Landlords, clinics, customer service, and everyday requests.</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-card-title">Relationships</div>
+          <div class="trust-card-body">Warmth, apologies, difficult conversations, and saying things carefully.</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-card-title">Work</div>
+          <div class="trust-card-body">Requests, follow-ups, boundaries, and sounding more polished.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -506,7 +530,7 @@
     <div class="section-inner">
       <h2 class="final-cta-headline">Communicate better in another language</h2>
       <p class="final-cta-sub">Get the tone right before you hit send.</p>
-      <a class="btn-primary" href="/app" style="font-size:16px; padding:17px 40px;">Open tonara →</a>
+      <a class="btn-primary" href="/app" style="font-size:16px; padding:17px 40px;">Try tonara free</a>
       <p style="margin-top:14px;font-size:13px;color:var(--faint);font-family:'DM Mono',monospace;letter-spacing:0.05em;">Free to try. No credit card needed.</p>
     </div>
   </section>
