@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_LANGUAGES, ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel, getLocalizedLanguageName } from "../lib/constants.js";
+import { ALL_LANGUAGES, ALL_TONES, PRO_LANGUAGES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang, getCanonicalLanguageLabel, getLocalizedLanguageName } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -281,6 +281,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleUseDictationOnce = () => {
     const selected = getCanonicalLanguageLabel(dictationLang, copy.locale) || getDefaultDictationLanguage(copy.locale);
+    if (PRO_LANGUAGES.includes(selected) && userTier !== "pro") {
+      setDictationSheetOpen(false);
+      navigate("upgrade");
+      return;
+    }
     setDictationLang(selected);
     setDictationSheetOpen(false);
     startDictation(selected);
@@ -288,6 +293,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleSetDictationAsSource = () => {
     const selected = getCanonicalLanguageLabel(dictationLang, copy.locale) || getDefaultDictationLanguage(copy.locale);
+    if (PRO_LANGUAGES.includes(selected) && userTier !== "pro") {
+      setDictationSheetOpen(false);
+      navigate("upgrade");
+      return;
+    }
     localStorage.setItem(LS_FROM_TOUCHED, "true");
     setFromLang(selected);
     setDictationLang(selected);
@@ -392,10 +402,19 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             <div style={{ overflowY: "auto", padding: "2px 18px 18px", flex: 1 }}>
               {filteredDictationLanguages.map((lang) => {
                 const active = dictationLang === lang;
+                const isProLanguage = PRO_LANGUAGES.includes(lang);
+                const canUseLanguage = !isProLanguage || userTier === "pro";
                 return (
                   <button
                     key={lang}
-                    onClick={() => setDictationLang(lang)}
+                    onClick={() => {
+                      if (!canUseLanguage) {
+                        setDictationSheetOpen(false);
+                        navigate("upgrade");
+                        return;
+                      }
+                      setDictationLang(lang);
+                    }}
                     style={{
                       width: "100%",
                       display: "flex",
@@ -404,16 +423,24 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
                       padding: "11px 12px",
                       borderRadius: 11,
                       background: active ? t.highlight : "transparent",
-                      color: active ? t.highlightText : t.text,
+                      color: active ? t.highlightText : canUseLanguage ? t.text : t.textDim,
                       border: "none",
                       cursor: "pointer",
                       fontSize: 13,
                       fontFamily: "'Lora',Georgia,serif",
                       marginBottom: 2,
+                      opacity: canUseLanguage ? 1 : 0.78,
                     }}
                   >
-                    <span>{getLocalizedLanguageName(lang, copy.locale)}</span>
-                    {active && <span style={{ fontSize: 12, color: t.accent }}>✓</span>}
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span>{getLocalizedLanguageName(lang, copy.locale)}</span>
+                      {isProLanguage && (
+                        <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold", letterSpacing: "0.04em" }}>
+                          {copy.t("langSelector.pro")}
+                        </span>
+                      )}
+                    </span>
+                    {active && canUseLanguage && <span style={{ fontSize: 12, color: t.accent }}>✓</span>}
                   </button>
                 );
               })}
