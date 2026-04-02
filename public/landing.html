@@ -35,25 +35,30 @@
     .hero-note { margin-top: 16px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; opacity: 0; animation: fadeUp 0.7s ease forwards 0.8s; }
     .mockup-section { padding: 0 24px 100px; display: flex; justify-content: center; opacity: 0; animation: fadeUp 0.8s ease forwards 0.9s; }
     .mockup-stage { width: min(1120px, 100%); }
-    .mockup-copy { text-align: center; margin-bottom: 24px; }
+    .mockup-copy { text-align: center; margin-bottom: 34px; }
     .mockup-headline { font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.12; letter-spacing: -0.9px; margin-bottom: 12px; color: var(--text); }
     .mockup-sub { font-size: 16px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto; }
     .mockup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
     .mockup-card { display: flex; flex-direction: column; align-items: center; }
-    .mockup-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
+    .mockup-label { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.11em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
     .phone-shell { width: 322px; background: #f7f2ea; border-radius: 36px; border: 8px solid #dcd6ca; box-shadow: 0 0 0 1px #c9c3b8, 0 36px 68px rgba(0,0,0,0.28), 0 0 52px rgba(200,240,160,0.04); overflow: hidden; padding: 26px 16px 12px; position: relative; }
     .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 104px; height: 23px; background: #dcd6ca; border-radius: 0 0 16px 16px; }
-    .phone-screen { font-size: 11px; line-height: 1.5; min-height: 398px; display: flex; flex-direction: column; color: #1a180e; }
+    .phone-screen { font-size: 12px; line-height: 1.5; min-height: 452px; display: flex; flex-direction: column; color: #1a180e; }
     .ps-tones { display: flex; gap: 7px; margin-bottom: 12px; overflow: hidden; }
-    .ps-tone { padding: 6px 12px; border-radius: 999px; font-size: 10px; border: 1px solid #cfc8bd; background: #f8f4ee; color: #544f45; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); }
+    .ps-tone { padding: 6px 12px; border-radius: 999px; font-size: 11px; border: 1px solid #cfc8bd; background: #f8f4ee; color: #544f45; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); }
     .ps-tone.active { background: #3d8634; color: #f6f4ea; border-color: #3d8634; font-weight: 700; }
+    .ps-strength-wrap { margin-bottom: 14px; }
+    .ps-strength-label { font-size: 7px; color: #8b8579; letter-spacing: 0.14em; text-transform: uppercase; font-family: 'DM Mono', monospace; text-align: center; margin-bottom: 5px; }
+    .ps-strength { display: flex; gap: 2px; padding: 2px; background: #f1ebe2; border: 1px solid #d7d0c4; border-radius: 11px; }
+    .ps-strength-item { flex: 1; text-align: center; padding: 6px 0; font-size: 9px; color: #8a857a; border-radius: 9px; }
+    .ps-strength-item.active { background: #e8e1d5; color: #302d23; font-weight: 700; }
     .ps-results-top { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 8px; margin-top: 2px; }
-    .ps-results-title { color: #1a180e; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+    .ps-results-title { color: #1a180e; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
     .ps-section { margin-bottom: 10px; }
-    .ps-meta-left { display: block; font-size: 8px; letter-spacing: 0.12em; color: #7a756a; font-family: 'DM Mono', monospace; text-transform: uppercase; margin-bottom: 6px; }
+    .ps-meta-left { display: block; font-size: 9px; letter-spacing: 0.12em; color: #7a756a; font-family: 'DM Mono', monospace; text-transform: uppercase; margin-bottom: 6px; }
     .ps-meta-left.refined { color: var(--green-text); font-weight: 700; }
-    .ps-original { padding: 12px 14px; border: 1px solid #ddd5ca; border-radius: 12px; background: #f8f4ee; color: #5f5a50; font-size: 9px; line-height: 1.68; }
-    .ps-result-bubble { padding: 14px 16px; background: #dcefd7; border: 1px solid #a7c79c; border-radius: 14px; color: #2f5d2b; font-size: 10px; line-height: 1.72; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45); }
+    .ps-original { padding: 12px 14px; border: 1px solid #ddd5ca; border-radius: 12px; background: #f8f4ee; color: #5f5a50; font-size: 10px; line-height: 1.68; }
+    .ps-result-bubble { padding: 14px 16px; background: #dcefd7; border: 1px solid #a7c79c; border-radius: 14px; color: #2f5d2b; font-size: 11px; line-height: 1.72; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45); }
     .ps-result-bubble.translated { background: #edf4e8; border-color: #c8d9bc; color: #486745; }
     .mockup-cta { padding: 0 24px 60px; text-align: center; }
     .mockup-cta .btn-primary { min-width: 220px; }
@@ -183,7 +188,16 @@
               <div class="ps-tones">
                 <div class="ps-tone active">Polite</div>
                 <div class="ps-tone">Friendly</div>
+                <div class="ps-tone">Assertive</div>
                 <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
               </div>
               <div class="ps-section">
                 <div class="ps-meta-left">Original</div>
@@ -211,7 +225,16 @@
               <div class="ps-tones">
                 <div class="ps-tone active">Warm</div>
                 <div class="ps-tone">Sincere</div>
+                <div class="ps-tone">Flirty</div>
                 <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
               </div>
               <div class="ps-section">
                 <div class="ps-meta-left">Original</div>
@@ -238,8 +261,17 @@
               </div>
               <div class="ps-tones">
                 <div class="ps-tone active">Polite</div>
+                <div class="ps-tone">Clear</div>
                 <div class="ps-tone">Friendly</div>
                 <div class="ps-tone">+ More</div>
+              </div>
+              <div class="ps-strength-wrap">
+                <div class="ps-strength-label">Tone strength</div>
+                <div class="ps-strength">
+                  <div class="ps-strength-item">Light</div>
+                  <div class="ps-strength-item active">Medium</div>
+                  <div class="ps-strength-item">Strong</div>
+                </div>
               </div>
               <div class="ps-section">
                 <div class="ps-meta-left">Original</div>
