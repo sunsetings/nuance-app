@@ -35,6 +35,11 @@ export const PRO_LANGUAGES = [
   "Kurdish", "Malay", "Marathi", "Mongolian", "Nepali", "Norwegian", "Persian", "Polish",
   "Punjabi", "Romanian", "Serbian", "Sinhala", "Slovak", "Swahili", "Swedish", "Tagalog",
   "Tamil", "Telugu", "Thai", "Turkish", "Ukrainian", "Urdu", "Uzbek", "Yoruba", "Zulu", "Bulgarian",
+  "Albanian", "Armenian", "Belarusian", "Bosnian", "Estonian", "Icelandic", "Irish", "Latvian",
+  "Lithuanian", "Macedonian", "Maltese", "Slovenian", "Assamese", "Kannada", "Malayalam", "Odia",
+  "Pashto", "Syriac", "Tibetan", "Uyghur", "Lao", "Javanese", "Sundanese", "Malagasy",
+  "Somali", "Xhosa", "Igbo", "Oromo", "Luganda", "Shona", "Sesotho", "Kinyarwanda",
+  "Wolof", "Fula", "Aymara", "Guarani", "Quechua", "Maori", "Samoan", "Tongan",
 ];
 export const ALL_LANGUAGES = [...BASE_LANGUAGES, ...PRO_LANGUAGES];
 

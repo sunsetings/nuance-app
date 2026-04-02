@@ -237,7 +237,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
         {[
           { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
           { label: "Tones", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
-          { label: "Languages", guest: "14", free: "14", pro: "60" },
+          { label: "Languages", guest: "14", free: "14", pro: "100" },
           { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
           { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
           { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
