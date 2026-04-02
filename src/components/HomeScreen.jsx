@@ -343,6 +343,53 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         );
       })
     : availableDictationLanguages;
+  const freeDictationLanguages = filteredDictationLanguages.filter((lang) => !PRO_LANGUAGES.includes(lang));
+  const proDictationLanguages = filteredDictationLanguages.filter((lang) => PRO_LANGUAGES.includes(lang));
+
+  const renderDictationLanguageButton = (lang) => {
+    const active = dictationLang === lang;
+    const isProLanguage = PRO_LANGUAGES.includes(lang);
+    const canUseLanguage = !isProLanguage || userTier === "pro";
+    return (
+      <button
+        key={lang}
+        onClick={() => {
+          if (!canUseLanguage) {
+            setDictationSheetOpen(false);
+            navigate("upgrade");
+            return;
+          }
+          setDictationLang(lang);
+        }}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "11px 12px",
+          borderRadius: 11,
+          background: active ? t.highlight : "transparent",
+          color: active ? t.highlightText : canUseLanguage ? t.text : t.textDim,
+          border: "none",
+          cursor: "pointer",
+          fontSize: 13,
+          fontFamily: "'Lora',Georgia,serif",
+          marginBottom: 2,
+          opacity: canUseLanguage ? 1 : 0.78,
+        }}
+      >
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span>{getLocalizedLanguageName(lang, copy.locale)}</span>
+          {isProLanguage && (
+            <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold", letterSpacing: "0.04em" }}>
+              {copy.t("langSelector.pro")}
+            </span>
+          )}
+        </span>
+        {active && canUseLanguage && <span style={{ fontSize: 12, color: t.accent }}>✓</span>}
+      </button>
+    );
+  };
 
   return (
     <div style={{
@@ -400,50 +447,29 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
               />
             </div>
             <div style={{ overflowY: "auto", padding: "2px 18px 18px", flex: 1 }}>
-              {filteredDictationLanguages.map((lang) => {
-                const active = dictationLang === lang;
-                const isProLanguage = PRO_LANGUAGES.includes(lang);
-                const canUseLanguage = !isProLanguage || userTier === "pro";
-                return (
-                  <button
-                    key={lang}
-                    onClick={() => {
-                      if (!canUseLanguage) {
-                        setDictationSheetOpen(false);
-                        navigate("upgrade");
-                        return;
-                      }
-                      setDictationLang(lang);
-                    }}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "11px 12px",
-                      borderRadius: 11,
-                      background: active ? t.highlight : "transparent",
-                      color: active ? t.highlightText : canUseLanguage ? t.text : t.textDim,
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: 13,
-                      fontFamily: "'Lora',Georgia,serif",
-                      marginBottom: 2,
-                      opacity: canUseLanguage ? 1 : 0.78,
-                    }}
-                  >
-                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <span>{getLocalizedLanguageName(lang, copy.locale)}</span>
-                      {isProLanguage && (
-                        <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold", letterSpacing: "0.04em" }}>
-                          {copy.t("langSelector.pro")}
-                        </span>
-                      )}
-                    </span>
-                    {active && canUseLanguage && <span style={{ fontSize: 12, color: t.accent }}>✓</span>}
-                  </button>
-                );
-              })}
+              {userTier === "pro" ? (
+                filteredDictationLanguages.map(renderDictationLanguageButton)
+              ) : (
+                <>
+                  {freeDictationLanguages.length > 0 && (
+                    <div style={{ marginBottom: proDictationLanguages.length > 0 ? 8 : 0 }}>
+                      <div style={{ padding: "6px 12px 4px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                        {copy.t("langSelector.freeLanguages")}
+                      </div>
+                      {freeDictationLanguages.map(renderDictationLanguageButton)}
+                    </div>
+                  )}
+                  {proDictationLanguages.length > 0 && (
+                    <div>
+                      {freeDictationLanguages.length > 0 && <div style={{ height: 1, background: t.borderLight, margin: "4px 0 8px" }} />}
+                      <div style={{ padding: "6px 12px 4px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                        {copy.t("langSelector.proLanguages")}
+                      </div>
+                      {proDictationLanguages.map(renderDictationLanguageButton)}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "14px 18px 20px", borderTop: `1px solid ${t.borderLight}` }}>
               <button onClick={handleUseDictationOnce} style={{ padding: "12px 10px", borderRadius: 12, border: `1px solid ${t.border}`, background: "transparent", color: t.text, fontSize: 12.5, fontFamily: "'Lora',Georgia,serif", cursor: "pointer" }}>
