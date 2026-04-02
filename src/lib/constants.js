@@ -83,7 +83,7 @@ export const TONE_DESCRIPTIONS = {
   Overexplaining: "Needlessly detailed",
   "Dad Joke": "Corny and harmless",
   Poetic: "Lyrical and expressive",
-  Rapper: "Rhythmic, punchy, and bar-heavy",
+  Rapper: "Rhythmic, punchy, and rhyme-forward",
   Flirty: "Playful and romantic",
   Tea: "Chatty, juicy, and a little gossipy",
   Noir: "Moody and mysterious",
