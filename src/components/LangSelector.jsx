@@ -66,6 +66,7 @@ export function LangSelector({
   const baseAvailable = filterList(availableLanguages.filter((lang) => BASE_LANGUAGES.includes(lang)));
   const proAvailable = filterList(availableLanguages.filter((lang) => PRO_LANGUAGES.includes(lang)));
   const showGroupedAvailable = !isPro;
+  const combinedAvailable = [...baseAvailable, ...proAvailable].sort((a, b) => a.localeCompare(b));
 
   const handleOpen = () => {
     if (open) {
@@ -245,7 +246,7 @@ export function LangSelector({
                 {baseAvailable.length > 0 && showGroupedAvailable && (
                   <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>{copy.t("langSelector.freeLanguages")}</div>
                 )}
-                {[...(showGroupedAvailable ? baseAvailable : [...baseAvailable, ...proAvailable])].map((lang) => {
+                {(showGroupedAvailable ? baseAvailable : combinedAvailable).map((lang) => {
                   const isProLanguage = PRO_LANGUAGES.includes(lang);
                   const canUseLanguage = !isProLanguage || isPro;
                   const canBookmarkLanguage = lang !== AUTO_DETECT_LANGUAGE && canBookmarkAny && (!isProLanguage || isPro);
