@@ -226,7 +226,7 @@ export function CopyBtn({ text, theme, variant = "default" }) {
 }
 
 // ─── MIC BUTTON ──────────────────────────────────────────────
-export function MicButton({ userTier, onDictate, theme }) {
+export function MicButton({ userTier, onDictate, theme, recognitionLang = "en-US" }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   const [listening, setListening] = useState(false);
@@ -238,7 +238,7 @@ export function MicButton({ userTier, onDictate, theme }) {
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SR();
-      recognition.lang = "en-US";
+      recognition.lang = recognitionLang;
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
       recognition.onresult = (e) => {
@@ -250,11 +250,7 @@ export function MicButton({ userTier, onDictate, theme }) {
       recognition.onend = () => { setListening(false); };
       recognition.start();
     } else {
-      // Fallback for browsers without speech recognition
-      setTimeout(() => {
-        setListening(false);
-        onDictate("I need this report done by Friday or we'll have a problem.");
-      }, 2000);
+      setListening(false);
     }
   };
 

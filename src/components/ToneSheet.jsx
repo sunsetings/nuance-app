@@ -111,8 +111,8 @@ export function ToneSheet({ visible, onClose, activeTone, userTier, favourites =
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 2 }}>
                           <span style={{ fontSize: 13, color: isActive ? t.highlightText : locked ? t.textDim : t.text }}>{getLocalizedToneName(tone, locale)}</span>
-                          {status === "free_locked" && <span style={{ background: t.freeTag, color: "#fff", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>FREE</span>}
-                          {(status === "pro_locked" || (userTier === "pro" && isProTone)) && <span style={{ background: t.proTag, color: "#000", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>PRO</span>}
+                          {status === "free_locked" && <span style={{ background: t.freeTag, color: "#fff", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>{copy.t("toneSheet.free")}</span>}
+                          {(status === "pro_locked" || (userTier === "pro" && isProTone)) && <span style={{ background: t.proTag, color: "#000", fontSize: 7, padding: "1px 5px", borderRadius: 4, fontWeight: "bold", letterSpacing: "0.04em" }}>{copy.t("toneSheet.pro")}</span>}
                           {isActive && <span style={{ fontSize: 10, color: t.accent }}>✓</span>}
                         </div>
                         <div style={{ fontSize: 11, color: t.textDim }}>{getLocalizedToneDescription(tone, locale)}</div>

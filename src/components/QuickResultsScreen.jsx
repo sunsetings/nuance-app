@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { THEMES, getLanguageCode } from "../lib/constants.js";
+import { THEMES, getLanguageCode, getLocalizedLanguageName } from "../lib/constants.js";
 import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
@@ -37,9 +37,10 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   };
 
   const handleShare = async () => {
+    const localizedToLang = getLocalizedLanguageName(toLang, copy.locale);
     const shareText = [
       `${copy.t("quickResults.original")}: ${original}`,
-      `${copy.t("quickResults.translation")} (${toLang}): ${translated}`,
+      `${copy.t("quickResults.translation")} (${localizedToLang}): ${translated}`,
     ].filter(Boolean).join("\n\n");
 
     try {

@@ -37,6 +37,40 @@ function getDefaultHomeTone(userTier) {
   return "Friendly";
 }
 
+function getRecognitionLang(fromLang, locale) {
+  const language = fromLang === AUTO_DETECT_LANGUAGE ? locale : fromLang;
+  const map = {
+    en: "en-US",
+    English: "en-US",
+    ko: "ko-KR",
+    Korean: "ko-KR",
+    ja: "ja-JP",
+    Japanese: "ja-JP",
+    es: "es-ES",
+    Spanish: "es-ES",
+    pt: "pt-BR",
+    Portuguese: "pt-BR",
+    it: "it-IT",
+    Italian: "it-IT",
+    ru: "ru-RU",
+    Russian: "ru-RU",
+    ar: "ar-SA",
+    Arabic: "ar-SA",
+    fr: "fr-FR",
+    French: "fr-FR",
+    de: "de-DE",
+    German: "de-DE",
+    vi: "vi-VN",
+    Vietnamese: "vi-VN",
+    "Chinese (Simplified)": "zh-CN",
+    "Chinese (Traditional)": "zh-TW",
+    "zh-cn": "zh-CN",
+    "zh-tw": "zh-TW",
+    Dutch: "nl-NL",
+  };
+  return map[language] || "en-US";
+}
+
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
@@ -315,7 +349,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
             }}>{copy.t("home.paste")}</button>
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} />
+            <MicButton userTier={userTier} onDictate={handleDictate} theme={theme} recognitionLang={getRecognitionLang(fromLang, copy.locale)} />
           </div>
           <div />
         </div>

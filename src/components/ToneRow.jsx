@@ -168,12 +168,12 @@ export function ToneRow({
                   {label}
                   {status === "free_locked" && (
                     <span style={{ position: "absolute", top: -8, right: -3, background: t.freeTag, color: "#fff", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                      FREE
+                      {copy.t("toneRow.free")}
                     </span>
                   )}
                   {(status === "pro_locked" || (userTier === "pro" && showProBadge)) && (
                     <span style={{ position: "absolute", top: -8, right: -3, background: t.proTag, color: "#000", fontSize: 6, padding: "2px 4px", borderRadius: 4, fontWeight: "bold", lineHeight: 1.3, whiteSpace: "nowrap", zIndex: 10 }}>
-                      PRO
+                      {copy.t("toneRow.pro")}
                     </span>
                   )}
                   {isFavourite && status === "unlocked" && (
