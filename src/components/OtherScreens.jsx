@@ -209,11 +209,11 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px", color: t.textMuted }}>{isCurrentPro ? "Your Pro benefits" : "Choose your plan"}</span>
         </div>
 
-        <div style={{ marginBottom: 18, paddingBottom: 16, borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
+        <div style={{ marginBottom: isCurrentPro ? 22 : 18, paddingBottom: 16, borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           {(isCurrentPro
             ? [
                 "You're already on Pro with everything unlocked below",
-                "More tones, more languages, more control",
+                "Daily room to refine, save, and switch tones freely",
               ]
             : [
                 "Avoid sounding awkward, rude, or off",
@@ -226,40 +226,19 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           ))}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 5, alignItems: "end" }}>
-          <div />
-          <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 8 }}>
-            <div style={{ fontSize: 10, color: t.textFaint, opacity: 0.6, letterSpacing: "0.04em" }}>Guest</div>
-          </div>
-          <div style={{ textAlign: "center", padding: "7px 4px", borderRadius: 8, background: t.surface }}>
-            <div style={{ fontSize: 11, fontWeight: "bold", color: t.textMuted }}>Free</div>
-          </div>
-          <div style={{ textAlign: "center", padding: "7px 4px 6px", borderRadius: 10, background: t.highlight, border: `1px solid ${t.highlightBorder}` }}>
-            <div style={{ fontSize: 8, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 2 }}>Most popular</div>
-            <div style={{ fontSize: 12, fontWeight: "bold", color: t.highlightText, letterSpacing: "-0.2px" }}>Pro</div>
-          </div>
-        </div>
-
-        {[
-          { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
-          { label: "Tones", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
-          { label: "Languages", guest: "14", free: "14", pro: "100" },
-          { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
-          { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
-          { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
-        ].map((row, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
-            <span style={{ fontSize: 10, color: t.textDim, lineHeight: 1.3 }}>{row.label}</span>
-            <div style={{ textAlign: "center", padding: "6px 2px", borderRadius: 6 }}><span style={{ fontSize: 10, color: t.textFaint, opacity: 0.55 }}>{row.guest}</span></div>
-            <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 6, background: t.surface }}><span style={{ fontSize: 10, color: t.textMuted }}>{row.free}</span></div>
-            <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 6, background: t.highlight, border: `1px solid ${t.highlightBorder}` }}><span style={{ fontSize: 10, color: t.accent }}>{row.pro}</span></div>
-          </div>
-        ))}
-
-        <div style={{ height: 14 }} />
-
         {isCurrentPro ? (
           <div>
+            <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+              <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+                Pro status
+              </div>
+              <div style={{ fontSize: 16, fontWeight: "bold", color: t.textMuted, marginBottom: 3 }}>
+                Active
+              </div>
+              <div style={{ fontSize: 11, color: t.textDim, lineHeight: 1.6 }}>
+                You already have the full Tonara Pro set on this account.
+              </div>
+            </div>
             <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
               Your account already has the full Pro set
             </div>
@@ -283,6 +262,37 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           </div>
         ) : (
           <div>
+            <div style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 5, alignItems: "end" }}>
+              <div />
+              <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 8 }}>
+                <div style={{ fontSize: 10, color: t.textFaint, opacity: 0.6, letterSpacing: "0.04em" }}>Guest</div>
+              </div>
+              <div style={{ textAlign: "center", padding: "7px 4px", borderRadius: 8, background: t.surface }}>
+                <div style={{ fontSize: 11, fontWeight: "bold", color: t.textMuted }}>Free</div>
+              </div>
+              <div style={{ textAlign: "center", padding: "7px 4px 6px", borderRadius: 10, background: t.highlight, border: `1px solid ${t.highlightBorder}` }}>
+                <div style={{ fontSize: 8, color: theme === "light" ? "#2a6a2a" : "#78b86f", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 2 }}>Most popular</div>
+                <div style={{ fontSize: 12, fontWeight: "bold", color: t.highlightText, letterSpacing: "-0.2px" }}>Pro</div>
+              </div>
+            </div>
+
+            {[
+              { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
+              { label: "Tones", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
+              { label: "Languages", guest: "14", free: "14", pro: "100" },
+              { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
+              { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
+              { label: "Saved tones", guest: "—", free: "—", pro: "✓" },
+            ].map((row, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "82px 1fr 1fr 1fr", gap: 5, marginBottom: 4, alignItems: "center" }}>
+                <span style={{ fontSize: 10, color: t.textDim, lineHeight: 1.3 }}>{row.label}</span>
+                <div style={{ textAlign: "center", padding: "6px 2px", borderRadius: 6 }}><span style={{ fontSize: 10, color: t.textFaint, opacity: 0.55 }}>{row.guest}</span></div>
+                <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 6, background: t.surface }}><span style={{ fontSize: 10, color: t.textMuted }}>{row.free}</span></div>
+                <div style={{ textAlign: "center", padding: "6px 4px", borderRadius: 6, background: t.highlight, border: `1px solid ${t.highlightBorder}` }}><span style={{ fontSize: 10, color: t.accent }}>{row.pro}</span></div>
+              </div>
+            ))}
+
+            <div style={{ height: 14 }} />
             <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
               Best for everyday use and important conversations
             </div>
