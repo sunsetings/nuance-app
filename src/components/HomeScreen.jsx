@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE } from "../lib/constants.js";
+import { ALL_TONES, THEMES, CHAR_LIMIT, DEFAULT_FROM_LANG, DEFAULT_TO_LANG, FREE_TONES, GUEST_TONES, getBookmarkLimitForTier, getCapForTier, AUTO_DETECT_LANGUAGE, getSpeechRecognitionLang } from "../lib/constants.js";
 import { BottomNav, MicButton, RefineCounter } from "./UI.jsx";
 import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
@@ -38,37 +38,19 @@ function getDefaultHomeTone(userTier) {
 }
 
 function getRecognitionLang(fromLang, locale) {
-  const language = fromLang === AUTO_DETECT_LANGUAGE ? locale : fromLang;
-  const map = {
-    en: "en-US",
-    English: "en-US",
-    ko: "ko-KR",
-    Korean: "ko-KR",
-    ja: "ja-JP",
-    Japanese: "ja-JP",
-    es: "es-ES",
-    Spanish: "es-ES",
-    pt: "pt-BR",
-    Portuguese: "pt-BR",
-    it: "it-IT",
-    Italian: "it-IT",
-    ru: "ru-RU",
-    Russian: "ru-RU",
-    ar: "ar-SA",
-    Arabic: "ar-SA",
-    fr: "fr-FR",
-    French: "fr-FR",
-    de: "de-DE",
-    German: "de-DE",
-    vi: "vi-VN",
-    Vietnamese: "vi-VN",
-    "Chinese (Simplified)": "zh-CN",
-    "Chinese (Traditional)": "zh-TW",
-    "zh-cn": "zh-CN",
-    "zh-tw": "zh-TW",
-    Dutch: "nl-NL",
-  };
-  return map[language] || "en-US";
+  if (fromLang && fromLang !== AUTO_DETECT_LANGUAGE) {
+    return getSpeechRecognitionLang(fromLang, "en-US");
+  }
+
+  if (typeof navigator !== "undefined") {
+    const browserLocales = [...(navigator.languages || []), navigator.language].filter(Boolean);
+    for (const candidate of browserLocales) {
+      const resolved = getSpeechRecognitionLang(candidate, "");
+      if (resolved) return resolved;
+    }
+  }
+
+  return getSpeechRecognitionLang(locale, "en-US");
 }
 
 export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate, savedTones = [], onToggleSavedTone, navContext = null }) {

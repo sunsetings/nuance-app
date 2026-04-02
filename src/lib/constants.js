@@ -1147,6 +1147,170 @@ export function getLocalizedLanguageName(label, locale = "en") {
   }
 }
 
+export const SPEECH_RECOGNITION_LANG_MAP = {
+  en: "en-US",
+  "en-us": "en-US",
+  "en-gb": "en-GB",
+  English: "en-US",
+  ko: "ko-KR",
+  "ko-kr": "ko-KR",
+  Korean: "ko-KR",
+  ja: "ja-JP",
+  "ja-jp": "ja-JP",
+  Japanese: "ja-JP",
+  es: "es-ES",
+  "es-es": "es-ES",
+  "es-419": "es-419",
+  Spanish: "es-ES",
+  pt: "pt-BR",
+  "pt-br": "pt-BR",
+  "pt-pt": "pt-PT",
+  Portuguese: "pt-BR",
+  it: "it-IT",
+  "it-it": "it-IT",
+  Italian: "it-IT",
+  ru: "ru-RU",
+  "ru-ru": "ru-RU",
+  Russian: "ru-RU",
+  ar: "ar-SA",
+  "ar-sa": "ar-SA",
+  Arabic: "ar-SA",
+  fr: "fr-FR",
+  "fr-fr": "fr-FR",
+  French: "fr-FR",
+  de: "de-DE",
+  "de-de": "de-DE",
+  German: "de-DE",
+  vi: "vi-VN",
+  "vi-vn": "vi-VN",
+  Vietnamese: "vi-VN",
+  zh: "zh-CN",
+  "zh-cn": "zh-CN",
+  "zh-sg": "zh-CN",
+  "zh-hans": "zh-CN",
+  "zh-tw": "zh-TW",
+  "zh-hk": "zh-TW",
+  "zh-hant": "zh-TW",
+  "Chinese (Simplified)": "zh-CN",
+  "Chinese (Traditional)": "zh-TW",
+  nl: "nl-NL",
+  "nl-nl": "nl-NL",
+  Dutch: "nl-NL",
+  hi: "hi-IN",
+  Hindi: "hi-IN",
+  id: "id-ID",
+  Indonesian: "id-ID",
+  th: "th-TH",
+  Thai: "th-TH",
+  tr: "tr-TR",
+  Turkish: "tr-TR",
+  uk: "uk-UA",
+  "uk-ua": "uk-UA",
+  Ukrainian: "uk-UA",
+  pl: "pl-PL",
+  "pl-pl": "pl-PL",
+  Polish: "pl-PL",
+  sv: "sv-SE",
+  "sv-se": "sv-SE",
+  Swedish: "sv-SE",
+  da: "da-DK",
+  "da-dk": "da-DK",
+  Danish: "da-DK",
+  no: "nb-NO",
+  nb: "nb-NO",
+  "nb-no": "nb-NO",
+  Norwegian: "nb-NO",
+  fi: "fi-FI",
+  "fi-fi": "fi-FI",
+  Finnish: "fi-FI",
+  cs: "cs-CZ",
+  "cs-cz": "cs-CZ",
+  Czech: "cs-CZ",
+  el: "el-GR",
+  "el-gr": "el-GR",
+  Greek: "el-GR",
+  he: "he-IL",
+  "he-il": "he-IL",
+  Hebrew: "he-IL",
+  ro: "ro-RO",
+  "ro-ro": "ro-RO",
+  Romanian: "ro-RO",
+  hu: "hu-HU",
+  "hu-hu": "hu-HU",
+  Hungarian: "hu-HU",
+  bn: "bn-BD",
+  "bn-bd": "bn-BD",
+  Bengali: "bn-BD",
+  ta: "ta-IN",
+  "ta-in": "ta-IN",
+  Tamil: "ta-IN",
+  te: "te-IN",
+  "te-in": "te-IN",
+  Telugu: "te-IN",
+  mr: "mr-IN",
+  "mr-in": "mr-IN",
+  Marathi: "mr-IN",
+  gu: "gu-IN",
+  "gu-in": "gu-IN",
+  Gujarati: "gu-IN",
+  pa: "pa-IN",
+  "pa-in": "pa-IN",
+  Punjabi: "pa-IN",
+  ml: "ml-IN",
+  "ml-in": "ml-IN",
+  Malayalam: "ml-IN",
+  kn: "kn-IN",
+  "kn-in": "kn-IN",
+  Kannada: "kn-IN",
+  or: "or-IN",
+  "or-in": "or-IN",
+  Odia: "or-IN",
+  si: "si-LK",
+  "si-lk": "si-LK",
+  Sinhala: "si-LK",
+  ne: "ne-NP",
+  "ne-np": "ne-NP",
+  Nepali: "ne-NP",
+  ms: "ms-MY",
+  "ms-my": "ms-MY",
+  Malay: "ms-MY",
+  tl: "fil-PH",
+  fil: "fil-PH",
+  "fil-ph": "fil-PH",
+  Tagalog: "fil-PH",
+  ur: "ur-PK",
+  "ur-pk": "ur-PK",
+  Urdu: "ur-PK",
+};
+
+export function getSpeechRecognitionLang(value, fallback = "en-US") {
+  const raw = String(value || "").trim();
+  if (!raw) return fallback;
+  if (/detect|auto/i.test(raw)) return fallback;
+
+  if (SPEECH_RECOGNITION_LANG_MAP[raw]) {
+    return SPEECH_RECOGNITION_LANG_MAP[raw];
+  }
+
+  const normalized = raw.toLowerCase().replace(/_/g, "-");
+  if (SPEECH_RECOGNITION_LANG_MAP[normalized]) {
+    return SPEECH_RECOGNITION_LANG_MAP[normalized];
+  }
+
+  const base = normalized.split("-")[0];
+  if (base === "zh") {
+    if (normalized.includes("tw") || normalized.includes("hk") || normalized.includes("hant")) {
+      return "zh-TW";
+    }
+    return "zh-CN";
+  }
+  if (SPEECH_RECOGNITION_LANG_MAP[base]) {
+    return SPEECH_RECOGNITION_LANG_MAP[base];
+  }
+
+  return fallback;
+}
+
 export function getLocalizedToneName(tone, locale = "en") {
   const resolvedLocale = String(locale || "en").toLowerCase().slice(0, 2);
   return TONE_NAME_TRANSLATIONS[resolvedLocale]?.[tone] || tone;
