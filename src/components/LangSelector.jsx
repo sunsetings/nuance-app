@@ -36,9 +36,11 @@ export function LangSelector({
   const canBookmarkAny = userTier !== "guest";
   const visibleBookmarked = canBookmarkAny ? bookmarked : [];
   const canBookmark = visibleBookmarked.length < bookmarkLimit;
+  const sortedBaseLanguages = [...BASE_LANGUAGES].sort((a, b) => a.localeCompare(b));
+  const sortedProLanguages = [...PRO_LANGUAGES].sort((a, b) => a.localeCompare(b));
   const allLanguages = label === "FROM"
-    ? [AUTO_DETECT_LANGUAGE, ...BASE_LANGUAGES, ...PRO_LANGUAGES]
-    : [...BASE_LANGUAGES, ...PRO_LANGUAGES];
+    ? [AUTO_DETECT_LANGUAGE, ...sortedBaseLanguages, ...sortedProLanguages]
+    : [...sortedBaseLanguages, ...sortedProLanguages];
 
   const filterList = (list) => (
     search ? list.filter((item) => item.toLowerCase().includes(search.toLowerCase())) : list
@@ -46,16 +48,12 @@ export function LangSelector({
 
   const bookmarkedFiltered = visibleBookmarked.filter((lang) => filterList([lang]).length > 0);
   const availableLanguages = allLanguages.filter((lang) => !visibleBookmarked.includes(lang));
-  const availableFiltered = filterList(
-    label === "FROM"
-      ? [
-          ...(availableLanguages.includes(AUTO_DETECT_LANGUAGE) ? [AUTO_DETECT_LANGUAGE] : []),
-          ...availableLanguages
-            .filter((lang) => lang !== AUTO_DETECT_LANGUAGE)
-            .sort((a, b) => a.localeCompare(b)),
-        ]
-      : availableLanguages.sort((a, b) => a.localeCompare(b))
-  );
+  const visibleAutoDetect = label === "FROM" && availableLanguages.includes(AUTO_DETECT_LANGUAGE)
+    ? [AUTO_DETECT_LANGUAGE]
+    : [];
+  const baseAvailable = filterList(availableLanguages.filter((lang) => BASE_LANGUAGES.includes(lang)));
+  const proAvailable = filterList(availableLanguages.filter((lang) => PRO_LANGUAGES.includes(lang)));
+  const showGroupedAvailable = !isPro;
 
   const handleOpen = () => {
     if (open) {
@@ -199,11 +197,40 @@ export function LangSelector({
               </div>
             )}
 
-            {availableFiltered.length > 0 && (
+            {(visibleAutoDetect.length > 0 || baseAvailable.length > 0 || proAvailable.length > 0) && (
               <div>
                 {bookmarkedFiltered.length > 0 && <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />}
                 <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.1em", textTransform: "uppercase" }}>Available</div>
-                {availableFiltered.map((lang) => {
+                {visibleAutoDetect.map((lang) => {
+                  const canBookmarkLanguage = false;
+                  return (
+                  <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
+                    <button
+                      onClick={() => {
+                        onChange(lang);
+                        handleClose();
+                      }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      {lang}
+                    </button>
+                    {canBookmarkAny && (
+                      <button
+                        onClick={() => {
+                          if (!canBookmarkLanguage) return;
+                          onToggleBookmark(lang);
+                        }}
+                        style={{ background: "none", border: "none", cursor: "default", padding: "2px", display: "flex", alignItems: "center", opacity: 0.3 }}
+                      >
+                        <SmallHeart size={13} color={t.textFaint} />
+                      </button>
+                    )}
+                  </div>
+                )})}
+                {baseAvailable.length > 0 && showGroupedAvailable && (
+                  <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>Free languages</div>
+                )}
+                {[...(showGroupedAvailable ? baseAvailable : [...baseAvailable, ...proAvailable])].map((lang) => {
                   const isProLanguage = PRO_LANGUAGES.includes(lang);
                   const canUseLanguage = !isProLanguage || isPro;
                   const canBookmarkLanguage = lang !== AUTO_DETECT_LANGUAGE && canBookmarkAny && (!isProLanguage || isPro);
@@ -243,10 +270,46 @@ export function LangSelector({
                     )}
                   </div>
                 )})}
+                {showGroupedAvailable && proAvailable.length > 0 && (
+                  <>
+                    <div style={{ height: 1, background: t.borderLight, margin: "2px 12px" }} />
+                    <div style={{ padding: "6px 14px 3px", fontSize: 9, color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>Pro languages</div>
+                    {proAvailable.map((lang) => {
+                      const canBookmarkLanguage = false;
+                      return (
+                      <div key={lang} style={{ display: "flex", alignItems: "center", padding: "8px 14px", background: lang === value ? t.surface : "transparent" }}>
+                        <button
+                          onClick={() => {
+                            navigate("upgrade");
+                          }}
+                          style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
+                        >
+                          {lang}
+                          <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
+                            PRO
+                          </span>
+                        </button>
+                        {canBookmarkAny && (
+                          <button
+                            onClick={() => {
+                              if (!canBookmarkLanguage) {
+                                navigate("upgrade");
+                                return;
+                              }
+                            }}
+                            style={{ background: "none", border: "none", cursor: "default", padding: "2px", display: "flex", alignItems: "center", opacity: 0.3 }}
+                          >
+                            <SmallHeart size={13} color={t.textFaint} />
+                          </button>
+                        )}
+                      </div>
+                    )})}
+                  </>
+                )}
               </div>
             )}
 
-            {bookmarkedFiltered.length === 0 && availableFiltered.length === 0 && (
+            {bookmarkedFiltered.length === 0 && visibleAutoDetect.length === 0 && baseAvailable.length === 0 && proAvailable.length === 0 && (
               <div style={{ padding: "18px 14px", textAlign: "center", fontSize: 12, color: t.textDim }}>No languages found</div>
             )}
           </div>
