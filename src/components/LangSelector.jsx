@@ -142,7 +142,7 @@ export function LangSelector({
                 }}
                 style={{ background: "none", border: "none", cursor: "pointer", fontSize: 10, color: t.freeTag, padding: 0, letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}
               >
-                ✦ Sign up free to bookmark languages
+                ✦ Create free account to bookmark languages
               </button>
             </div>
           )}

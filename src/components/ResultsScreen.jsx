@@ -308,7 +308,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     3: "STRONG",
   };
   const toneLabel = activeTone.toUpperCase();
-  const refinedLabel = `REFINED · ${toneLabel} (${strengthLabelMap[toneCount] || "LIGHT"})`;
+  const refinedLabel = `REFINED — ${toneLabel} (${strengthLabelMap[toneCount] || "LIGHT"})`;
   const sourceLangCode = getLanguageCode(source.fromLang || source.from_lang || "EN");
   const targetLangCode = getLanguageCode(toLang);
   const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
@@ -401,8 +401,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         {/* Tone row */}
         <div style={{ marginBottom: 12 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 2 }}>
-            <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>Refine further</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Scroll for more tones</div>
+            <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>Try a different tone</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Pick how it should come across</div>
           </div>
           <ToneRow
             activeTone={activeTone} toneCount={toneCount}
@@ -458,7 +458,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 function ResultsHeaderCTA({ userTier, navigate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   if (userTier === "guest") {
-    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock free tones →</button>;
+    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock more tones →</button>;
   }
   if (userTier === "free") {
     return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>Unlock Pro tones →</button>;

@@ -11,8 +11,8 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState(null);
   const planRows = [
-    { label: "Daily refines", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
-    { label: "Tones", value: isPremium ? `All ${ALL_TONES.length}` : `${FREE_TONES.length} of ${ALL_TONES.length}`, accent: true },
+    { label: "Messages refined today", value: `${usageCount}/${dailyRefineCap} a day`, accent: true },
+    { label: "Tones available", value: isPremium ? `All ${ALL_TONES.length}` : `${FREE_TONES.length} of ${ALL_TONES.length}`, accent: true },
     { label: "Bookmarked languages", value: isPremium ? `Up to ${PRO_BOOKMARK_LIMIT}` : `Up to ${FREE_BOOKMARK_LIMIT}`, accent: true },
     { label: "Saved messages", value: isPremium ? `${savedCount} / ${PRO_SAVE_LIMIT}` : `${savedCount} / ${FREE_SAVE_LIMIT}`, accent: true },
     { label: "Saved tones", value: isPremium ? `Up to ${PRO_SAVED_TONE_LIMIT}` : "Pro only", accent: false },
@@ -65,10 +65,11 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
         </div>
 
         <div style={{ background: t.surface, borderRadius: 14, padding: "18px 18px 16px", marginBottom: 18, textAlign: "center" }}>
-          <div style={{ fontSize: 15, fontWeight: "bold", color: t.text, marginBottom: 3 }}>{isPremium ? "Pro Plan" : "Free Plan"}</div>
+          <div style={{ fontSize: 15, fontWeight: "bold", color: t.text, marginBottom: 3 }}>{isPremium ? "Pro plan" : "Free plan"}</div>
+          <div style={{ fontSize: 11, color: t.textDim, marginBottom: 3 }}>{isPremium ? "More control for important conversations" : "Good for everyday messages"}</div>
           <div style={{ fontSize: 11, color: t.textFaint, letterSpacing: "0.01em" }}>{user?.email || "user@email.com"}</div>
           {!isPremium && (
-            <button onClick={() => navigate("upgrade")} style={{ marginTop: 12, padding: "8px 20px", background: t.accent, color: t.accentText, border: "none", borderRadius: 8, fontSize: 12, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>✦ Go Pro →</button>
+            <button onClick={() => navigate("upgrade")} style={{ marginTop: 12, padding: "8px 20px", background: t.accent, color: t.accentText, border: "none", borderRadius: 8, fontSize: 12, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Upgrade to Pro</button>
           )}
         </div>
 
@@ -76,7 +77,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
           <div style={{ background: t.surface, borderRadius: 14, padding: "16px 16px 14px", marginBottom: 16 }}>
             <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>Subscription</div>
             <div style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.65, marginBottom: 10 }}>
-              Change between monthly and annual billing, or cancel your Pro plan.
+              Change billing or cancel anytime.
             </div>
             <button
               onClick={handleManagePlan}
@@ -206,18 +207,18 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           <span style={{ fontSize: 26, fontWeight: "bold", letterSpacing: "-0.5px", color: t.text }}>tonara.</span>
         </div>
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px", color: t.textMuted }}>{isCurrentPro ? "Your Pro benefits" : "Choose your plan"}</span>
+          <span style={{ fontSize: 16, fontWeight: "bold", letterSpacing: "-0.3px", color: t.textMuted }}>{isCurrentPro ? "You’re on Pro" : "Choose your plan"}</span>
         </div>
 
         <div style={{ marginBottom: isCurrentPro ? 22 : 18, paddingBottom: 16, borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           {(isCurrentPro
             ? [
-                "You're already on Pro with everything unlocked below",
-                "Daily room to refine, save, and switch tones freely",
+                "All 30 tones are already unlocked on this account",
+                "More room to refine, save, and switch tones freely",
               ]
             : [
-                "Avoid sounding awkward, rude, or off",
-                "More tones, more languages, more control",
+                "Default translation apps give one version. tonara gives you options.",
+                "Choose the right tone for everyday chats and important conversations.",
               ]).map((line, i) => (
             <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i === 0 ? 7 : 0 }}>
               <span style={{ color: theme === "light" ? "#2a6a2a" : "#78b86f", fontSize: 12, marginTop: 1, flexShrink: 0 }}>·</span>
@@ -230,17 +231,17 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
           <div>
             <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
               <div style={{ fontSize: 10, color: t.textFaint, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
-                Pro status
+                PRO STATUS
               </div>
               <div style={{ fontSize: 16, fontWeight: "bold", color: t.textMuted, marginBottom: 3 }}>
                 Active
               </div>
               <div style={{ fontSize: 11, color: t.textDim, lineHeight: 1.6 }}>
-                You already have the full Tonara Pro set on this account.
+                This account already has the full tonara Pro plan.
               </div>
             </div>
             <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
-              Your account already has the full Pro set
+              You already have full Pro access
             </div>
             <div style={{ background: t.highlight, border: `1px solid ${t.highlightBorder}`, borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
               {[
@@ -248,7 +249,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
                 `All ${ALL_TONES.length} tones unlocked`,
                 "100 languages available",
                 `${PRO_BOOKMARK_LIMIT} bookmarked languages`,
-                `${PRO_SAVE_LIMIT} saved messages and ${PRO_SAVED_TONE_LIMIT} saved tones`,
+                `${PRO_SAVE_LIMIT} saved messages + ${PRO_SAVED_TONE_LIMIT} saved tones`,
               ].map((line) => (
                 <div key={line} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
                   <span style={{ color: theme === "light" ? "#2a6a2a" : "#78b86f", fontSize: 12, marginTop: 1, flexShrink: 0 }}>·</span>
@@ -277,8 +278,8 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
             </div>
 
             {[
-              { label: "Daily refines", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
-              { label: "Tones", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
+              { label: "Refines per day", guest: "10", free: `${FREE_DAILY_CAP}`, pro: `${PRO_DAILY_CAP}` },
+              { label: "Tones available", guest: `${GUEST_TONES.length}`, free: `${FREE_TONES.length}`, pro: `All ${ALL_TONES.length}` },
               { label: "Languages", guest: "14", free: "14", pro: "100" },
               { label: "Saved messages", guest: "—", free: "3", pro: `${PRO_SAVE_LIMIT}` },
               { label: "Bookmarks", guest: "—", free: `${FREE_BOOKMARK_LIMIT}`, pro: `${PRO_BOOKMARK_LIMIT}` },
@@ -294,7 +295,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
 
             <div style={{ height: 14 }} />
             <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.03em" }}>
-              Best for everyday use and important conversations
+              Best when wording matters
             </div>
 
             {checkoutError && (
@@ -323,7 +324,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier })
               <div style={{ textAlign: "center", fontSize: 10, color: t.textFaint, marginBottom: userTier === "guest" ? 12 : 0, letterSpacing: "0.03em" }}>Manage subscription anytime</div>
               {userTier === "guest" && (
                 <button onClick={() => navigate("signin_nav")} style={{ width: "100%", background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", marginTop: 2, fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.02em" }}>
-                  Sign up free instead
+                  Or create a free account instead
                 </button>
               )}
             </div>
@@ -340,18 +341,18 @@ export function CapScreen({ navigate, userTier, theme }) {
   const isPro = userTier === "pro";
   const variant = isGuest
     ? {
-        title: "You've used today's 10 refines",
-        subtitle: "Sign up free — 30 seconds, 20 refines a day.",
-        primaryLabel: "Sign up free — 20 refines/day",
+        title: "You’ve used today’s 10 guest refines",
+        subtitle: "Create a free account for 20 refines a day, 5 tones, and saved messages.",
+        primaryLabel: "Create free account",
         primaryAction: () => navigate("signin_cap"),
-        secondaryLabel: "View Pro plan →",
+        secondaryLabel: "See Pro plan",
         secondaryAction: () => navigate("upgrade"),
         secondaryAccent: false,
       }
     : isPro
       ? {
-          title: "You've used today's 300 refines",
-          subtitle: "Come back tomorrow for another 300 refines.",
+          title: "You’ve used today’s 300 Pro refines",
+          subtitle: "Your 300 daily refines reset tomorrow.",
           primaryLabel: null,
           primaryAction: null,
           secondaryLabel: null,
@@ -359,11 +360,11 @@ export function CapScreen({ navigate, userTier, theme }) {
           secondaryAccent: false,
         }
       : {
-          title: "You've used today's 20 refines",
-          subtitle: "Upgrade to Pro for 300 refines a day.",
+          title: "You’ve used today’s 20 free refines",
+          subtitle: "Upgrade to Pro for 300 refines a day and all 30 tones.",
           primaryLabel: null,
           primaryAction: null,
-          secondaryLabel: "✦ Upgrade to Pro — 300/day",
+          secondaryLabel: "Upgrade to Pro",
           secondaryAction: () => navigate("upgrade"),
           secondaryAccent: true,
         };
@@ -394,7 +395,7 @@ export function CapScreen({ navigate, userTier, theme }) {
         )}
 
         <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-          Come back tomorrow
+          Or come back tomorrow
         </button>
       </div>
     </div>
@@ -442,9 +443,9 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: t.textFaint }}>🔒</div>
           </div>
           <div style={{ fontSize: 15, fontWeight: "bold", marginBottom: 8, letterSpacing: "-0.2px" }}>Save your best translations</div>
-          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.75 }}>Sign up free to save up to 3 translations. Reopen any time to keep refining.</div>
-          <button onClick={() => navigate("signin_save")} style={{ width: "100%", padding: "12px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 10, fontFamily: "'Lora',Georgia,serif" }}>Sign up free</button>
-          <button onClick={() => navigate("upgrade")} style={{ width: "100%", padding: "10px", background: "transparent", color: t.textFaint, border: "none", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>View Pro plan →</button>
+          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 22, lineHeight: 1.75 }}>Create a free account to save up to 3 messages. Reopen them any time to copy them or try a different tone.</div>
+          <button onClick={() => navigate("signin_save")} style={{ width: "100%", padding: "12px", background: t.accent, color: t.accentText, border: "none", borderRadius: 10, fontSize: 13, fontWeight: "bold", cursor: "pointer", marginBottom: 10, fontFamily: "'Lora',Georgia,serif" }}>Create free account</button>
+          <button onClick={() => navigate("upgrade")} style={{ width: "100%", padding: "10px", background: "transparent", color: t.textFaint, border: "none", fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>See Pro plan</button>
         </div>
       ) : items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "36px 16px" }}>
@@ -456,7 +457,7 @@ export function SavedScreen({ navigate, isPremium, userTier, theme, onOpenSaved,
         </div>
       ) : (
         <>
-          <div style={{ fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.04em" }}>Tap any item to reopen and refine.</div>
+          <div style={{ fontSize: 10, color: t.textFaint, marginBottom: 12, letterSpacing: "0.04em" }}>Reopen any saved message to copy it or try a different tone.</div>
           {items.map(item => (
             <button key={item.id} onClick={() => {
               const parsedTone = parseToneSelection(item.tone);

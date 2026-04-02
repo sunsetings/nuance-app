@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
 
 const SIGNIN_CONTEXT = {
-  nav: { title: "Welcome back", sub: "Sign in to access your account." },
+  nav: { title: "Create your free account", sub: "Save messages, bookmark languages, and get 20 refines a day." },
   save: { title: "Save this translation", sub: "Free account — save up to 3 translations." },
   bm: { title: "Bookmark languages", sub: "Sign up free — bookmark 1 language for quick access." },
   tone: { title: "Unlock more tones", sub: "Sign up free — unlock Poetic, Gen A, and Flirty." },
@@ -31,6 +31,13 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
   const [success, setSuccess] = useState(null);
   const ctx = SIGNIN_CONTEXT[context] || SIGNIN_CONTEXT.default;
   const showBenefits = context === "nav";
+  const isSignup = mode === "signup";
+  const displayTitle = mode === "forgot" ? "Reset your password" : isSignup ? "Create your free account" : "Welcome back";
+  const displaySubtitle = mode === "forgot"
+    ? "Enter your email and we'll send you a reset link."
+    : isSignup
+      ? "Save messages, bookmark languages, and get 20 refines a day."
+      : "Sign in to your saved messages, tones, and account.";
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -110,20 +117,18 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
 
         <div style={{ textAlign: "center", marginBottom: 20 }}>
           <div style={{ fontSize: 17, fontWeight: "bold", marginBottom: 7, letterSpacing: "-0.2px" }}>
-            {mode === "forgot" ? "Reset your password" : ctx.title}
+            {displayTitle}
           </div>
           <div style={{ fontSize: 12, color: t.textDim, lineHeight: 1.75, maxWidth: 290, margin: "0 auto" }}>
-            {mode === "forgot"
-              ? "Enter your email and we'll send you a reset link."
-              : (ctx.sub || (mode === "signup" ? "Create a free account to save translations and bookmark languages." : "Sign in to access your account."))}
+            {displaySubtitle}
           </div>
         </div>
 
         {showBenefits && mode !== "forgot" && (
           <div style={{ marginBottom: 22, padding: "15px 16px", background: t.surface, borderRadius: 12 }}>
             {[
-              { icon: "◈", text: "20 refines a day — enough for everyday chats, messages, and quick fixes." },
-              { icon: "◐", text: "Unlock Poetic, Gen A, and Flirty — get more expressive options for creative, internet-native, and playful conversations." },
+              { icon: "◈", text: "20 refines a day for everyday chats, requests, and quick fixes." },
+              { icon: "◐", text: "5 tones to help your message sound more natural, warm, playful, or direct." },
             ].map((item, index, arr) => (
               <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: index < arr.length - 1 ? 11 : 0, marginBottom: index < arr.length - 1 ? 11 : 0, borderBottom: index < arr.length - 1 ? `1px solid ${t.borderLight}` : "none" }}>
                 <span style={{ fontSize: 13, color: t.accentDim, width: 16, textAlign: "center", flexShrink: 0 }}>{item.icon}</span>
@@ -162,7 +167,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
               transition: "all 0.2s",
             }}>
               <span style={{ fontSize: 14, fontWeight: "bold", fontFamily: "sans-serif", color: t.textDim }}>G</span>
-              Continue with Google for free
+              Continue with Google
             </button>
 
             {/* Divider */}
@@ -271,7 +276,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav" }) {
         {mode === "forgot" ? (
           <button onClick={() => { setMode("login"); setError(null); setSuccess(null); }} style={{ background: "none", border: "none", color: t.textFaint, cursor: "pointer", fontSize: 11, fontFamily: "'Lora',Georgia,serif" }}>← Back to sign in</button>
         ) : (
-          <button onClick={() => navigate?.("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Continue without an account</button>
+          <button onClick={() => navigate?.("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>Continue as guest</button>
         )}
       </div>
     </div>

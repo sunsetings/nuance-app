@@ -168,11 +168,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           </button>
         ) : userTier === "free" ? (
           <button onClick={() => navigate("upgrade")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-            ✦ Go Pro
+            Upgrade to Pro
           </button>
         ) : (
           <button onClick={() => navigate("signin_nav")} style={{ background: t.accent, border: "none", borderRadius: 10, padding: "6px 12px", color: t.accentText, fontSize: 11, fontWeight: "bold", cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-            Sign up free
+            Create free account
           </button>
         )}
       </div>
@@ -210,7 +210,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
       {/* Mode toggle */}
       <div style={{ display: "flex", marginBottom: 10, gap: 2, padding: "2px", background: t.surface, borderRadius: 10 }}>
-        {[{ id: "refine", label: "Refine & Translate" }, { id: "quick", label: "Standard Translate" }].map(opt => (
+        {[{ id: "refine", label: "Refine & Translate" }, { id: "quick", label: "Translate only" }].map(opt => (
           <button key={opt.id} onClick={() => setMode(opt.id)} style={{
             flex: 1, padding: "8px 4px", borderRadius: 8, border: "none",
             background: mode === opt.id ? t.surface2 : "transparent",
@@ -227,7 +227,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
             <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>Tone</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Scroll for more tones</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>Pick how it should come across</div>
           </div>
           <ToneRow
             activeTone={tone} toneCount={toneCount}
@@ -256,7 +256,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       }}>
         <div style={{ padding: "13px 16px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
           <span style={{ fontSize: 10, color: t.textFaint, fontStyle: "italic", letterSpacing: "0.03em" }}>
-            {isRefine ? "Say what you really mean" : "Translate directly, without tone refinement"}
+            {isRefine ? "Write it naturally" : "Write it naturally"}
           </span>
           <span style={{ fontSize: 10, color: charsNearLimit ? t.proTag : t.textFaint, letterSpacing: "0.04em", transition: "color 0.2s" }}>
             {charsLeft} left
@@ -268,7 +268,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           onChange={e => setText(e.target.value.slice(0, CHAR_LIMIT))}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 160)}
-          placeholder={isRefine ? "Type your message — we'll refine and translate it..." : "Type or paste text to translate..."}
+          placeholder={isRefine ? "Type your message naturally — tonara will help it sound right." : "Type your message and tonara will translate it."}
           style={{
             flex: 1, background: "transparent", border: "none",
             padding: "12px 16px", color: t.text, fontSize: 13,
@@ -308,7 +308,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           fontSize: 14, fontFamily: "'Lora',Georgia,serif",
           fontWeight: "bold", cursor: "pointer",
         }}>
-          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Go Pro for 300/day`}
+          {userTier === "pro" ? `Daily limit reached (${cap}) — come back tomorrow` : `✦ Daily limit reached (${cap}) — Upgrade to Pro`}
         </button>
       ) : (
         <button onClick={handleTranslate} disabled={!hasText} style={{
@@ -322,7 +322,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           transition: "all 0.2s",
           letterSpacing: "-0.1px",
         }}>
-          Translate
+          {mode === "refine" ? "Refine & translate" : "Translate only"}
         </button>
       )}
 

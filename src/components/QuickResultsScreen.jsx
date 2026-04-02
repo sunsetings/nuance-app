@@ -173,7 +173,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
             fontSize: 12, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", marginTop: 8, marginBottom: 4,
           }}>
-            ✦ Want to refine the tone? Try Refine & Translate
+            ✦ Need it to sound more natural? Try Refine & Translate
           </button>
         )}
       </div>
