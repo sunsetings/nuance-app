@@ -75,7 +75,7 @@ export const TONE_DESCRIPTIONS = {
   Professional: "Clean and corporate-safe",
   Motivational: "Energising and encouraging",
   Humble: "Deferential and respectful",
-  Anger: "Sharp and openly frustrated",
+  Anger: "Sharp, heated, and openly pissed off",
   Royal: "Regal and elevated",
   Luxury: "Elevated and high-end",
   Chaotic: "Unhinged and energetic",
