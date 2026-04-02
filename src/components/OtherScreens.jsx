@@ -356,8 +356,8 @@ export function CapScreen({ navigate, userTier, theme }) {
       }
     : isPro
       ? {
-          title: "You’ve used today’s 300 Pro refines",
-          subtitle: "Your 300 daily refines reset tomorrow.",
+          title: "You’ve reached today’s Pro refine limit",
+          subtitle: "You can refine again tomorrow.",
           primaryLabel: null,
           primaryAction: null,
           secondaryLabel: null,
@@ -400,7 +400,7 @@ export function CapScreen({ navigate, userTier, theme }) {
         )}
 
         <button onClick={() => navigate("home")} style={{ background: "none", border: "none", color: t.textFaint, fontSize: 11, cursor: "pointer", fontFamily: "'Lora',Georgia,serif" }}>
-          Or come back tomorrow
+          {isPro ? "Back to home" : "Or come back tomorrow"}
         </button>
       </div>
     </div>
