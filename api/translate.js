@@ -22,17 +22,22 @@ Respond in this exact JSON format (no markdown, no backticks):
   }
 
   const toneGuide = {
+    Succinct: "Extremely concise. Strip the message down hard, cut filler, compress phrasing aggressively, and make every word earn its place. It should feel noticeably shorter and tighter than normal while still preserving the meaning.",
+    Assertive: "Much more assertive. Use firmer, blunter, more commanding wording with very little hedging or softness. It should feel strong, direct, and hard to ignore.",
     Casual: "Relaxed, everyday language — like texting a close friend. Short sentences, natural contractions, no formality.",
     "Gen A": "Gen Alpha and Gen Z internet-native language — use a broad rotating mix of current expressions, playful phrasing, meme-adjacent wording, and casually online rhythm. Pull from a wider pool than the same few catchphrases, and vary the wording naturally between responses. Can include things like 'lowkey', 'highkey', 'fr', 'fr fr', 'no cap', 'it's giving', 'ate', 'core', 'vibes', 'delulu', 'iconic', 'wild', 'mid', 'bet', 'say less', or emojis when natural, but avoid sounding repetitive, forced, or copy-pasted. Should sound distinctly different from just being casual.",
     Flirty: "Modern-day flirty — playful, confident, and casually charming. Keep it current, natural, and a little teasing, like present-day texting or light real-life banter. Avoid sounding old-fashioned, overly polished, theatrical, or poetic. Do not use words like 'alas'.",
     Luxury: "Elevated and high-end. Sound polished, premium, and refined, like upscale hospitality or luxury branding, without becoming robotic or pretentious.",
+    Motivational: "Far more motivational. Make it uplifting, energizing, and momentum-building, like a real pep talk. Use strong encouragement, belief, and forward-drive rather than mild positivity.",
     Anger: "Sharper, hotter, and more openly angry. Make the frustration unmistakable with biting, forceful wording, stronger edge, and less softness. It should feel irritated, fed up, or pissed off rather than merely stern, while still preserving the original meaning and not inventing new facts.",
-    Chaotic: "Unhinged and energetic. Fast-moving, impulsive, expressive, and a little wild, but still understandable and intentional rather than random nonsense.",
-    Iconic: "Confident and unforgettable. Bold, self-assured, memorable, and polished, with main-character energy but not arrogance for its own sake.",
+    Chaotic: "Much more unhinged. Make it wild, impulsive, messy, over-the-top, and erratic with explosive energy, while still barely coherent enough to follow. It should feel delightfully unstable rather than simply playful.",
+    Sarcastic: "Clearly sarcastic. Use dry, biting, eye-roll energy, pointed phrasing, and obvious verbal irony. It should feel knowingly cutting, not accidentally sincere.",
+    Savage: "Extra ruthless. Make it brutally sharp, merciless, and cutting with zero softness. It should feel devastatingly direct and harsh, but still preserve the original meaning instead of inventing insults from nowhere.",
     Overexplaining: "Needlessly detailed. Over-clarify obvious things, add extra explanation and qualifiers, and make the message comically more elaborate while keeping the same meaning.",
-    "Dad Joke": "Corny and harmless. Use light groan-worthy humor, puns, or wholesome joke energy without becoming too silly or derailing the message.",
+    "Dad Joke": "Much cornier and more pun-heavy. Lean hard into eye-roll-worthy dad humor, wholesome groaners, obvious wordplay, and embarrassingly earnest joke energy without derailing the message.",
     Rapper: "Rhythmic, punchy, and rhyme-forward. Use bars, internal rhyme or end-rhyme when natural, and a rap-like flow that feels intentional and musical. Make the wording sound like lyrics or confident rap-influenced speech, but keep the meaning clear and avoid turning it into nonsense just to force a rhyme.",
     Tea: "Extremely chatty, juicy, and gossipy. Make it sound like someone spilling tea with animated side-comments, little reactions, knowing phrasing, and conversational momentum. Lean into nosy, dramatic, 'can you believe this?' energy when appropriate, but keep the core meaning intact and don't invent new facts.",
+    Enthusiastic: "Much more enthusiastic. Turn up the excitement, warmth, exclamation, and eager energy so it feels openly thrilled and animated rather than just positive.",
     Shakespearean: "Theatrical, elevated, and Bard-like — use expressive, dramatic phrasing inspired by Shakespearean English without becoming unreadable. Favor lyrical turns of phrase, grand feeling, and stage-like rhythm, adapted naturally to the target language.",
     Noir: "Moody and mysterious. Use shadowy, understated, slightly cinematic wording with a cool, enigmatic edge. Keep it modern and readable, not cheesy detective parody.",
   };
