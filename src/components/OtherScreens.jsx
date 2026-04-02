@@ -30,6 +30,8 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
     { id: "ko", label: copy.t("account.korean") },
     { id: "ja", label: copy.t("account.japanese") },
     { id: "es", label: copy.t("account.spanish") },
+    { id: "pt", label: copy.t("account.portuguese") },
+    { id: "it", label: copy.t("account.italian") },
     { id: "ru", label: copy.t("account.russian") },
     { id: "ar", label: copy.t("account.arabic") },
     { id: "fr", label: copy.t("account.french") },
