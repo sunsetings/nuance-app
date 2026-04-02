@@ -69,7 +69,7 @@ export const TONE_DESCRIPTIONS = {
   Empathetic: "Understanding and caring",
   Apologetic: "Remorseful and soft",
   Enthusiastic: "Very energetic, excited, and animated",
-  Urgent: "Pressing and time-sensitive",
+  Urgent: "Immediate, pressing, and hard to ignore",
   Shakespearean: "Theatrical and Bard-like",
   Professional: "Clean and corporate-safe",
   Motivational: "Hyped, uplifting, and strongly encouraging",
@@ -84,7 +84,7 @@ export const TONE_DESCRIPTIONS = {
   "Dad Joke": "Maximum cornball, pun-heavy, and harmless",
   Poetic: "Lyrical and expressive",
   Rapper: "Rhythmic, punchy, and rhyme-forward",
-  Flirty: "Playful and romantic",
+  Flirty: "Boldly playful, teasing, and romantic",
   Tea: "Extra chatty, juicy, and unapologetically gossipy",
   Noir: "Moody and mysterious",
 };

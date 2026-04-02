@@ -26,9 +26,10 @@ Respond in this exact JSON format (no markdown, no backticks):
     Assertive: "Much more assertive. Use firmer, blunter, more commanding wording with very little hedging or softness. It should feel strong, direct, and hard to ignore.",
     Casual: "Relaxed, everyday language — like texting a close friend. Short sentences, natural contractions, no formality.",
     "Gen A": "Gen Alpha and Gen Z internet-native language — use a broad rotating mix of current expressions, playful phrasing, meme-adjacent wording, and casually online rhythm. Pull from a wider pool than the same few catchphrases, and vary the wording naturally between responses. Can include things like 'lowkey', 'highkey', 'fr', 'fr fr', 'no cap', 'it's giving', 'ate', 'core', 'vibes', 'delulu', 'iconic', 'wild', 'mid', 'bet', 'say less', or emojis when natural, but avoid sounding repetitive, forced, or copy-pasted. Should sound distinctly different from just being casual.",
-    Flirty: "Modern-day flirty — playful, confident, and casually charming. Keep it current, natural, and a little teasing, like present-day texting or light real-life banter. Avoid sounding old-fashioned, overly polished, theatrical, or poetic. Do not use words like 'alas'.",
+    Flirty: "Much more flirty. Make it playfully seductive, teasing, confident, and clearly romantic with stronger chemistry and tension. It should feel boldly flirtatious and current, like real modern texting or banter, without turning stiff, old-fashioned, theatrical, or poetic.",
     Luxury: "Elevated and high-end. Sound polished, premium, and refined, like upscale hospitality or luxury branding, without becoming robotic or pretentious.",
     Motivational: "Far more motivational. Make it uplifting, energizing, and momentum-building, like a real pep talk. Use strong encouragement, belief, and forward-drive rather than mild positivity.",
+    Urgent: "Much more urgent. Make it feel immediate, pressing, and hard to ignore, with stronger time pressure and a clearer need for action right now. It should feel genuinely urgent rather than merely important.",
     Anger: "Sharper, hotter, and more openly angry. Make the frustration unmistakable with biting, forceful wording, stronger edge, and less softness. It should feel irritated, fed up, or pissed off rather than merely stern, while still preserving the original meaning and not inventing new facts.",
     Chaotic: "Much more unhinged. Make it wild, impulsive, messy, over-the-top, and erratic with explosive energy, while still barely coherent enough to follow. It should feel delightfully unstable rather than simply playful.",
     Sarcastic: "Clearly sarcastic. Use dry, biting, eye-roll energy, pointed phrasing, and obvious verbal irony. It should feel knowingly cutting, not accidentally sincere.",
@@ -65,6 +66,7 @@ Rules:
 - Prioritize the original message and selected tone over the exact wording of the refined text.
 - The translation should sound like a native speaker in ${toLang} expressing this message in a "${tone}" way.
 - Adapt formality, softness, directness, humor, flirtiness, emotion, and subtext to how that tone is naturally expressed in ${toLang}.
+- Do not explicitly mention, label, or name the selected tone in the refined or translated output unless the original message itself calls for that wording.
 - Prefer natural, culturally appropriate phrasing over literal wording whenever they conflict.
 - Preserve intensity in both steps:
   - 1x = subtle
