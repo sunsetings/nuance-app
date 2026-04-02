@@ -171,6 +171,8 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
                 color: mode === opt.id ? t.text : t.textFaint,
                 fontSize: 12, cursor: "pointer", fontWeight: mode === opt.id ? "bold" : "normal",
                 fontFamily: "'Lora',Georgia,serif",
+                lineHeight: 1.15,
+                minHeight: 34,
               }}>
                 {opt.label}
               </button>
@@ -189,6 +191,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
               cursor: "pointer", marginBottom: 16,
               display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
               transition: "all 0.2s",
+              lineHeight: 1.2,
             }}>
               <span style={{ fontSize: 14, fontWeight: "bold", fontFamily: "sans-serif", color: t.textDim }}>G</span>
               {copy.t("auth.continueWithGoogle")}

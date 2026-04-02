@@ -90,7 +90,7 @@ export function LangSelector({
           background: "transparent",
           border: "none",
           color: t.text,
-          fontSize: 13,
+          fontSize: 12.5,
           cursor: "pointer",
           padding: 0,
           display: "flex",
@@ -99,7 +99,7 @@ export function LangSelector({
           fontFamily: "'Lora',Georgia,serif",
         }}
       >
-        <span style={{ flex: 1, textAlign: isTo ? "right" : "left" }}>{getLocalizedLanguageName(value, locale)}</span>
+        <span style={{ flex: 1, textAlign: isTo ? "right" : "left", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{getLocalizedLanguageName(value, locale)}</span>
         {value !== AUTO_DETECT_LANGUAGE && visibleBookmarked.includes(value) && <SmallHeart size={10} color={t.proTag} filled />}
         {PRO_LANGUAGES.includes(value) && (
           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>
@@ -116,7 +116,8 @@ export function LangSelector({
             top: "calc(100% + 12px)",
             left: isTo ? "auto" : "-14px",
             right: isTo ? "-14px" : "auto",
-            width: 244,
+            width: 262,
+            maxWidth: "calc(100vw - 40px)",
             background: theme === "light" ? "#faf6ee" : "#1a1a1a",
             borderRadius: 14,
             zIndex: 400,
@@ -183,7 +184,7 @@ export function LangSelector({
                         background: "none",
                         border: "none",
                         color: lang === value ? t.accent : t.textMuted,
-                        fontSize: 13,
+                        fontSize: 12.5,
                         cursor: "pointer",
                         textAlign: "left",
                         display: "flex",
@@ -221,7 +222,7 @@ export function LangSelector({
                         onChange(lang);
                         handleClose();
                       }}
-                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : t.textMuted, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6 }}
                     >
                       {getLocalizedLanguageName(lang, locale)}
                     </button>
@@ -256,7 +257,7 @@ export function LangSelector({
                         onChange(lang);
                         handleClose();
                       }}
-                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
+                      style={{ flex: 1, background: "none", border: "none", color: lang === value ? t.accent : canUseLanguage ? t.textMuted : t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: canUseLanguage ? 1 : 0.72 }}
                     >
                       {getLocalizedLanguageName(lang, locale)}
                       {isProLanguage && (
@@ -293,7 +294,7 @@ export function LangSelector({
                           onClick={() => {
                             navigate("upgrade");
                           }}
-                          style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 13, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
+                          style={{ flex: 1, background: "none", border: "none", color: t.textDim, fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'Lora',Georgia,serif", display: "flex", alignItems: "center", gap: 6, opacity: 0.72 }}
                         >
                           {getLocalizedLanguageName(lang, locale)}
                           <span style={{ fontSize: 7, background: t.proTag, color: "#000", padding: "1px 4px", borderRadius: 3, fontWeight: "bold" }}>

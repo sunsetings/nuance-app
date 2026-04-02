@@ -186,6 +186,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
             borderRadius: 10, color: theme === "light" ? "#2a6a2a" : "#8adc8a",
             fontSize: 12, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", marginTop: 8, marginBottom: 4,
+            lineHeight: 1.25,
           }}>
             ✦ {copy.t("quickResults.needMoreNatural")}
           </button>

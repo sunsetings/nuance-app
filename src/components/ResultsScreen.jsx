@@ -306,7 +306,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const refinedLabel = copy.t("results.refined", { tone: toneLabel, strength: strengthLabelMap[toneCount] || copy.t("results.light") });
   const sourceLangCode = getLanguageCode(source.fromLang || source.from_lang || "EN");
   const targetLangCode = getLanguageCode(toLang);
-  const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 };
+  const sectionMetaStyle = { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 5 };
   const sectionLabelStyle = { fontSize: 9, letterSpacing: "0.12em" };
   const inlineCopyWrapStyle = { display: "flex", alignItems: "center", gap: 8 };
 
@@ -397,7 +397,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         <div style={{ marginBottom: 12 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, marginBottom: 2 }}>
             <div style={{ fontSize: 15, color: t.text, fontWeight: "bold", letterSpacing: "-0.02em" }}>{copy.t("results.tryDifferentTone")}</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{copy.t("results.pickHow")}</div>
+              <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", lineHeight: 1.2, textAlign: "right", maxWidth: "44%" }}>{copy.t("results.pickHow")}</div>
           </div>
           <ToneRow
             activeTone={activeTone} toneCount={toneCount}
@@ -429,8 +429,8 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         {!loading && resultSections.map(({ label, content, lang, textToCopy, contentStyle, labelColor, labelWeight }, i) => (
           <div key={i} style={{ marginBottom: i < resultSections.length - 1 ? 10 : 8 }}>
             <div style={sectionMetaStyle}>
-              <span style={{ ...sectionLabelStyle, color: labelColor, fontWeight: labelWeight || "normal" }}>{label}</span>
-              <div style={inlineCopyWrapStyle}>
+              <span style={{ ...sectionLabelStyle, color: labelColor, fontWeight: labelWeight || "normal", lineHeight: 1.2, maxWidth: "68%" }}>{label}</span>
+              <div style={{ ...inlineCopyWrapStyle, flexShrink: 0 }}>
                 <span style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em" }}>{lang}</span>
                 <CopyBtn text={textToCopy} theme={theme} variant="inline" />
               </div>
@@ -454,10 +454,10 @@ function ResultsHeaderCTA({ userTier, navigate, theme }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   if (userTier === "guest") {
-    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("results.unlockMoreTones")}</button>;
+    return <button onClick={() => navigate("signin_tone")} style={{ background: "transparent", border: "none", padding: "4px 0", color: t.freeTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.01em", fontFamily: "'Lora',Georgia,serif", textAlign: "right", lineHeight: 1.2, maxWidth: 112 }}>{copy.t("results.unlockMoreTones")}</button>;
   }
   if (userTier === "free") {
-    return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.02em", fontFamily: "'Lora',Georgia,serif" }}>{copy.t("results.unlockProTones")}</button>;
+    return <button onClick={() => navigate("upgrade")} style={{ background: "transparent", border: `1px solid ${t.proTag}`, borderRadius: 8, padding: "4px 10px", color: t.proTag, fontSize: 10, cursor: "pointer", letterSpacing: "0.01em", fontFamily: "'Lora',Georgia,serif", textAlign: "center", lineHeight: 1.2, maxWidth: 118 }}>{copy.t("results.unlockProTones")}</button>;
   }
-  return <span style={{ fontSize: 10, color: t.accentDim, letterSpacing: "0.02em" }}>{copy.t("results.proUnlocked")}</span>;
+  return <span style={{ fontSize: 10, color: t.accentDim, letterSpacing: "0.01em", lineHeight: 1.2, textAlign: "right", maxWidth: 124 }}>{copy.t("results.proUnlocked")}</span>;
 }

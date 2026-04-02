@@ -231,12 +231,14 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       <div style={{ display: "flex", marginBottom: 10, gap: 2, padding: "2px", background: t.surface, borderRadius: 10 }}>
         {[{ id: "refine", label: copy.t("home.refineTranslateTab") }, { id: "quick", label: copy.t("home.translateOnlyTab") }].map(opt => (
           <button key={opt.id} onClick={() => setMode(opt.id)} style={{
-            flex: 1, padding: "8px 4px", borderRadius: 8, border: "none",
+            flex: 1, padding: "8px 6px", borderRadius: 8, border: "none",
             background: mode === opt.id ? t.surface2 : "transparent",
             color: mode === opt.id ? t.text : t.textFaint,
-            fontSize: 11, fontFamily: "'Lora',Georgia,serif",
+            fontSize: 10.5, fontFamily: "'Lora',Georgia,serif",
             cursor: "pointer", fontWeight: mode === opt.id ? "bold" : "normal",
             transition: "all 0.18s",
+            lineHeight: 1.15,
+            minHeight: 36,
           }}>{opt.label}</button>
         ))}
       </div>
@@ -246,7 +248,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         <div style={{ marginBottom: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
             <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>{copy.t("home.tone")}</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{copy.t("home.pickHow")}</div>
+            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", textAlign: "right", lineHeight: 1.2, maxWidth: "46%" }}>{copy.t("home.pickHow")}</div>
           </div>
           <ToneRow
             activeTone={tone} toneCount={toneCount}

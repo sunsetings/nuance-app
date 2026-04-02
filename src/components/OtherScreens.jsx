@@ -122,9 +122,9 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
         )}
 
         {planRows.map((item, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
-            <span style={{ fontSize: 12, color: t.textMuted }}>{item.label}</span>
-            <span style={{ fontSize: 12, color: item.accent ? t.accent : t.textFaint, fontWeight: item.accent ? "bold" : "normal" }}>
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, padding: "10px 0", borderBottom: `1px solid ${theme === "light" ? "#d0ccbf" : "#232323"}` }}>
+            <span style={{ fontSize: 12, color: t.textMuted, lineHeight: 1.35, minWidth: 0, flex: 1 }}>{item.label}</span>
+            <span style={{ fontSize: 12, color: item.accent ? t.accent : t.textFaint, fontWeight: item.accent ? "bold" : "normal", lineHeight: 1.35, textAlign: "right", maxWidth: "44%", flexShrink: 0 }}>
               {item.value}
             </span>
           </div>
@@ -136,7 +136,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
           <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>{copy.t("account.display")}</div>
           <div style={{ display: "flex", background: t.surface, borderRadius: 10, padding: 3, gap: 2, marginBottom: 8 }}>
             {displayOptions.map(opt => (
-              <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "7px 2px", borderRadius: 8, border: "none", background: themePreference === opt.id ? t.surface2 : "transparent", color: themePreference === opt.id ? t.text : t.textFaint, fontSize: 10, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: themePreference === opt.id ? "bold" : "normal", transition: "all 0.15s" }}>
+              <button key={opt.id} onClick={() => setTheme(opt.id)} style={{ flex: 1, padding: "7px 4px", borderRadius: 8, border: "none", background: themePreference === opt.id ? t.surface2 : "transparent", color: themePreference === opt.id ? t.text : t.textFaint, fontSize: 9.5, fontFamily: "'Lora',Georgia,serif", cursor: "pointer", fontWeight: themePreference === opt.id ? "bold" : "normal", transition: "all 0.15s", lineHeight: 1.15 }}>
                 {opt.icon} {opt.label}
               </button>
             ))}
@@ -162,6 +162,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
                 fontFamily: "'Lora',Georgia,serif",
                 outline: "none",
                 cursor: "pointer",
+                lineHeight: 1.2,
               }}
             >
               {languageOptions.map((opt) => (

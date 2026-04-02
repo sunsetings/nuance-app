@@ -159,9 +159,9 @@ export function BottomNav({ active, navigate, theme, userTier }) {
           flex: 1,
           background: "none", border: "none", cursor: "pointer",
           color: active === item.id ? t.accent : t.textDim,
-          fontSize: 9, display: "flex", flexDirection: "column",
+          fontSize: 8.5, display: "flex", flexDirection: "column",
           alignItems: "center", gap: 3, transition: "color 0.15s",
-          letterSpacing: "0.06em", textTransform: "uppercase",
+          letterSpacing: "0.03em",
           fontFamily: "'Lora',Georgia,serif",
           minWidth: 0,
           padding: "0 4px",
@@ -173,7 +173,7 @@ export function BottomNav({ active, navigate, theme, userTier }) {
               <span style={{ fontSize: 16, lineHeight: 1 }}>{item.icon}</span>
             )}
           </span>
-          <span style={{ display: "block", width: "100%", textAlign: "center", lineHeight: 1.2 }}>
+          <span style={{ display: "block", width: "100%", textAlign: "center", lineHeight: 1.15, whiteSpace: "normal", wordBreak: "keep-all" }}>
             {item.label}
           </span>
         </button>
@@ -314,9 +314,10 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
         color: t.textDim, fontSize: 12,
         fontFamily: "'Lora',Georgia,serif", cursor: "pointer",
         display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+        minWidth: 0,
       }}>
         <ShareIcon size={14} color={t.textFaint} />
-        <span>{copy.t("ui.share")}</span>
+        <span style={{ whiteSpace: "normal", lineHeight: 1.2 }}>{copy.t("ui.share")}</span>
       </button>
       <button
         onClick={handleSave}
@@ -329,9 +330,10 @@ export function ShareSaveRow({ userTier, saved, onSave, onShare, navigate, saveC
           cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center",
           gap: 7, transition: "all 0.2s",
+          minWidth: 0,
         }}>
         <SmallHeart size={14} color={saved ? t.accent : t.textFaint} filled={saved} />
-        <span>{saveLabel}</span>
+        <span style={{ whiteSpace: "normal", lineHeight: 1.2, textAlign: "center" }}>{saveLabel}</span>
       </button>
     </div>
   );
@@ -349,12 +351,12 @@ export function RefineCounter({ usageCount, userTier, theme }) {
   if (pct >= 0.85) color = t.cCrit;
   else if (pct >= 0.6) color = t.cWarn;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
-      <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.04em" }}>
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
+      <span style={{ fontSize: 10, color, transition: "color 0.3s", letterSpacing: "0.02em", lineHeight: 1.2, textAlign: "right" }}>
         {copy.t("ui.remainingRefines", { remaining, cap })}
       </span>
       {remaining <= 3 && (
-        <span style={{ fontSize: 9, color: t.proTag }}>
+        <span style={{ fontSize: 9, color: t.proTag, lineHeight: 1.2, textAlign: "right" }}>
           {userTier === "guest" ? copy.t("ui.signUpForMore") : copy.t("ui.upgradeFor300")}
         </span>
       )}
