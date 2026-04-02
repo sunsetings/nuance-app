@@ -103,6 +103,13 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     if (navContext.mode === "refine" || navContext.mode === "quick") {
       setMode(navContext.mode);
     }
+    if (typeof navContext.fromLang === "string" && navContext.fromLang) {
+      localStorage.setItem(LS_FROM_TOUCHED, "true");
+      setFromLang(navContext.fromLang);
+    }
+    if (typeof navContext.toLang === "string" && navContext.toLang) {
+      setToLang(navContext.toLang);
+    }
   }, [navContext]);
 
   const toggleBM = lang => setBookmarked(prev =>

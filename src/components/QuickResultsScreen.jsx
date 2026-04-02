@@ -97,7 +97,26 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, marginTop: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button onClick={() => navigate(fromSaved ? "saved" : "home")} style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}>←</button>
+            <button
+              onClick={() =>
+                navigate(
+                  fromSaved
+                    ? "saved"
+                    : {
+                        screen: "home",
+                        context: {
+                          mode: "quick",
+                          prefillText: original,
+                          fromLang: source.fromLang || source.from_lang || "English",
+                          toLang,
+                        },
+                      }
+                )
+              }
+              style={{ background: "none", border: "none", color: t.textMuted, fontSize: 18, cursor: "pointer" }}
+            >
+              ←
+            </button>
             <span style={{ fontSize: 15, fontWeight: "bold" }}>Translation</span>
             {fromSaved && <span style={{ fontSize: 9, color: t.accent, border: `1px solid ${t.highlightBorder}`, padding: "2px 8px", borderRadius: 10 }}>from saved</span>}
           </div>
