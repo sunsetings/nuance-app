@@ -350,7 +350,19 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
       color: t.text, display: "flex", flexDirection: "column",
       height: "100%", boxSizing: "border-box", background: t.phoneBg,
       direction: isRTL ? "rtl" : "ltr",
+      position: "relative",
     }} dir={isRTL ? "rtl" : "ltr"}>
+      {openLang && (
+        <div
+          onClick={() => setOpenLang(null)}
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 250,
+            background: "transparent",
+          }}
+        />
+      )}
       <ToneSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
