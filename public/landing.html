@@ -72,14 +72,14 @@
     .mockup-cta { padding: 0 24px 60px; text-align: center; }
     .mockup-cta .btn-primary { min-width: 220px; }
     .mockup-cta-note { margin-top: 14px; font-size: 13px; color: var(--faint); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
-    .who-strip { padding: 0 24px 88px; }
+    .who-strip { padding: 72px 24px 84px; }
     .who-inner { max-width: 920px; margin: 0 auto; text-align: center; }
     .who-heading { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 12px; color: var(--text); }
     .who-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
     .who-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .who-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; text-align: left; }
+    .who-card { background: var(--surface); border: 1px solid #dfd7ca; border-radius: 16px; padding: 16px 15px; text-align: left; }
     .who-card-title { font-size: 15px; color: var(--text); font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
-    .who-card-body { font-size: 14px; color: var(--muted); line-height: 1.55; }
+    .who-card-body { font-size: 14px; color: var(--muted); line-height: 1.5; }
     section { position: relative; z-index: 1; }
     .section-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
     .section-tag { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; margin-bottom: 16px; }
@@ -134,17 +134,9 @@
     .compare-card.pro .price { border-color: var(--highlight-border); color: var(--muted); }
     .price-amount { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
     .compare-card.pro .price-amount { color: var(--green-text); }
-    .trust-strip { padding: 0 24px 100px; border-top: 1px solid var(--border); }
-    .trust-wrap { max-width: 900px; margin: 0 auto; text-align: center; padding-top: 72px; }
-    .trust-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 12px; color: var(--text); }
-    .trust-sub { font-size: 15px; color: var(--muted); line-height: 1.75; max-width: 620px; margin: 0 auto 28px; }
-    .trust-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: left; }
-    .trust-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px 18px; }
-    .trust-card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .trust-card-body { font-size: 14px; color: var(--muted); line-height: 1.6; }
     .mic-inline { display: inline-flex; width: 14px; height: 14px; vertical-align: -2px; margin-left: 4px; }
     .mic-inline svg { display: block; }
-    .final-cta { padding: 120px 24px; border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
+    .final-cta { padding: 96px 24px 120px; border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
     .final-cta::before { content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 400px; background: radial-gradient(ellipse, rgba(200,240,160,0.12) 0%, transparent 70%); pointer-events: none; }
     .final-cta-headline { font-size: clamp(32px, 5vw, 58px); font-weight: 700; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; color: var(--text); }
     .final-cta-headline em { font-style: italic; color: var(--green-text); }
@@ -159,7 +151,6 @@
       .compare { grid-template-columns: 1fr; }
       .who-grid { grid-template-columns: 1fr; }
       .comparison-grid { grid-template-columns: 1fr; }
-      .trust-grid { grid-template-columns: 1fr; }
       .mockup-section { padding-left: 0; padding-right: 0; }
       .mockup-stage { width: 100%; }
       .mockup-copy { padding: 0 24px; }
@@ -370,26 +361,6 @@
     <a class="btn-primary" href="/app">Try tonara free</a>
     <p class="mockup-cta-note">Free to try · No credit card needed</p>
   </section>
-  <section class="who-strip">
-    <div class="who-inner">
-      <h2 class="who-heading">Who it’s for</h2>
-      <p class="who-sub">Built for people communicating with real people in another language.</p>
-      <div class="who-grid">
-        <div class="who-card">
-          <div class="who-card-title">People living abroad</div>
-          <div class="who-card-body">Landlords, clinics, delivery issues, and customer service.</div>
-        </div>
-        <div class="who-card">
-          <div class="who-card-title">People dating or in relationships across languages</div>
-          <div class="who-card-body">Warmth, apologies, difficult conversations, and tone that feels right.</div>
-        </div>
-        <div class="who-card">
-          <div class="who-card-title">Non-native professionals</div>
-          <div class="who-card-body">Requests, follow-ups, boundaries, and more polished communication.</div>
-        </div>
-      </div>
-    </div>
-  </section>
   <section class="problem">
     <div class="problem-grid">
       <div>
@@ -440,7 +411,7 @@
           </ul>
         </div>
       </div>
-      <div class="comparison-foot">Better than literal translation when how you sound matters.</div>
+      <div class="comparison-foot">Better than literal translation when tone matters.</div>
     </div>
   </section>
   <section class="how" id="how">
@@ -506,22 +477,22 @@
       </div>
     </div>
   </section>
-  <section class="trust-strip">
-    <div class="trust-wrap">
-      <h2 class="trust-title">Most common use cases</h2>
-      <p class="trust-sub">Where people use tonara most when literal translation isn’t enough.</p>
-      <div class="trust-grid">
-        <div class="trust-card">
-          <div class="trust-card-title">Daily life abroad</div>
-          <div class="trust-card-body">Landlords, clinics, customer service, and everyday requests.</div>
+  <section class="who-strip">
+    <div class="who-inner">
+      <h2 class="who-heading">Who it’s for</h2>
+      <p class="who-sub">For people who want to sound right in another language — not just translated.</p>
+      <div class="who-grid">
+        <div class="who-card">
+          <div class="who-card-title">People living abroad</div>
+          <div class="who-card-body">Handle landlords, clinics, and local customer service more naturally.</div>
         </div>
-        <div class="trust-card">
-          <div class="trust-card-title">Relationships</div>
-          <div class="trust-card-body">Warmth, apologies, difficult conversations, and saying things carefully.</div>
+        <div class="who-card">
+          <div class="who-card-title">People dating or in relationships across languages</div>
+          <div class="who-card-body">Say things with warmth, care, and the right tone.</div>
         </div>
-        <div class="trust-card">
-          <div class="trust-card-title">Work</div>
-          <div class="trust-card-body">Requests, follow-ups, boundaries, and sounding more polished.</div>
+        <div class="who-card">
+          <div class="who-card-title">Non-native professionals</div>
+          <div class="who-card-body">Write clearer requests, follow-ups, and work messages.</div>
         </div>
       </div>
     </div>
@@ -531,7 +502,7 @@
       <h2 class="final-cta-headline">Communicate better in another language</h2>
       <p class="final-cta-sub">Get the tone right before you hit send.</p>
       <a class="btn-primary" href="/app" style="font-size:16px; padding:17px 40px;">Try tonara free</a>
-      <p style="margin-top:14px;font-size:13px;color:var(--faint);font-family:'DM Mono',monospace;letter-spacing:0.05em;">Free to try. No credit card needed.</p>
+      <p style="margin-top:14px;font-size:13px;color:var(--faint);font-family:'DM Mono',monospace;letter-spacing:0.05em;">Free to try · No credit card needed</p>
     </div>
   </section>
   <footer>
