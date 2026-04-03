@@ -12,6 +12,13 @@ A translation app with tone refinement.
 OPENAI_API_KEY=sk-your-key-here
 ```
 
+Optional beta analytics:
+
+```
+VITE_POSTHOG_KEY=phc_your_project_key
+VITE_POSTHOG_HOST=https://us.i.posthog.com
+```
+
 4. Run `npm run dev` to start locally
 5. Open http://localhost:5173
 

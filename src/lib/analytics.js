@@ -1,5 +1,8 @@
+import posthog from "posthog-js";
+
 const STORAGE_KEY = "tonara_beta_analytics_events";
 const MAX_EVENTS = 300;
+let posthogReady = false;
 
 function isBrowser() {
   return typeof window !== "undefined";
@@ -46,6 +49,11 @@ function persistPayload(payload) {
 function fanOutToKnownProviders(event, props) {
   if (!isBrowser()) return;
   try {
+    if (posthogReady) {
+      posthog.capture(event, props);
+    }
+  } catch {}
+  try {
     if (typeof window.gtag === "function") {
       window.gtag("event", event, props);
     }
@@ -55,10 +63,36 @@ function fanOutToKnownProviders(event, props) {
       window.plausible(event, { props });
     }
   } catch {}
+}
+
+export function initAnalytics() {
+  if (!isBrowser() || posthogReady) return;
+  const key = import.meta.env?.VITE_POSTHOG_KEY;
+  if (!key) return;
+  posthog.init(key, {
+    api_host: import.meta.env?.VITE_POSTHOG_HOST || "https://us.i.posthog.com",
+    person_profiles: "identified_only",
+    capture_pageview: false,
+    capture_pageleave: true,
+    autocapture: false,
+    persistence: "localStorage+cookie",
+    loaded: () => {
+      posthogReady = true;
+    },
+  });
+}
+
+export function identifyAnalyticsUser(userId, props = {}) {
+  if (!isBrowser() || !posthogReady || !userId) return;
   try {
-    if (window.posthog?.capture) {
-      window.posthog.capture(event, props);
-    }
+    posthog.identify(userId, sanitizeValue(props));
+  } catch {}
+}
+
+export function resetAnalyticsUser() {
+  if (!isBrowser() || !posthogReady) return;
+  try {
+    posthog.reset();
   } catch {}
 }
 
@@ -90,4 +124,3 @@ export function getStoredAnalyticsEvents() {
     return [];
   }
 }
-

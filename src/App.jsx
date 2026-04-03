@@ -11,7 +11,7 @@ import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
 import { createI18n, UI_LOCALE_STORAGE_KEY, getLocalePreference, isRTLLocale } from "./lib/i18n.js";
-import { track, trackScreen } from "./lib/analytics.js";
+import { identifyAnalyticsUser, initAnalytics, resetAnalyticsUser, track, trackScreen } from "./lib/analytics.js";
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
@@ -74,6 +74,10 @@ export default function App() {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    initAnalytics();
   }, []);
 
   useEffect(() => {
@@ -174,6 +178,18 @@ export default function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      identifyAnalyticsUser(user.id, {
+        email: user.email || "",
+        user_tier: userTier,
+        ui_locale: copy.locale,
+      });
+      return;
+    }
+    resetAnalyticsUser();
+  }, [user?.id, user?.email, userTier, copy.locale]);
 
   const loadUserData = async (userId) => {
     try {
