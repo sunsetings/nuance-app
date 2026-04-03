@@ -5,6 +5,7 @@ import { LangSelector } from "./LangSelector.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
+import { track } from "../lib/analytics.js";
 
 const LS_FROM = "tonara_fromLang";
 const LS_TO = "tonara_toLang";
@@ -227,8 +228,14 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const toggleBM = lang => setBookmarked(prev =>
     lang === AUTO_DETECT_LANGUAGE ? prev :
-    userTier === "guest" ? prev : prev.includes(lang) ? prev.filter(l => l !== lang)
-    : prev.length < bookmarkLimit ? [...prev, lang] : prev
+    userTier === "guest" ? prev : prev.includes(lang) ? (
+      track("bookmark_removed", { language: lang, user_tier: userTier }),
+      prev.filter(l => l !== lang)
+    )
+    : prev.length < bookmarkLimit ? (
+      track("bookmark_added", { language: lang, user_tier: userTier }),
+      [...prev, lang]
+    ) : prev
   );
 
   const swapLanguages = () => {
@@ -285,9 +292,11 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   const handleMicTap = () => {
     if (listening) {
       try { recognitionRef.current?.stop?.(); } catch {}
+      track("dictation_stopped", { user_tier: userTier, source_language: fromLang, dictation_language: dictationLang });
       return;
     }
     if (fromLang !== AUTO_DETECT_LANGUAGE) {
+      track("dictation_started", { user_tier: userTier, source_language: fromLang, dictation_language: fromLang, mode: "direct" });
       startDictation(fromLang);
       return;
     }
@@ -305,6 +314,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     }
     setDictationLang(selected);
     setDictationSheetOpen(false);
+    track("dictation_started", { user_tier: userTier, source_language: fromLang, dictation_language: selected, mode: "use_once" });
     startDictation(selected);
   };
 
@@ -319,6 +329,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
     setFromLang(selected);
     setDictationLang(selected);
     setDictationSheetOpen(false);
+    track("dictation_started", { user_tier: userTier, source_language: selected, dictation_language: selected, mode: "set_as_source" });
     startDictation(selected);
   };
 
@@ -329,11 +340,13 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
 
   const handleRowToneSelect = (selectedTone) => {
     setTone(selectedTone);
+    track("tone_selected", { tone: selectedTone, location: "home_row", user_tier: userTier });
   };
 
   const handleSheetToneSelect = (selectedTone) => {
     setTone(selectedTone);
     setHomeToneOrder((prev) => [selectedTone, ...prev.filter((entry) => entry !== selectedTone)]);
+    track("tone_selected", { tone: selectedTone, location: "home_sheet", user_tier: userTier });
   };
 
   const charsLeft = CHAR_LIMIT - text.length;

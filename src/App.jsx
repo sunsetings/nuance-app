@@ -11,6 +11,7 @@ import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
 import { getQuickTranslationsToday, getRefinesToday, incrementUsage } from "./lib/usage.js";
 import { createI18n, UI_LOCALE_STORAGE_KEY, getLocalePreference, isRTLLocale } from "./lib/i18n.js";
+import { track, trackScreen } from "./lib/analytics.js";
 
 const LS_SAVED_TONES = "tonara_saved_tones";
 const LS_THEME_PREFERENCE = "tonara_theme_preference";
@@ -76,6 +77,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    track("app_open", {
+      ui_locale: copy.locale,
+      locale_preference: localePreference,
+      is_mobile: window.innerWidth <= 768,
+      device_locale: navigator.language || "",
+    });
+  }, []);
+
+  useEffect(() => {
     setQuickUsageCount(getQuickTranslationsToday());
   }, []);
 
@@ -95,6 +105,11 @@ export default function App() {
       localStorage.setItem(UI_LOCALE_STORAGE_KEY, nextPreference);
     }
     setLocalePreference(nextPreference);
+    track("ui_language_changed", {
+      locale_preference: nextPreference,
+      previous_locale: copy.locale,
+      user_tier: userTier,
+    });
   };
 
   useEffect(() => {
@@ -112,6 +127,25 @@ export default function App() {
     document.documentElement.dir = dir;
     document.body.dir = dir;
   }, [copy.locale, isRTL]);
+
+  useEffect(() => {
+    trackScreen(screen, {
+      user_tier: userTier,
+      ui_locale: copy.locale,
+      context: screenContext || "",
+    });
+    if (screen === "upgrade") {
+      track("upgrade_viewed", {
+        user_tier: userTier,
+        context: screenContext || "default",
+      });
+    }
+    if (screen === "cap") {
+      track("cap_hit", {
+        user_tier: userTier,
+      });
+    }
+  }, [screen, userTier, copy.locale, screenContext]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -217,8 +251,18 @@ export default function App() {
     const cap = userTier === "pro" ? 300 : userTier === "free" ? 30 : 10;
     if (mode === "quick" && quickUsageCount >= cap) {
       showToast(copy.t("app.standardTranslationsCap", { cap }));
+      track("cap_hit", { user_tier: userTier, mode: "quick", cap });
       return;
     }
+
+    track(mode === "quick" ? "translate_only_started" : "refine_started", {
+      user_tier: userTier,
+      from_lang: fromLang,
+      to_lang: toLang,
+      tone: mode === "quick" ? "" : tone,
+      tone_strength: mode === "quick" ? 0 : toneCount,
+      char_count: text.length,
+    });
 
     setIsTranslating(true);
     try {
@@ -232,6 +276,12 @@ export default function App() {
           setQuickUsageCount(updated.count);
         }
         setTranslationData({ original: text, translated: result.translated, fromLang: resolvedFromLang, toLang, tone, mode: "quick" });
+        track("translate_only_succeeded", {
+          user_tier: userTier,
+          from_lang: resolvedFromLang,
+          to_lang: toLang,
+          char_count: text.length,
+        });
         setScreen("quickresults");
       } else {
         const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount });
@@ -241,11 +291,27 @@ export default function App() {
         }
         addRecentTone(tone);
         setTranslationData({ original: text, refined: result.refined, translated: result.translated, fromLang: resolvedFromLang, toLang, tone, toneCount, mode: "refine" });
+        track("refine_succeeded", {
+          user_tier: userTier,
+          from_lang: resolvedFromLang,
+          to_lang: toLang,
+          tone,
+          tone_strength: toneCount,
+          char_count: text.length,
+        });
         setScreen("results");
       }
     } catch (e) {
       console.error(copy.t("app.translationFailed"), e);
       setTranslationData({ original: text, refined: copy.t("app.translationFailed"), translated: "", fromLang, toLang, tone, toneCount, mode });
+      track(mode === "quick" ? "translate_only_failed" : "refine_failed", {
+        user_tier: userTier,
+        from_lang: fromLang,
+        to_lang: toLang,
+        tone: mode === "quick" ? "" : tone,
+        tone_strength: mode === "quick" ? 0 : toneCount,
+        error: e?.message || "unknown_error",
+      });
       setScreen(mode === "quick" ? "quickresults" : "results");
     } finally {
       setIsTranslating(false);

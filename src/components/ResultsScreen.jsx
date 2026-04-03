@@ -7,6 +7,7 @@ import { refineAndTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
+import { track } from "../lib/analytics.js";
 
 export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -243,6 +244,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     }
     if (tone === activeTone) return;
     setActiveTone(tone);
+    track("tone_selected", { tone, location: "results_row", user_tier: userTier });
     await doRefine(tone, toneCount);
   };
 
@@ -250,6 +252,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     if (!ensureWithinCap()) return;
     if (lvl < 1 || lvl > MAX_SAME_TONE || lvl === toneCount) return;
     setToneCount(lvl);
+    track("tone_strength_selected", { tone: activeTone, tone_strength: lvl, location: "results_row", user_tier: userTier });
     await doRefine(activeTone, lvl);
   };
 
@@ -263,12 +266,14 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       return;
     }
     setActiveTone(tone);
+    track("tone_selected", { tone, location: "results_sheet", user_tier: userTier });
     await doRefine(tone, toneCount);
   };
 
   const handleSave = async () => {
     if (!user) { navigate("signin_save"); return; }
     if (saving) return;
+    track("save_clicked", { mode: "refine", user_tier: userTier, already_saved: saved, tone: activeTone });
     setSaving(true);
     try {
       if (saved && existingSave) {
@@ -289,6 +294,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         });
         setSavedItems(prev => [newItem, ...prev]);
         showToast(copy.t("results.saveSuccess"));
+        track("save_succeeded", { mode: "refine", user_tier: userTier, tone: activeTone, tone_strength: toneCount });
       }
     } catch (e) {
       console.error("Save failed:", e);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { THEMES } from "../lib/constants.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
+import { track } from "../lib/analytics.js";
 
 const LS_POST_AUTH_ROUTE = "tonara_post_auth_route";
 
@@ -78,6 +79,10 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
     setLoading(true);
     setError(null);
     setSuccess(null);
+    track("auth_started", {
+      method: mode === "signup" ? "email_signup" : "email_login",
+      context,
+    });
 
     try {
       if (mode === "signup") {
@@ -85,10 +90,12 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
         if (error) throw error;
         setSuccess(copy.t("auth.checkEmailConfirm"));
         setMode("login");
+        track("auth_succeeded", { method: "email_signup", context });
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         onAuth(data.user);
+        track("auth_succeeded", { method: "email_login", context });
         navigate?.(resolvePostAuthTarget());
       }
     } catch (e) {
@@ -116,6 +123,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
   const handleGoogle = async () => {
     setLoading(true);
     setError(null);
+    track("auth_started", { method: "google_oauth", context });
     try {
       localStorage.setItem(LS_POST_AUTH_ROUTE, resolvePostAuthTarget({ forOAuth: true }));
       const { error } = await supabase.auth.signInWithOAuth({
@@ -123,6 +131,7 @@ export function AuthScreen({ theme, onAuth, navigate, context = "nav", navContex
         options: { redirectTo: `${window.location.origin}/app` },
       });
       if (error) throw error;
+      track("auth_succeeded", { method: "google_oauth", context });
     } catch (e) {
       setError(e.message);
       setLoading(false);

@@ -3,6 +3,7 @@ import { ALL_TONES, FREE_DAILY_CAP, FREE_BOOKMARK_LIMIT, FREE_SAVE_LIMIT, FREE_T
 import { BottomNav } from "./UI.jsx";
 import { supabase } from "../lib/supabase.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
+import { track } from "../lib/analytics.js";
 
 // ─── ACCOUNT ─────────────────────────────────────────────────
 export function AccountScreen({ navigate, isPremium, userTier, theme, themePreference = "system", setTheme, localePreference = "device", setLocalePreference, user, savedItems, usageCount = 0, onLogout }) {
@@ -46,6 +47,7 @@ export function AccountScreen({ navigate, isPremium, userTier, theme, themePrefe
     if (!user?.id || portalLoading) return;
     setPortalError(null);
     setPortalLoading(true);
+    track("subscription_portal_started", { user_tier: userTier });
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
@@ -235,6 +237,7 @@ export function UpgradeScreen({ navigate, setIsPremium, theme, user, userTier, c
 
     setCheckoutError(null);
     setLoadingPlan(plan);
+    track("checkout_started", { plan, user_tier: userTier, context: context || "default" });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();

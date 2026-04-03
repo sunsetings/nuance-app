@@ -3,6 +3,7 @@ import { THEMES, getLanguageCode, getLocalizedLanguageName } from "../lib/consta
 import { Toast, ShareSaveRow, BottomNav, CopyBtn } from "./UI.jsx";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
+import { track } from "../lib/analytics.js";
 
 export function QuickResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
@@ -64,6 +65,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
   const handleSave = async () => {
     if (!user) { navigate("signin_save"); return; }
     if (saving) return;
+    track("save_clicked", { mode: "quick", user_tier: userTier, already_saved: saved });
     setSaving(true);
     try {
       if (saved && existingSave) {
@@ -79,6 +81,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
         });
         setSavedItems(prev => [newItem, ...prev]);
         showToast();
+        track("save_succeeded", { mode: "quick", user_tier: userTier, to_lang: toLang });
       }
     } catch (e) {
       console.error("Save failed:", e);
