@@ -195,7 +195,7 @@ export function QuickResultsScreen({ navigate, userTier, theme, initialData, sav
             cursor: "pointer", marginTop: 8, marginBottom: 4,
             lineHeight: 1.25,
           }}>
-            ✦ {copy.t("quickResults.needMoreNatural")}
+            ✦ Try a tone
           </button>
         )}
       </div>

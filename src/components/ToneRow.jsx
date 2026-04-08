@@ -21,6 +21,7 @@ export function ToneRow({
   toneCount,
   onSelect,
   onSetLevel,
+  onSelectTranslateOnly,
   onOpenSheet,
   userTier,
   favourites = [],
@@ -29,6 +30,9 @@ export function ToneRow({
   disabled,
   isHomeScreen = false,
   showStrengthControl,
+  showTranslateOnlyChip = false,
+  translateOnlyActive = false,
+  strengthDisabled = false,
   navigate,
   theme,
 }) {
@@ -125,6 +129,29 @@ export function ToneRow({
             paddingTop: 10,
             paddingRight: 2,
           }} ref={scrollerRef}>
+            {showTranslateOnlyChip && (
+              <button
+                onClick={() => {
+                  if (disabled) return;
+                  onSelectTranslateOnly?.();
+                }}
+                style={{
+                  flexShrink: 0,
+                  padding: "7px 13px",
+                  borderRadius: 18,
+                  border: `1.5px solid ${translateOnlyActive ? t.border : t.border2}`,
+                  background: translateOnlyActive ? t.surface2 : "transparent",
+                  color: translateOnlyActive ? t.text : t.textDim,
+                  fontSize: 12,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  transition: "all 0.18s",
+                  fontFamily: "'Lora',Georgia,serif",
+                }}
+              >
+                Translate only
+              </button>
+            )}
             {pills.map((pill, index) => {
               const status = getToneStatus(pill.tone, userTier);
               const isFavourite = favourites.includes(pill.tone);
@@ -197,7 +224,7 @@ export function ToneRow({
         </button>
       </div>
 
-      {shouldShowStrengthControl && !disabled && (
+      {shouldShowStrengthControl && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <div style={{ width: "100%", maxWidth: 236 }}>
             <div style={{ textAlign: "center", fontSize: 9, color: t.textDim, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
@@ -212,13 +239,17 @@ export function ToneRow({
               border: `1px solid ${t.border}`,
               borderRadius: 11,
               width: "100%",
+              opacity: disabled || strengthDisabled ? 0.45 : 1,
             }}>
               {levelOptions.map((option) => {
                 const isActive = toneCount === option.level;
                 return (
                   <button
                     key={option.level}
-                    onClick={() => onSetLevel(option.level)}
+                    onClick={() => {
+                      if (disabled || strengthDisabled) return;
+                      onSetLevel(option.level);
+                    }}
                     style={{
                       border: "none",
                       borderRadius: 9,
@@ -226,7 +257,7 @@ export function ToneRow({
                       color: isActive ? t.text : t.textFaint,
                       padding: "7px 4px",
                       fontSize: 10,
-                      cursor: "pointer",
+                      cursor: disabled || strengthDisabled ? "default" : "pointer",
                       fontFamily: "'Lora',Georgia,serif",
                       fontWeight: isActive ? "bold" : "normal",
                       transition: "all 0.18s",

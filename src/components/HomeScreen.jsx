@@ -339,14 +339,21 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
   };
 
   const handleRowToneSelect = (selectedTone) => {
+    setMode("refine");
     setTone(selectedTone);
     track("tone_selected", { tone: selectedTone, location: "home_row", user_tier: userTier });
   };
 
   const handleSheetToneSelect = (selectedTone) => {
+    setMode("refine");
     setTone(selectedTone);
     setHomeToneOrder((prev) => [selectedTone, ...prev.filter((entry) => entry !== selectedTone)]);
     track("tone_selected", { tone: selectedTone, location: "home_sheet", user_tier: userTier });
+  };
+
+  const handleSelectTranslateOnly = () => {
+    setMode("quick");
+    track("translate_only_selected", { location: "home_row", user_tier: userTier });
   };
 
   const charsLeft = CHAR_LIMIT - text.length;
@@ -565,45 +572,33 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
         )}
       </div>
 
-      {/* Mode toggle */}
-      <div style={{ display: "flex", marginBottom: 10, gap: 2, padding: "2px", background: t.surface, borderRadius: 10 }}>
-        {[{ id: "refine", label: copy.t("home.refineTranslateTab") }, { id: "quick", label: copy.t("home.translateOnlyTab") }].map(opt => (
-          <button key={opt.id} onClick={() => setMode(opt.id)} style={{
-            flex: 1, padding: "8px 6px", borderRadius: 8, border: "none",
-            background: mode === opt.id ? t.surface2 : "transparent",
-            color: mode === opt.id ? t.text : t.textFaint,
-            fontSize: 10.5, fontFamily: "'Lora',Georgia,serif",
-            cursor: "pointer", fontWeight: mode === opt.id ? "bold" : "normal",
-            transition: "all 0.18s",
-            lineHeight: 1.15,
-            minHeight: 36,
-          }}>{opt.label}</button>
-        ))}
-      </div>
-
       {/* Tone row */}
-      {isRefine && (
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
-            <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>{copy.t("home.tone")}</div>
-            <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", textAlign: isRTL ? "left" : "right", lineHeight: 1.2, maxWidth: "46%" }}>{copy.t("home.pickHow")}</div>
-          </div>
-          <ToneRow
-            activeTone={tone} toneCount={toneCount}
-            onSelect={handleRowToneSelect} onSetLevel={setToneCount}
-            onOpenSheet={() => setSheetOpen(true)}
-            userTier={userTier}
-            favourites={savedTones}
-            recentTones={[]}
-            priorityTonesOverride={homeToneOrder}
-            disabled={false}
-            isHomeScreen={true}
-            showStrengthControl={true}
-            navigate={navigate}
-            theme={theme}
-          />
+      <div style={{ marginBottom: 8 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
+          <div style={{ fontSize: 9, color: t.textDim, letterSpacing: "0.14em", textTransform: "uppercase" }}>{copy.t("home.tone")}</div>
+          <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", textAlign: isRTL ? "left" : "right", lineHeight: 1.2, maxWidth: "46%" }}>{copy.t("home.pickHow")}</div>
         </div>
-      )}
+        <ToneRow
+          activeTone={isRefine ? tone : null}
+          toneCount={toneCount}
+          onSelect={handleRowToneSelect}
+          onSetLevel={setToneCount}
+          onSelectTranslateOnly={handleSelectTranslateOnly}
+          onOpenSheet={() => setSheetOpen(true)}
+          userTier={userTier}
+          favourites={savedTones}
+          recentTones={[]}
+          priorityTonesOverride={["Friendly", "Playful", "Poetic", "Gen A"]}
+          disabled={false}
+          isHomeScreen={true}
+          showStrengthControl={true}
+          showTranslateOnlyChip={true}
+          translateOnlyActive={!isRefine}
+          strengthDisabled={!isRefine}
+          navigate={navigate}
+          theme={theme}
+        />
+      </div>
 
       {/* Text input */}
       <div style={{
@@ -627,7 +622,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           onChange={e => setText(e.target.value.slice(0, CHAR_LIMIT))}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 160)}
-          placeholder={isRefine ? copy.t("home.refinePlaceholder") : copy.t("home.quickPlaceholder")}
+          placeholder={isRefine ? copy.t("home.refinePlaceholder") : "Type your message and tonara will translate it"}
           style={{
             flex: 1, background: "transparent", border: "none",
             padding: "12px 16px", color: t.text, fontSize: 13,
@@ -681,7 +676,7 @@ export function HomeScreen({ navigate, userTier, theme, usageCount, onTranslate,
           transition: "all 0.2s",
           letterSpacing: "-0.1px",
         }}>
-          {mode === "refine" ? copy.t("home.refineTranslateButton") : copy.t("home.translateOnlyButton")}
+          {mode === "refine" ? copy.t("home.refineTranslateButton") : "Translate"}
         </button>
       )}
 
