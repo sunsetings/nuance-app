@@ -5,7 +5,6 @@ import { PhoneFrame, Toast } from "./components/UI.jsx";
 import { AuthScreen } from "./components/AuthScreen.jsx";
 import { HomeScreen } from "./components/HomeScreen.jsx";
 import { ResultsScreen } from "./components/ResultsScreen.jsx";
-import { QuickResultsScreen } from "./components/QuickResultsScreen.jsx";
 import { AccountScreen, UpgradeScreen, SavedScreen, CapScreen } from "./components/OtherScreens.jsx";
 import { refineAndTranslate, quickTranslate } from "./lib/openai.js";
 import { getUsageToday, getSavedTranslations } from "./lib/userdata.js";
@@ -229,7 +228,7 @@ export default function App() {
     const nextContext = typeof target === "object" ? target?.context ?? null : null;
     if (!nextScreen) return;
 
-    if (nextScreen !== "results" && nextScreen !== "quickresults") setOpenedSavedItem(null);
+    if (nextScreen !== "results") setOpenedSavedItem(null);
     if (nextScreen !== screen) setPreviousScreen(screen);
     setScreenContext(nextContext);
     setScreen(nextScreen);
@@ -237,7 +236,7 @@ export default function App() {
 
   const handleOpenSaved = item => {
     setOpenedSavedItem(item);
-    setScreen(item.mode === "quick" ? "quickresults" : "results");
+    setScreen("results");
   };
 
   const addRecentTone = tone => {
@@ -298,7 +297,7 @@ export default function App() {
           to_lang: toLang,
           char_count: text.length,
         });
-        setScreen("quickresults");
+        setScreen("results");
       } else {
         const result = await refineAndTranslate({ text, tone, fromLang, toLang, toneCount });
         const resolvedFromLang = result.sourceLanguage || fromLang;
@@ -328,7 +327,7 @@ export default function App() {
         tone_strength: mode === "quick" ? 0 : toneCount,
         error: e?.message || "unknown_error",
       });
-      setScreen(mode === "quick" ? "quickresults" : "results");
+      setScreen("results");
     } finally {
       setIsTranslating(false);
     }
@@ -342,8 +341,9 @@ export default function App() {
     }
     switch (screen) {
       case "home": return <HomeScreen {...props} onTranslate={handleTranslate} isTranslating={isTranslating} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} navContext={screenContext} />;
-      case "results": return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
-      case "quickresults": return <QuickResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
+      case "results":
+      case "quickresults":
+        return <ResultsScreen {...props} initialData={translationData} savedItem={openedSavedItem} setUsageCount={setUsageCount} setQuickUsageCount={setQuickUsageCount} usageCount={usageCount} quickUsageCount={quickUsageCount} recentTones={recentTones} savedTones={visibleSavedTones} onToggleSavedTone={toggleSavedTone} onAddRecentTone={addRecentTone} savedItems={savedItems} setSavedItems={setSavedItems} user={user} />;
       case "account": return user ? <AccountScreen {...props} themePreference={themePreference} setTheme={setThemePreference} localePreference={localePreference} setLocalePreference={applyLocalePreference} savedItems={savedItems} onLogout={handleLogout} /> : <AuthScreen theme={theme} onAuth={handleAuth} navigate={navigate} navContext={{ ...(screenContext || {}), returnScreen: "account" }} />;
       case "upgrade": return <UpgradeScreen {...props} setIsPremium={setIsPremium} user={user} context={screenContext} />;
       case "saved": return <SavedScreen {...props} onOpenSaved={handleOpenSaved} savedItems={savedItems} setSavedItems={setSavedItems} />;

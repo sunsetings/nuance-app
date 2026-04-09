@@ -3,22 +3,24 @@ import { THEMES, MAX_SAME_TONE, getCapForTier, getToneStatus, parseToneSelection
 import { Toast, ShareSaveRow, BottomNav, CopyBtn, RefineCounter } from "./UI.jsx";
 import { ToneSheet } from "./ToneSheet.jsx";
 import { ToneRow } from "./ToneRow.jsx";
-import { refineAndTranslate } from "../lib/openai.js";
+import { refineAndTranslate, quickTranslate } from "../lib/openai.js";
 import { incrementUsage } from "../lib/usage.js";
 import { saveTranslation, unsaveTranslation } from "../lib/userdata.js";
 import { createI18n, isRTLLocale } from "../lib/i18n.js";
 import { track } from "../lib/analytics.js";
 
-export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, setUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
+export function ResultsScreen({ navigate, userTier, theme, initialData, savedItem, usageCount, quickUsageCount = 0, setUsageCount, setQuickUsageCount, recentTones, savedTones = [], onToggleSavedTone, onAddRecentTone, savedItems, setSavedItems, user }) {
   const t = THEMES[theme] || THEMES.dark;
   const copy = createI18n();
   const isRTL = isRTLLocale(copy.locale);
   const fromSaved = !!savedItem;
   const source = savedItem || initialData || {};
   const sourceToneSelection = parseToneSelection(source.tone);
+  const initialMessageMode = source.mode === "quick" ? "translate_only" : "tone";
 
   const [activeTone, setActiveTone] = useState(sourceToneSelection.tone || source.tone || "Polite");
   const [toneCount, setToneCount] = useState(source.toneCount || 1);
+  const [messageMode, setMessageMode] = useState(initialMessageMode);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -31,9 +33,20 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const original = source.original || "";
   const toLang = source.toLang || source.to_lang || source.lang || "Japanese";
   const cap = getCapForTier(userTier);
+  const isTranslateOnly = messageMode === "translate_only";
+  const currentMode = isTranslateOnly ? "quick" : "refine";
 
-  const ensureWithinCap = () => {
-    if (usageCount >= cap) {
+  useEffect(() => {
+    setMessageMode(source.mode === "quick" ? "translate_only" : "tone");
+    setActiveTone(sourceToneSelection.tone || source.tone || "Polite");
+    setToneCount(source.toneCount || 1);
+    setRefined(source.refined || "");
+    setTranslated(source.translated || "");
+  }, [source.mode, source.original, source.refined, source.translated, source.tone, source.toneCount, sourceToneSelection.tone]);
+
+  const ensureWithinCap = (mode = currentMode) => {
+    const count = mode === "quick" ? quickUsageCount : usageCount;
+    if (count >= cap) {
       navigate("cap");
       return false;
     }
@@ -41,12 +54,11 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   };
 
   // Check if this translation is already saved
-  const existingSave = savedItems?.find(s =>
-    s.original === original &&
-    (parseToneSelection(s.tone).tone || s.tone) === activeTone &&
-    s.tone_count === toneCount &&
-    s.mode === "refine"
-  );
+  const existingSave = savedItems?.find((s) => {
+    if (s.original !== original || s.mode !== currentMode) return false;
+    if (currentMode === "quick") return true;
+    return (parseToneSelection(s.tone).tone || s.tone) === activeTone && s.tone_count === toneCount;
+  });
   const saved = !!existingSave;
 
   const showToast = (msg) => {
@@ -169,8 +181,10 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
     };
 
     drawOriginalBlock();
-    drawBubbleBlock(refinedLabel, sourceLangCode, refinedLines, refinedHeight, bubbleText);
-    drawBubbleBlock("REFINED AND TRANSLATED", targetLangCode, translatedLines, translatedHeight, bubbleText);
+    if (!isTranslateOnly && refined) {
+      drawBubbleBlock(refinedLabel, sourceLangCode, refinedLines, refinedHeight, bubbleText);
+    }
+    drawBubbleBlock(isTranslateOnly ? "TRANSLATED" : "REFINED AND TRANSLATED", targetLangCode, translatedLines, translatedHeight, bubbleText);
 
     return await new Promise((resolve) => {
       canvas.toBlob((blob) => resolve(blob), "image/png");
@@ -210,6 +224,14 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const doRefine = async (tone, count) => {
     setLoading(true);
     setError(null);
+    track("refine_started", {
+      user_tier: userTier,
+      from_lang: source.fromLang || source.from_lang || "English",
+      to_lang: toLang,
+      tone,
+      tone_strength: count,
+      char_count: original.length,
+    });
     try {
       const result = await refineAndTranslate({
         text: original,
@@ -218,6 +240,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         toLang,
         toneCount: count,
       });
+      setMessageMode("tone");
       setRefined(result.refined);
       setTranslated(result.translated);
       if (user?.id) {
@@ -227,38 +250,111 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
         setUsageCount(updated.count);
       }
       onAddRecentTone(tone);
+      track("refine_succeeded", {
+        user_tier: userTier,
+        from_lang: result.sourceLanguage || source.fromLang || source.from_lang || "English",
+        to_lang: toLang,
+        tone,
+        tone_strength: count,
+        char_count: original.length,
+      });
+      return true;
     } catch (e) {
       setError(copy.t("results.genericError"));
+      track("refine_failed", {
+        user_tier: userTier,
+        from_lang: source.fromLang || source.from_lang || "English",
+        to_lang: toLang,
+        tone,
+        tone_strength: count,
+        error: e?.message || "unknown_error",
+      });
       console.error(e);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const doTranslateOnly = async () => {
+    setLoading(true);
+    setError(null);
+    track("translate_only_started", {
+      user_tier: userTier,
+      from_lang: source.fromLang || source.from_lang || "English",
+      to_lang: toLang,
+      char_count: original.length,
+    });
+    try {
+      const result = await quickTranslate({
+        text: original,
+        fromLang: source.fromLang || source.from_lang || "English",
+        toLang,
+      });
+      setMessageMode("translate_only");
+      setRefined("");
+      setTranslated(result.translated);
+      if (user?.id) {
+        setQuickUsageCount?.((prev) => prev + 1);
+      } else {
+        const updated = incrementUsage("quick");
+        setQuickUsageCount?.(updated.count);
+      }
+      track("translate_only_succeeded", {
+        user_tier: userTier,
+        from_lang: result.sourceLanguage || source.fromLang || source.from_lang || "English",
+        to_lang: toLang,
+        char_count: original.length,
+      });
+      return true;
+    } catch (e) {
+      setError(copy.t("results.genericError"));
+      track("translate_only_failed", {
+        user_tier: userTier,
+        from_lang: source.fromLang || source.from_lang || "English",
+        to_lang: toLang,
+        error: e?.message || "unknown_error",
+      });
+      console.error(e);
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
   const handleSelect = async tone => {
-    if (!ensureWithinCap()) return;
+    if (!ensureWithinCap("refine")) return;
     const status = getToneStatus(tone, userTier);
     if (status !== "unlocked") {
       navigate(status === "free_locked" ? "signin_tone" : { screen: "upgrade", context: "tone" });
       return;
     }
-    if (tone === activeTone) return;
+    if (!isTranslateOnly && tone === activeTone) return;
     setActiveTone(tone);
+    setMessageMode("tone");
     track("tone_selected", { tone, location: "results_row", user_tier: userTier });
     await doRefine(tone, toneCount);
   };
 
   const handleSetLevel = async lvl => {
-    if (!ensureWithinCap()) return;
+    if (isTranslateOnly) return;
+    if (!ensureWithinCap("refine")) return;
     if (lvl < 1 || lvl > MAX_SAME_TONE || lvl === toneCount) return;
     setToneCount(lvl);
     track("tone_strength_selected", { tone: activeTone, tone_strength: lvl, location: "results_row", user_tier: userTier });
     await doRefine(activeTone, lvl);
   };
 
+  const handleTranslateOnlySelect = async () => {
+    if (isTranslateOnly) return;
+    if (!ensureWithinCap("quick")) return;
+    track("translate_only_selected", { location: "results_row", user_tier: userTier });
+    await doTranslateOnly();
+  };
+
   const handleSheetSelect = async (tone) => {
-    if (!ensureWithinCap()) return;
-    if (tone === activeTone) {
+    if (!ensureWithinCap("refine")) return;
+    if (!isTranslateOnly && tone === activeTone) {
       if (toneCount !== 1) {
         setToneCount(1);
         await doRefine(tone, 1);
@@ -266,6 +362,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       return;
     }
     setActiveTone(tone);
+    setMessageMode("tone");
     track("tone_selected", { tone, location: "results_sheet", user_tier: userTier });
     await doRefine(tone, toneCount);
   };
@@ -273,7 +370,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
   const handleSave = async () => {
     if (!user) { navigate("signin_save"); return; }
     if (saving) return;
-    track("save_clicked", { mode: "refine", user_tier: userTier, already_saved: saved, tone: activeTone });
+    track("save_clicked", { mode: currentMode, user_tier: userTier, already_saved: saved, tone: isTranslateOnly ? "" : activeTone });
     setSaving(true);
     try {
       if (saved && existingSave) {
@@ -283,18 +380,18 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       } else {
         // Save
         const newItem = await saveTranslation(user.id, {
-          mode: "refine",
+          mode: currentMode,
           original,
-          refined,
+          refined: isTranslateOnly ? "" : refined,
           translated,
-          tone: activeTone,
-          toneCount,
+          tone: isTranslateOnly ? null : activeTone,
+          toneCount: isTranslateOnly ? null : toneCount,
           fromLang: source.fromLang || source.from_lang || "English",
           toLang,
         });
         setSavedItems(prev => [newItem, ...prev]);
-        showToast(copy.t("results.saveSuccess"));
-        track("save_succeeded", { mode: "refine", user_tier: userTier, tone: activeTone, tone_strength: toneCount });
+        showToast(isTranslateOnly ? copy.t("quickResults.translationSaved") : copy.t("results.saveSuccess"));
+        track("save_succeeded", { mode: currentMode, user_tier: userTier, tone: isTranslateOnly ? "" : activeTone, tone_strength: isTranslateOnly ? 0 : toneCount });
       }
     } catch (e) {
       console.error("Save failed:", e);
@@ -334,7 +431,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       },
       labelColor: t.textFaint,
     },
-    {
+    ...(!isTranslateOnly ? [{
       label: refinedLabel,
       content: refined,
       lang: sourceLangCode,
@@ -350,9 +447,9 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
       },
       labelColor: theme === "light" ? "#2a6a2a" : "#78b86f",
       labelWeight: "bold",
-    },
+    }] : []),
     {
-      label: copy.t("results.refinedTranslated"),
+      label: isTranslateOnly ? copy.t("quickResults.translation") : copy.t("results.refinedTranslated"),
       content: translated,
       lang: targetLangCode,
       textToCopy: translated,
@@ -409,14 +506,18 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
               <div style={{ fontSize: 9, color: t.textFaint, letterSpacing: "0.04em", lineHeight: 1.2, textAlign: isRTL ? "left" : "right", maxWidth: "44%" }}>{copy.t("results.pickHow")}</div>
           </div>
           <ToneRow
-            activeTone={activeTone} toneCount={toneCount}
+            activeTone={isTranslateOnly ? null : activeTone} toneCount={toneCount}
             onSelect={handleSelect} onSetLevel={handleSetLevel}
+            onSelectTranslateOnly={handleTranslateOnlySelect}
             onOpenSheet={() => setSheetOpen(true)}
             userTier={userTier}
             favourites={savedTones}
             recentTones={recentTones}
             disabled={loading}
             isHomeScreen={false}
+            showTranslateOnlyChip={true}
+            translateOnlyActive={isTranslateOnly}
+            strengthDisabled={isTranslateOnly}
             navigate={navigate}
             theme={theme}
           />
@@ -424,7 +525,7 @@ export function ResultsScreen({ navigate, userTier, theme, initialData, savedIte
 
         {loading && (
           <div style={{ textAlign: "center", padding: "20px", color: t.textDim, fontSize: 13, fontStyle: "italic", letterSpacing: "0.05em" }}>
-            {copy.t("results.refining")}
+            {isTranslateOnly ? "Translating..." : copy.t("results.refining")}
           </div>
         )}
 
